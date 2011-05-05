@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">InCense</string>
+    <string name="http_client_id">InCense-1.0 (Android)</string>
+    <string name="app_name_survey">InCense :: Survey</string>
+    <string name="results">Results</string>
+    <string name="settings">Settings</string>
+    <string name="project_signature_filename">/sdcard/project_signature.json</string>
+    <string name="project_new_signature_filename">/sdcard/project_new_signature.json</string>
+    <string name="project_filename">/sdcard/project.json</string>
+    <string name="server_sink_path">/uploads/json</string>
+    <string name="server_survey_path">/uploads/json</string>
+    <string name="server_media_path">/uploads/audio</string>
+    <string name="server_project_signature_path">/downloads/signature</string>
+    <string name="server_project_path">/downloads/project</string>
+    <string name="results_audio_parent">/sdcard/</string>
+    <string name="results_audio_child">audio</string>
+    <string name="results_audio_extension">.3gp</string>
+    <string name="results_data_parent">/sdcard/</string>
+    <string name="results_data_child">data</string>
+    <string name="results_data_extension">.json</string>
+    <string name="results_survey_parent">/sdcard/</string>
+    <string name="results_survey_child">survey</string>
+    <string name="results_survey_extension">.json</string>
+    <string name="filequeue_max_files">100</string>
+    <string name="filequeue_filename">/sdcard/results.json</string>
+    
+    <string name="json_file_path">/res/data/data.json</string>
+    <string name="json_queue_file_path">/res/data/queue.json</string>
+    <string name="audio_file_path">/res/data/audio.mp4</string>
+    <string name="new_recording">Record</string>
+    <string name="inst_start">Please enter a username, then press start to start the sensing process.</string>
+    <string name="inst_sensing">Sensing and collecting data... Please wait a moment.</string>
+    <string name="alert_username">Please enter a username.</string>
+    <string name="alert_tags">It\'s recommended to enter at least one tag describing this moment.</string>
+</resources>
