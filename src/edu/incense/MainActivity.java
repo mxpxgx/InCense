@@ -62,7 +62,7 @@ public class MainActivity extends MainMenuActivity implements Runnable {
 		userNameEditText = (EditText) findViewById(R.id.usernameEditText);
 		statusTextView = (TextView) findViewById(R.id.statusTextView);
 		final Button startButton = (Button) findViewById(R.id.startButton);
-		
+
 		//Show Username according to the SharedPreferences
 		userNameEditText.setText(getUsername());
 		

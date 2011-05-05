@@ -29,8 +29,10 @@ import edu.incense.survey.SurveyController;
 import android.app.Application;
 import android.util.Log;
 
-/*** 
- * InCenseApplication represents the whole application. It's the only object is always running.
+/**
+ * InCenseApplication is a subclass of android.app.Application,
+ * a base class for maintaining global application state.
+ * In this case, it maintains a SurveyController instance to... TODO
  * 
  * @author Moises Perez (mxpxgx@gmail.com)
  * @version 1.0, 2011/04/10
@@ -38,21 +40,21 @@ import android.util.Log;
  */
 
 public class InCenseApplication extends Application {
-	private static InCenseApplication singleton; 	//Instance of this application
+	private static InCenseApplication singleton; 	//Static singleton of this application
 	private SurveyController surveyController;		//Temporary SurveyController reference to be started
-	private Map<String, DataTask> taskCollection;
-	private Project project;
+	private Map<String, DataTask> taskCollection;   //TODO
+	private Project project;                        //TODO
 	
-	/*** Implements the singleton patter, returns the application instance
+	/**
+     * Returns this application instance (an static singleton).
 	 *  
-	 * @return InCenseApplication the instance of this application
+	 * @return the instance of this application (an static singleton).
 	 */
 	public static InCenseApplication getInstance() {
 		return singleton;
 	}
 
-	/** (non-Javadoc)
-	 * @
+	/**
 	 * @see android.app.Application#onCreate()
 	 */
 	@Override 
@@ -64,7 +66,11 @@ public class InCenseApplication extends Application {
 		taskCollection = new HashMap<String, DataTask>();
 		surveyController = null;
 	}
-	
+
+    /**
+     *
+     * @param survey
+     */
 	public void setSurvey(Survey survey){
 		surveyController = new SurveyController(survey);
 	}
