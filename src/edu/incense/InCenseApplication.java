@@ -32,7 +32,9 @@ import android.util.Log;
 /**
  * InCenseApplication is a subclass of android.app.Application,
  * a base class for maintaining global application state.
- * In this case, it maintains a SurveyController instance to... TODO
+ * In this case, it maintains a SurveyController instance to...
+ *  TODO This is no the best approach, I need something like the The Static Starter Pattern
+ *  http://fupeg.blogspot.com/2011/02/static-starter-pattern.html
  * 
  * @author Moises Perez (mxpxgx@gmail.com)
  * @version 1.0, 2011/04/10
@@ -68,7 +70,7 @@ public class InCenseApplication extends Application {
 	}
 
     /**
-     *
+     * Set an instance of survey in order to be used by a new SurveyController
      * @param survey
      */
 	public void setSurvey(Survey survey){

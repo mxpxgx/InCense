@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Main UrbanMoments activity to start a recording session.
+ * Main activity to start a recording session.
  * Includes an optional text area for user tagging.
  *
  * @author  Moises Perez (mxpxgx@gmail.com)
