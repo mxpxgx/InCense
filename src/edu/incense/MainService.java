@@ -2,7 +2,7 @@ package edu.incense;
 
 public class MainService {
 	
-	private final static int PERIOD_TIME=1; //Period in Minutes to check new update
+	// private final static int PERIOD_TIME=1; //Period in Minutes to check new update
 	
 	/*private void initAlarmManager(){
 		AlarmManager alarms = (AlarmManager)getSystemService(Context.ALARM_SERVICE);

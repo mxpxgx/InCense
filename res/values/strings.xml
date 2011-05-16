@@ -24,7 +24,8 @@
     <string name="results_survey_extension">.json</string>
     <string name="filequeue_max_files">100</string>
     <string name="filequeue_filename">/sdcard/results.json</string>
-    
+
+    <!-- this is a comment -->
     <string name="json_file_path">/res/data/data.json</string>
     <string name="json_queue_file_path">/res/data/queue.json</string>
     <string name="audio_file_path">/res/data/audio.mp4</string>
@@ -33,4 +34,17 @@
     <string name="inst_sensing">Sensing and collecting data... Please wait a moment.</string>
     <string name="alert_username">Please enter a username.</string>
     <string name="alert_tags">It\'s recommended to enter at least one tag describing this moment.</string>
+
+    <!-- login & sign-up activities -->
+    <string name="login_title">Login</string>
+    <string name="username_label">Username: </string>
+    <string name="password_label">Password: </string>
+    <string name="incenseid_label">InCense device ID (required): </string>
+    <string name="password_confirmation_label">Password confirmation: </string>
+    <string name="email_label">Email: </string>
+    <string name="device_label">Device: </string>
+    <string name="login_text">Login</string>
+    <string name="signup_text">Sign-up for InCense</string>
+    <string name="submit_label">Submit</string>
+    <string name="cancel_label">Cancel</string>
 </resources>
