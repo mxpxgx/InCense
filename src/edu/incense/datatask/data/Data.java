@@ -1,29 +1,29 @@
 package edu.incense.datatask.data;
 
-public abstract class Data {//implements Comparable<Data> {
-	private long timestamp;
-	private DataType dataType = DataType.NULL;
-	
-	public Data(DataType dataType){
-		setTimestamp(System.currentTimeMillis());
-		setDataType(dataType);
-	}
-	
-	public DataType getDataType() {
-		return dataType;
-	}
+public abstract class Data {// implements Comparable<Data> {
+    private long timestamp;
+    private DataType dataType = DataType.NULL;
 
-	public void setDataType(DataType dataType) {
-		this.dataType = dataType;
-	}
+    public Data(DataType dataType) {
+        setTimestamp(System.currentTimeMillis());
+        setDataType(dataType);
+    }
 
-	protected void setTimestamp(long time) {
-		timestamp = time;
-	}
+    public DataType getDataType() {
+        return dataType;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
-	
-	//public abstract int compareTo(Data data);
+    public void setDataType(DataType dataType) {
+        this.dataType = dataType;
+    }
+
+    protected void setTimestamp(long time) {
+        timestamp = time;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    // public abstract int compareTo(Data data);
 }

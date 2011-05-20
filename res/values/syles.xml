@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="ToDoTheme" parent="@android:style/Theme.Black">
-		<item name="android:textSize">12sp</item>
+	<!-- Variation on the Light theme that turns off the title -->
+    <style name="InCense" parent="android:style/Theme.Light">
+    </style>
+	
+	<style name="app_title" >
+		<item name="android:textSize">24sp</item>
+		<item name="android:textStyle">bold</item>
 	</style>
 </resources>
