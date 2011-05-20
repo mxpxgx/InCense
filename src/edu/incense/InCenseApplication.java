@@ -37,7 +37,7 @@ import android.util.Log;
  * 
  * @author Moises Perez (mxpxgx@gmail.com)
  * @since 2011/04/10 //TODO probably before
- * @version 1.3, 2011/05/20
+ * @version 1.1, 2011/05/20
  * 
  */
 
