@@ -11,6 +11,7 @@ import edu.incense.R;
 import edu.incense.comm.Uploader;
 
 import android.content.Context;
+import android.util.Log;
 
 public class ResultsUploader {
     private FileQueue fileQueue;
@@ -52,8 +53,13 @@ public class ResultsUploader {
 
     public void deleteFile(String fileName) {
         File file = new File(fileName);
-        if (file.exists())
-            file.delete();
+        if (file.exists()){
+            try{
+                file.delete();
+            } catch(Exception e){
+                Log.e(getClass().getName(), "Deleting file" , e);
+            }
+        }
     }
 
     /***

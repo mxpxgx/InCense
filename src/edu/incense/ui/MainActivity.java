@@ -51,9 +51,9 @@ public class MainActivity extends MainMenuActivity implements Runnable {
 
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public synchronized void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Initialize activity.
+        
         setContentView(R.layout.main);
         duration = 1000;
         thread = new Thread(this);
@@ -173,8 +173,10 @@ public class MainActivity extends MainMenuActivity implements Runnable {
         // startService(serviceIntent);
         try {
             // Thread.sleep(11000);
-            Thread.sleep(duration);
-        } catch (Exception e) {
+            //Thread.sleep(duration);
+            // TODO Verify this is not affected by wait
+            wait(duration);
+        } catch (InterruptedException e) {
             Log.e(getClass().getName(), "Failed to sleep for " + duration
                     + " ms", e);
         }
@@ -277,7 +279,7 @@ public class MainActivity extends MainMenuActivity implements Runnable {
 
     // Suspend recording session and the thread from this class, dismiss the
     // progress dialog
-    private void suspendRecordingSession() {
+    private synchronized void suspendRecordingSession() {
 
         // Suspend recording session
         /*

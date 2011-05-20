@@ -1,11 +1,5 @@
 package edu.incense.ui;
 
-import edu.incense.R;
-import edu.incense.R.id;
-import edu.incense.R.menu;
-import edu.incense.R.xml;
-import edu.incense.results.ResultsListActivity;
-
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -15,14 +9,16 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import edu.incense.R;
+import edu.incense.results.ResultsListActivity;
 
 public class SettingsActivity extends PreferenceActivity {
     SharedPreferences sharedPreferences;

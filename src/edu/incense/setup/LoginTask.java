@@ -26,7 +26,7 @@ public class LoginTask extends AsyncTask<String, Integer, Integer> {
 
     public LoginTask(LoginTaskListener listener) {
         super();
-        this.listener = listener;
+        setListener(listener);
     }
 
     public void setListener(LoginTaskListener listener) {
@@ -38,14 +38,8 @@ public class LoginTask extends AsyncTask<String, Integer, Integer> {
         // TODO Auto-generated method stub, it has to return different values
         // depending on the results from the server
         // Send a post to the server with the username and password
-        // Use SSL
-        saveSharedPreferences();
+        // Use SSL encryption
         return LOGGED_IN;
-    }
-
-    private void saveSharedPreferences() {
-        // TODO save the username and the data received from the server to the
-        // SharedPreferences
     }
 
     @Override
@@ -58,5 +52,9 @@ public class LoginTask extends AsyncTask<String, Integer, Integer> {
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
         listener.onLoginTaskComplete(result);
+    }
+    
+    public void removeListener() {
+        setListener(null);
     }
 }

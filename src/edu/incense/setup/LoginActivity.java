@@ -2,10 +2,13 @@ package edu.incense.setup;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import edu.incense.R;
 import edu.incense.setup.LoginTask;
@@ -27,7 +30,9 @@ public class LoginActivity extends Activity implements
     public static final String EXTRA_USERNAME = "username";
     public static final String EXTRA_PASSWORD = "password";
 
-    private String username = "Unknown User";
+    private ProgressBar progressBar = null;
+    private LoginTask loginTask = null;
+    private String username = "";
 
     /** Called when the activity is first created. */
     @Override
@@ -41,6 +46,23 @@ public class LoginActivity extends Activity implements
         final Button bLogin = (Button) findViewById(R.id.button_login);
         final Button bRegister = (Button) findViewById(R.id.button_register);
 
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        // If necessary, initialize LoginTaks.
+        // If not then set to local member.
+        loginTask = (LoginTask) getLastNonConfigurationInstance();
+        if (loginTask == null) {
+            loginTask = new LoginTask(this);
+        } else {
+            loginTask.setListener(this);
+            // TODO test orientation change, it may need the commented code
+            // here:
+            /*
+             * if (progressBar.getProgress() == 50) { // TODO set a constant
+             * with // 50? progressBar.setVisibility(ProgressBar.VISIBLE); }
+             */
+
+        }
+
         bLogin.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -52,9 +74,39 @@ public class LoginActivity extends Activity implements
         bRegister.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                register();
+                startRegisterActivity();
             }
         });
+
+    }
+    
+    /* (non-Javadoc)
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        // TODO move this code to a splash screen?
+        // Check if the user has already logged in
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        boolean loggedin = sp.getBoolean("loggedin", false);
+        // If he has, move/go directly to the main activity
+        if(loggedin){
+            startMainActivity();
+        }
+    }
+
+    /**
+     * Called before activity is destroyed
+     * 
+     * @see android.app.Activity#onRetainNonConfigurationInstance()
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        loginTask.removeListener();
+        return loginTask;
     }
 
     /**
@@ -69,8 +121,9 @@ public class LoginActivity extends Activity implements
             Toast.makeText(this, getText(R.string.password_empty),
                     Toast.LENGTH_SHORT).show();
         } else {
+            // Feedback to the user (progressBar)
+            progressBar.setVisibility(ProgressBar.VISIBLE);
             // Start login task: authentication of the user
-            LoginTask loginTask = new LoginTask(this);
             loginTask.execute(username, password);
         }
     }
@@ -79,31 +132,69 @@ public class LoginActivity extends Activity implements
      * Starts the MainActivity. This method is called by a LoginTask if the user
      * was successfully logged in.
      */
-    public void startMainActivity() {
+    private void startMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     /**
-     * Starts a SignupActivity in order to register a new user
+     * Starts a RegisterActivity in order to register a new user
      */
-    private void register() {
+    private void startRegisterActivity() {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 
     /**
+     * Saves the username to the SharedPreferences
+     * 
+     * @param username
+     */
+    private void setUsernameInPreferences(String username) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(this);
+
+        // Retrieve an editor to modify the shared preferences.
+        SharedPreferences.Editor editor = sp.edit();
+
+        // Store new primitive types in the shared preferences object.
+        editor.putString("editTextUsername", username);
+
+        // Set a flag to prevent this activity from starting automatically
+        // again.
+        editor.putBoolean("loggedin", true);
+
+        // Commit the changes.
+        editor.commit();
+    }
+
+    /**
      * Receives the the result from the authentication process and shows the
-     * result to the user.
+     * result to the user. If logged successfully, start the MainActivity. Also,
+     * stops the progress bar.
      * 
      * @param result
      */
     public void onLoginTaskComplete(int result) {
+
         String resultMessage = null;
         if (result == LoginTask.LOGGED_IN) {
-            resultMessage = getString(R.string.logged_in_message) + username;
+            setUsernameInPreferences(username);
+            resultMessage = getString(R.string.logged_in_message) + " "
+                    + username + "!";
             startMainActivity();
+        } else if (result == LoginTask.UNKNOWN_USER) {
+            resultMessage = getString(R.string.unknown_username_message);
+        } else if (result == LoginTask.INCORRECT_PASSWORD) {
+            resultMessage = getString(R.string.logged_in_message);
+        } else if (result == LoginTask.NO_CONNECTION) {
+            resultMessage = getString(R.string.no_connection_message);
         }
+
+        // Hides/Stops the progressBar
+        progressBar.setVisibility(ProgressBar.INVISIBLE);
+
+        // Show a feedback message to the user
         if (resultMessage != null) {
             Toast.makeText(this, resultMessage, Toast.LENGTH_SHORT).show();
         }

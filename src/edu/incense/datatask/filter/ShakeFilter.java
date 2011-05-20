@@ -57,7 +57,7 @@ public class ShakeFilter extends DataFilter {
                 Log.i(getClass().getName(), "SHAKE detected with speed: "
                         + speed);
                 counter++;
-                if (counter % 1 == 0) {
+                if (counter > 0) {
                     Log.i(getClass().getName(),
                             "DOUBLE SHAKE detected with speed: " + speed);
                     return new BooleanData(true);
