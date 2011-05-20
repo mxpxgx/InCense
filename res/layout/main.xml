@@ -1,43 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+    android:layout_height="fill_parent">
 
-    <TextView android:id="@+id/usernameTextView"
-			  android:layout_width="wrap_content" 
-			  android:layout_height="wrap_content"
-			  android:text="Username: " />
-	<EditText android:id="@+id/usernameEditText"
-			  android:layout_width="fill_parent" 
-			  android:layout_height="wrap_content"
-			  android:editable="false"
-			  android:text="Moises" />
-	<TextView
-		android:id="@+id/configurationTextView" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:text="" />
-	<LinearLayout
-    	android:orientation="horizontal"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-    >
-		<Button   android:id="@+id/startButton"
-				  android:layout_width="wrap_content" 
-				  android:layout_height="wrap_content"
-				  android:text="Start Session" />
-	</LinearLayout>
-	<TextView
-		android:id="@+id/instructionTextView" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:text="" />
-	<TextView
-		android:id="@+id/statusTextView" 
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:text="" />
+    <include
+        layout="@layout/header_logo_text"
+        android:id="@+id/layout_header_ref"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" android:layout_margin="10dip"/>
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout1">
+        <TextView android:id="@+id/usernameTextView" android:text="Username: " android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+        <EditText android:layout_width="fill_parent" android:layout_height="wrap_content" android:editable="false" android:id="@+id/usernameEditText" android:text="@string/unknown_username"></EditText>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/configurationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="@string/start_session"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/instructionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/statusTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
 
 </LinearLayout>

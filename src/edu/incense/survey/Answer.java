@@ -56,7 +56,7 @@ public class Answer {
     public boolean deselectOption(int option) {
         boolean removed = false;
         if (selectedOptions != null) {
-            removed = selectedOptions.remove(new Integer(option));
+            removed = selectedOptions.remove(Integer.valueOf(option));
             if (selectedOptions.isEmpty())
                 setAnswered(false);
         }

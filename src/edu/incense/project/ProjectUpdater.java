@@ -34,7 +34,7 @@ public class ProjectUpdater {
         jsonProject = new JsonProject();
     }
 
-    public void setListener(ProjectUpdateListener listener) {
+    public synchronized void setListener(ProjectUpdateListener listener) {
         this.listener = listener;
     }
 

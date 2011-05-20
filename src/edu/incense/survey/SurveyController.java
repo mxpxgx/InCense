@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Stack;
 
 public class SurveyController {
-    public final static int MAX_OPTIONS = 5;
+    public final static int MAX_OPTIONS = 5; // Maximum number of answers
     private Survey survey;
     private Answer[] answers;
-    private int index;
+    private int index; // Index of current question
     private Stack<Integer> surveyPath;
 
     public SurveyController(Survey survey) {
@@ -38,25 +38,28 @@ public class SurveyController {
     }
 
     /***
-     * Initializes answer if necessary
+     * Initializes answer of the current question if necessary, that is, if it
+     * hasn't been set, it calls a constructor of a new answer and adds it to
+     * the given index of the answers array.
      * 
-     * @param index
-     *            - index of the answer to initialize
+     * @param i
+     *            index of the answer to initialize (number of question in the
+     *            survey)
      */
-    private void initAnswer(int index) {
-        if (answers[index] == null) {
-            answers[index] = new Answer();
+    private Answer initializeAnswer(int i) {
+        if (answers[i] == null) {
+            answers[i] = new Answer();
         }
+        return answers[i];
     }
 
     /***
-     * Returns current answer
+     * Returns current answer (initializes it if necessary)
      * 
      * @return Answer - current answer
      */
     private Answer getAnswer() {
-        initAnswer(index);
-        return answers[index];
+        return initializeAnswer(index);
     }
 
     public String getStringAnswer() {
@@ -64,23 +67,26 @@ public class SurveyController {
     }
 
     public void setAnswer(int answer) {
-        initAnswer(index);
+        initializeAnswer(index);
         getAnswer().setAnswer(answer);
     }
 
     public void setAnswer(String answer) {
-        initAnswer(index);
+        initializeAnswer(index);
         getAnswer().setAnswer(answer);
     }
 
+    /**
+     * Select the option number of a multiple-answers question.
+     * 
+     * @param option number/position/option of the answer
+     */
     public void selectOption(int option) {
-        initAnswer(index);
         getAnswer().selectOption(option, getQuestion().getType());
     }
 
     public boolean deselectOption(int option) {
-        initAnswer(index);
-        return deselectOption(option);
+        return getAnswer().deselectOption(option);
     }
 
     public List<Integer> getSelectedOptions() {

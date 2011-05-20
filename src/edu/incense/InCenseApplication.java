@@ -36,7 +36,8 @@ import android.util.Log;
  * http://fupeg.blogspot.com/2011/02/static-starter-pattern.html
  * 
  * @author Moises Perez (mxpxgx@gmail.com)
- * @version 1.0, 2011/04/10
+ * @since 2011/04/10 //TODO probably before
+ * @version 1.2, 2011/05/20
  * 
  */
 

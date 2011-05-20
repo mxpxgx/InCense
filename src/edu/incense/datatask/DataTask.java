@@ -24,13 +24,13 @@ public abstract class DataTask implements Runnable {
 
     protected void clearInputs() {
         if (inputs != null)
-            inputs.removeAll(inputs);
+            inputs.clear();
         inputs = new ArrayList<Input>();
     }
 
     protected void clearOutputs() {
         if (outputs != null)
-            outputs.removeAll(outputs);
+            outputs.clear();
         outputs = new ArrayList<Output>();
     }
 

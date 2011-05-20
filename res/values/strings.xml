@@ -54,7 +54,11 @@
     <string name="cancel_label">Cancel</string>
     <string name="required_notice">* required field</string>
     <string name="logged_in_message">Welcome back</string>
+    <string name="incorrect_password_message">Username or password is incorrect.</string>
+    <string name="unknown_username_message">Username was not found.</string>
+    <string name="no_connection_message">No connection available.</string>
     
-    
-    <!-- Colors -->
+    <!-- MainActivity -->
+    <string name="unknown_username">Unknown</string>
+    <string name="start_session">Start session</string>
 </resources>

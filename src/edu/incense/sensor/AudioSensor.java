@@ -26,7 +26,9 @@ public class AudioSensor extends Sensor implements Runnable {
         while (isSensing) {
             try {
 
-                Thread.sleep(getPeriodTime());
+                //Thread.sleep(getPeriodTime());
+                // TODO Verify this is not affected by wait
+                wait(getPeriodTime());
 
                 newData = new AudioData();
                 saveAndRestartRecording(newData);

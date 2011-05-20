@@ -1,8 +1,6 @@
 package edu.incense.ui;
 
 import edu.incense.R;
-import edu.incense.R.id;
-import edu.incense.R.menu;
 import edu.incense.results.ResultsListActivity;
 
 import android.app.Activity;

@@ -7,7 +7,6 @@ import edu.incense.datatask.data.Data;
 
 public class PipeBuffer implements Input, Output {
     Queue<Data> dataBuffer = null;
-    int size = -1;
 
     public PipeBuffer() {
         dataBuffer = new LinkedList<Data>();
