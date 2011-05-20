@@ -7,10 +7,17 @@ import android.widget.Button;
 import edu.incense.R;
 
 /**
+ * Activity class to register a user with the given inputs. Once the user
+ * completes this form, the data is validated and sent to a server. If he's
+ * successfully registered, the Settings activity is started to let the user
+ * personalize the application.
+ * TODO validad email y otros datos
+ * 
  * @author Moises Perez (mxpxgx@gmail.com)
- * @version 0.1, 2011/05/05
+ * @since 2011/05/05
+ * @version 0.2, 2011/05/18
  */
-public class SignupActivity extends Activity{
+public class RegisterActivity extends Activity {
     private Button bSubmit;
     private Button bCancel;
 
@@ -18,19 +25,19 @@ public class SignupActivity extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.signup);
+        setContentView(R.layout.register);
 
-        bSubmit = (Button) findViewById(R.id.button_signup);
+        bSubmit = (Button) findViewById(R.id.button_submit);
         bCancel = (Button) findViewById(R.id.button_cancel);
 
-        bSubmit.setOnClickListener(new View.OnClickListener(){
+        bSubmit.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
                 submit();
             }
         });
 
-        bCancel.setOnClickListener(new View.OnClickListener(){
+        bCancel.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
                 cancel();
@@ -42,14 +49,14 @@ public class SignupActivity extends Activity{
     /**
      *
      */
-    private void submit(){
+    private void submit() {
 
     }
 
     /**
-     * Cancel this sign-up process (activity), returning to the login activity
+     * Cancel this registration (activity), returning to the LoginActivity
      */
-    private void cancel(){
+    private void cancel() {
         finish();
     }
 }

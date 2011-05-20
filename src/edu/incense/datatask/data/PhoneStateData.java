@@ -1,18 +1,18 @@
 package edu.incense.datatask.data;
 
-public class PhoneStateData extends Data{
-	//private int isCharging;
-	private int dataState;
+public class PhoneStateData extends Data {
+    // private int isCharging;
+    private int dataState;
 
-	public PhoneStateData(){
-		super(DataType.STATES);
-	}
-	
-	public void setState(int state) {
-		this.dataState = state;
-	}
+    public PhoneStateData() {
+        super(DataType.STATES);
+    }
 
-	public int getState() {
-		return dataState;
-	}
+    public void setState(int state) {
+        this.dataState = state;
+    }
+
+    public int getState() {
+        return dataState;
+    }
 }

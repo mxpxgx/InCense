@@ -4,46 +4,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Survey {
-	private int id;
-	private String title;
-	private List<Question> questions;
-	
-	public void add(Question question){
-		if(questions == null){
-			questions = new ArrayList<Question>();
-		}
-		questions.add(question);
-	}
+    private int id;
+    private String title;
+    private List<Question> questions;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void add(Question question) {
+        if (questions == null) {
+            questions = new ArrayList<Question>();
+        }
+        questions.add(question);
+    }
 
-	public String getTitle() {
-		return title;
-	}
-	
-	public Question getQuestion(int index){
-		return questions.get(index);
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public List<Question> getQuestions() {
-		return questions;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setQuestions(List<Question> questions) {
-		this.questions = questions;
-	}
+    public Question getQuestion(int index) {
+        return questions.get(index);
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public List<Question> getQuestions() {
+        return questions;
+    }
 
-	public int getId() {
-		return id;
-	}
-	
-	public int getSize(){
-		return questions.size();
-	}
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getSize() {
+        return questions.size();
+    }
 }

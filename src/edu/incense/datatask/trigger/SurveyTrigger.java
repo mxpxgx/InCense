@@ -6,40 +6,39 @@ import edu.incense.survey.StartSurveyTask;
 import android.content.Context;
 
 public class SurveyTrigger extends DataTrigger {
-	private String surveyName;
-	//private boolean trigger;
+    private String surveyName;
 
-	public SurveyTrigger(Context context) {
-		super(context);
-		//trigger =false;
-	}
+    // private boolean trigger;
 
-	@Override
-	protected void trigger() {
-		(new StartSurveyTask(context)).execute(surveyName);
-	}
+    public SurveyTrigger(Context context) {
+        super(context);
+        // trigger =false;
+    }
 
-	protected void computeSingleData(Data data) {
-		BooleanData bData = (BooleanData)data;
-		if(bData.getValue()){
-			//trigger = true;
-			trigger();
-			//stop();
-		}
-	}
-	
-	/*@Override
-	public void stop(){
-		if(trigger) trigger();
-		super.stop();
-	}*/
+    @Override
+    protected void trigger() {
+        (new StartSurveyTask(context)).execute(surveyName);
+    }
 
-	public void setSurveyName(String surveyName) {
-		this.surveyName = surveyName;
-	}
+    protected void computeSingleData(Data data) {
+        BooleanData bData = (BooleanData) data;
+        if (bData.getValue()) {
+            // trigger = true;
+            trigger();
+            // stop();
+        }
+    }
 
-	public String getSurveyName() {
-		return surveyName;
-	}
+    /*
+     * @Override public void stop(){ if(trigger) trigger(); super.stop(); }
+     */
+
+    public void setSurveyName(String surveyName) {
+        this.surveyName = surveyName;
+    }
+
+    public String getSurveyName() {
+        return surveyName;
+    }
 
 }

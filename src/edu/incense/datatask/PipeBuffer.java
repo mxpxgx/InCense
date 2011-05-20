@@ -1,30 +1,28 @@
 package edu.incense.datatask;
 
-
 import java.util.LinkedList;
 import java.util.Queue;
 
 import edu.incense.datatask.data.Data;
 
-
 public class PipeBuffer implements Input, Output {
-	Queue<Data> dataBuffer = null;
-	int size = -1;
-	
-	public PipeBuffer(){
-		dataBuffer = new LinkedList<Data>();
-	}
+    Queue<Data> dataBuffer = null;
+    int size = -1;
 
-	public Data pullData() {
-		if(!dataBuffer.isEmpty())
-			return dataBuffer.poll();
-		else
-			return null;
-	}
+    public PipeBuffer() {
+        dataBuffer = new LinkedList<Data>();
+    }
 
-	public void pushData(Data data) {
-		if(dataBuffer != null)
-			dataBuffer.offer(data);
-	}
+    public Data pullData() {
+        if (!dataBuffer.isEmpty())
+            return dataBuffer.poll();
+        else
+            return null;
+    }
+
+    public void pushData(Data data) {
+        if (dataBuffer != null)
+            dataBuffer.offer(data);
+    }
 
 }

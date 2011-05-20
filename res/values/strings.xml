@@ -35,16 +35,26 @@
     <string name="alert_username">Please enter a username.</string>
     <string name="alert_tags">It\'s recommended to enter at least one tag describing this moment.</string>
 
-    <!-- login & sign-up activities -->
+    <!-- login & register activities -->
+    <string name="mobile_app">Mobile Application</string>
     <string name="login_title">Login</string>
     <string name="username_label">Username: </string>
+    <string name="username_inst">Enter username</string>
+    <string name="username_empty">Please enter your username</string>
     <string name="password_label">Password: </string>
-    <string name="incenseid_label">InCense device ID (required): </string>
+    <string name="password_inst">Enter password</string>
+    <string name="password_empty">Please enter your password</string>
+    <string name="incenseid_label">InCense ID*: </string>
     <string name="password_confirmation_label">Password confirmation: </string>
     <string name="email_label">Email: </string>
     <string name="device_label">Device: </string>
     <string name="login_text">Login</string>
-    <string name="signup_text">Sign-up for InCense</string>
+    <string name="signup_text">Sign-up</string>
     <string name="submit_label">Submit</string>
     <string name="cancel_label">Cancel</string>
+    <string name="required_notice">* required field</string>
+    <string name="logged_in_message">Welcome back</string>
+    
+    
+    <!-- Colors -->
 </resources>
