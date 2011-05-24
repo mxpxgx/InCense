@@ -18,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 import edu.incense.R;
-import edu.incense.results.ResultsListActivity;
 
 public class SettingsActivity extends PreferenceActivity {
     SharedPreferences sharedPreferences;
@@ -168,7 +167,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         switch (item.getItemId()) {
         case R.id.new_recording:
-            Intent mainIntent = new Intent(this, MainActivity.class);
+            Intent mainIntent = new Intent(this, RecordActivity.class);
             startActivity(mainIntent);
             return true;
         case R.id.settings:

@@ -31,8 +31,9 @@
     <string name="audio_file_path">/res/data/audio.mp4</string>
     <string name="new_recording">Record</string>
     <string name="inst_start">Please enter a username, then press start to start the sensing process.</string>
-    <string name="inst_sensing">Sensing and collecting data... Please wait a moment.</string>
-    <string name="alert_username">Please enter a username.</string>
+    <string name="session_title">Recording session</string>
+    <string name="session_active_message">Sensing and collecting data... Please wait a moment.</string>
+    <string name="no_username_message">Please enter a username.</string>
     <string name="alert_tags">It\'s recommended to enter at least one tag describing this moment.</string>
 
     <!-- login & register activities -->

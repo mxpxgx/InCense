@@ -1,4 +1,4 @@
-package edu.incense.setup;
+package edu.incense.ui;
 
 import android.app.Activity;
 import android.os.Bundle;

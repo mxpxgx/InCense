@@ -1,4 +1,4 @@
-package edu.incense.setup;
+package edu.incense.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import edu.incense.R;
 import edu.incense.setup.LoginTask;
-import edu.incense.ui.MainActivity;
+import edu.incense.ui.RecordActivity;
 
 /**
  * This is the first screen the user sees when starts the InCense application
@@ -133,7 +133,7 @@ public class LoginActivity extends Activity implements
      * was successfully logged in.
      */
     private void startMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, RecordActivity.class);
         startActivity(intent);
     }
 

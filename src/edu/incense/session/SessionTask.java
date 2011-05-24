@@ -1,5 +1,9 @@
 package edu.incense.session;
 
+import edu.incense.InCenseApplication;
+import edu.incense.R;
+import edu.incense.project.JsonProject;
+import edu.incense.project.Project;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -25,7 +29,9 @@ public class SessionTask extends AsyncTask<Session, Integer, Boolean> {
 
     @Override
     protected Boolean doInBackground(Session... params) {
-        publishProgress(STARTED);
+        
+        publishProgress(STARTED);      
+        
         controller = new SessionController(context, params[0]);
         controller.prepareSession();
 
