@@ -1,11 +1,12 @@
-package edu.incense.results;
+package edu.incense.ui;
 
 import java.util.List;
 
 
 import edu.incense.R;
-import edu.incense.ui.MainActivity;
-import edu.incense.ui.SettingsActivity;
+import edu.incense.results.JsonResults;
+import edu.incense.results.ResultFile;
+import edu.incense.results.ResultsUploader;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -101,7 +102,7 @@ public class ResultsListActivity extends ListActivity {
 
         switch (item.getItemId()) {
         case R.id.new_recording:
-            Intent mainIntent = new Intent(this, MainActivity.class);
+            Intent mainIntent = new Intent(this, RecordActivity.class);
             startActivity(mainIntent);
             return true;
         case R.id.settings:

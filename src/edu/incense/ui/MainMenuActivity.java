@@ -1,7 +1,6 @@
 package edu.incense.ui;
 
 import edu.incense.R;
-import edu.incense.results.ResultsListActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,14 +9,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public abstract class MainMenuActivity extends Activity {
-    private Intent mainIntent, settingsIntent, resultsIntent;
+    private Intent recordIntent, settingsIntent, resultsIntent;
 
     @Override
     public void onStart() {
         super.onStart();
         // Apply any required UI change now that the Activity is visible.
 
-        mainIntent = new Intent(this, MainActivity.class);
+        recordIntent = new Intent(this, RecordActivity.class);
         settingsIntent = new Intent(this, SettingsActivity.class);
         resultsIntent = new Intent(this, ResultsListActivity.class);
     }
@@ -39,7 +38,7 @@ public abstract class MainMenuActivity extends Activity {
 
         switch (item.getItemId()) {
         case R.id.new_recording:
-            startActivity(mainIntent);
+            startActivity(recordIntent);
             return true;
         case R.id.settings:
             startActivity(settingsIntent);

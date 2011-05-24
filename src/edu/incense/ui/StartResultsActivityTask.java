@@ -1,4 +1,4 @@
-package edu.incense.results;
+package edu.incense.ui;
 
 import android.content.Context;
 import android.content.Intent;
