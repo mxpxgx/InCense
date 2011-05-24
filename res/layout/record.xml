@@ -32,14 +32,9 @@
             android:layout_width="wrap_content"
             android:id="@+id/textview_username"
             android:text="@string/unknown_username"
+            android:textAppearance="@style/big_text"
             android:layout_weight="1"></TextView>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/instructionTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="" />
 
     <ProgressBar
         android:layout_width="wrap_content"
@@ -51,9 +46,11 @@
 
     <TextView
         android:id="@+id/textview_status"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:minLines="2"
+        android:layout_gravity="center"
+        android:text="@string/record_instructions"/>
     <Button
         android:layout_height="wrap_content"
         android:layout_margin="10dip"

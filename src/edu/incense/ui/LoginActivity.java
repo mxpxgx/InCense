@@ -94,7 +94,7 @@ public class LoginActivity extends Activity implements
         boolean loggedin = sp.getBoolean("loggedin", false);
         // If he has, move/go directly to the main activity
         if(loggedin){
-            startMainActivity();
+            startRecordActivity();
         }
     }
 
@@ -132,7 +132,7 @@ public class LoginActivity extends Activity implements
      * Starts the MainActivity. This method is called by a LoginTask if the user
      * was successfully logged in.
      */
-    private void startMainActivity() {
+    private void startRecordActivity() {
         Intent intent = new Intent(this, RecordActivity.class);
         startActivity(intent);
     }
@@ -182,7 +182,7 @@ public class LoginActivity extends Activity implements
             setUsernameInPreferences(username);
             resultMessage = getString(R.string.logged_in_message) + " "
                     + username + "!";
-            startMainActivity();
+            startRecordActivity();
         } else if (result == LoginTask.UNKNOWN_USER) {
             resultMessage = getString(R.string.unknown_username_message);
         } else if (result == LoginTask.INCORRECT_PASSWORD) {
