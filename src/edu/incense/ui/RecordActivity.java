@@ -12,7 +12,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.incense.InCenseApplication;
@@ -35,7 +34,7 @@ public class RecordActivity extends MainMenuActivity {
     // UI elements
     private ProgressDialog progressDialog = null;
     private TextView statusTextView;
-    private EditText usernameEditText;
+    private TextView usernameTextView;
 
     private String username = null;
 
@@ -43,10 +42,10 @@ public class RecordActivity extends MainMenuActivity {
     @Override
     public synchronized void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.record);
 
         // Get UI elements
-        usernameEditText = (EditText) findViewById(R.id.textview_username);
+        usernameTextView = (TextView) findViewById(R.id.textview_username);
         statusTextView = (TextView) findViewById(R.id.textview_status);
         final Button startButton = (Button) findViewById(R.id.button_start);
 
@@ -55,7 +54,7 @@ public class RecordActivity extends MainMenuActivity {
         updateUsernameFromPrefs();
 
         // Set the instructions text
-        statusTextView.setText(getResources().getText(R.string.inst_start));
+        statusTextView.setText(getResources().getText(R.string.record_instructions));
 
         // Add click listener in START button
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +93,7 @@ public class RecordActivity extends MainMenuActivity {
      */
     private void updateUsernameFromPrefs() {
         this.username = getUsernameFromPrefs();
-        usernameEditText.setText(this.username);
+        usernameTextView.setText(this.username);
     }
 
     /*** Overridden methods from Activity ***/

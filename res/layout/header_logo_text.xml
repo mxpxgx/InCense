@@ -19,7 +19,7 @@
 
         <TextView
             android:textAppearance="@style/app_title"
-            android:id="@+id/textview_username"
+            android:id="@+id/textview_app_title"
             android:hint="Enter username"
             android:text="@string/app_name"
             android:layout_height="wrap_content" android:layout_width="fill_parent">

@@ -24,13 +24,14 @@
     <string name="results_survey_extension">.json</string>
     <string name="filequeue_max_files">100</string>
     <string name="filequeue_filename">/sdcard/results.json</string>
+    <string name="splashscreen_time">3000</string>
 
     <!-- this is a comment -->
     <string name="json_file_path">/res/data/data.json</string>
     <string name="json_queue_file_path">/res/data/queue.json</string>
     <string name="audio_file_path">/res/data/audio.mp4</string>
     <string name="new_recording">Record</string>
-    <string name="inst_start">Please enter a username, then press start to start the sensing process.</string>
+    <string name="record_instructions">Press start to run the sensing process.</string>
     <string name="session_title">Recording session</string>
     <string name="session_active_message">Sensing and collecting data... Please wait a moment.</string>
     <string name="no_username_message">Please enter a username.</string>
@@ -39,16 +40,16 @@
     <!-- login & register activities -->
     <string name="mobile_app">Mobile Application</string>
     <string name="login_title">Login</string>
-    <string name="username_label">Username: </string>
+    <string name="username_label">Username:&#160;</string>
     <string name="username_inst">Enter username</string>
     <string name="username_empty">Please enter your username</string>
-    <string name="password_label">Password: </string>
+    <string name="password_label">Password:&#160;</string>
     <string name="password_inst">Enter password</string>
     <string name="password_empty">Please enter your password</string>
-    <string name="incenseid_label">InCense ID*: </string>
+    <string name="incenseid_label">InCense ID*:&#160;</string>
     <string name="password_confirmation_label">Password confirmation: </string>
-    <string name="email_label">Email: </string>
-    <string name="device_label">Device: </string>
+    <string name="email_label">Email:&#160;</string>
+    <string name="device_label">Device:&#160;</string>
     <string name="login_text">Login</string>
     <string name="signup_text">Sign-up</string>
     <string name="submit_label">Submit</string>
