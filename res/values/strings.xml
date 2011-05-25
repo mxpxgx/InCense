@@ -25,6 +25,8 @@
     <string name="filequeue_max_files">100</string>
     <string name="filequeue_filename">/sdcard/results.json</string>
     <string name="splashscreen_time">3000</string>
+    <string name="local_service_disconnected">Local service disconnected</string>
+    <string name="local_service_connected">Local service connected</string>
 
     <!-- this is a comment -->
     <string name="json_file_path">/res/data/data.json</string>
