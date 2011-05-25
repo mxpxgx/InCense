@@ -167,8 +167,8 @@ public class SettingsActivity extends PreferenceActivity {
 
         switch (item.getItemId()) {
         case R.id.new_recording:
-            Intent mainIntent = new Intent(this, RecordActivity.class);
-            startActivity(mainIntent);
+            Intent recordIntent = new Intent(this, RecordActivity.class);
+            startActivity(recordIntent);
             return true;
         case R.id.settings:
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
