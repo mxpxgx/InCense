@@ -6,7 +6,6 @@ import java.util.Map;
 import android.app.Application;
 import android.util.Log;
 import edu.incense.datatask.DataTask;
-import edu.incense.project.Project;
 import edu.incense.survey.Survey;
 import edu.incense.survey.SurveyController;
 import edu.incense.test.SurveyGenerator;
@@ -30,7 +29,6 @@ public class InCenseApplication extends Application {
     // Temporary SurveyController reference to be started
     private SurveyController surveyController;
     private Map<String, DataTask> taskCollection; // TODO
-    private Project project; // TODO
 
     /**
      * Returns this application instance (an static singleton).
@@ -79,13 +77,5 @@ public class InCenseApplication extends Application {
 
     public Map<String, DataTask> getTaskCollection() {
         return taskCollection;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public Project getProject() {
-        return project;
     }
 }

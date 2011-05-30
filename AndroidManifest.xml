@@ -56,13 +56,14 @@
             android:launchMode="singleInstance">
             <intent-filter>
                 <action
-                    android:name="edu.incense.SESSION_USER_ACTION" />
+                    android:name="edu.incense.SESSION_ACTION" />
                 <action
-                    android:name="edu.incense.SESSION_ALARM_ACTION" />
+                    android:name="edu.incense.SURVEY_ACTION" />
                 <category
                     android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
+
 
         <activity
             android:name=".ui.LoginActivity"

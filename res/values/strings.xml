@@ -27,6 +27,7 @@
     <string name="splashscreen_time">3000</string>
     <string name="local_service_disconnected">Local service disconnected</string>
     <string name="local_service_connected">Local service connected</string>
+    <string name="survey_max_answers">5</string>
 
     <!-- this is a comment -->
     <string name="json_file_path">/res/data/data.json</string>
@@ -36,6 +37,7 @@
     <string name="record_instructions">Press start to run the sensing process.</string>
     <string name="session_title">Recording session</string>
     <string name="session_active_message">Sensing and collecting data... Please wait a moment.</string>
+    <string name="session_completed_message">Recording session completed!</string>
     <string name="no_username_message">Please enter a username.</string>
     <string name="alert_tags">It\'s recommended to enter at least one tag describing this moment.</string>
 

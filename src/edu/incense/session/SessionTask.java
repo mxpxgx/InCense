@@ -1,9 +1,5 @@
 package edu.incense.session;
 
-import edu.incense.InCenseApplication;
-import edu.incense.R;
-import edu.incense.project.JsonProject;
-import edu.incense.project.Project;
 import android.content.Context;
 import android.os.AsyncTask;
 

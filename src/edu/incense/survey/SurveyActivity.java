@@ -3,13 +3,11 @@ package edu.incense.survey;
 import java.util.List;
 
 import edu.incense.R;
-import edu.incense.InCenseApplication;
 import edu.incense.results.FileType;
 import edu.incense.results.QueueFileTask;
 import edu.incense.results.ResultFile;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,17 +32,23 @@ import android.widget.Toast;
  */
 
 public class SurveyActivity extends Activity {
-
-    private SurveyController surveyController;
+    public final static String SURVEY_CONTROLLER = "survey_controller";
+    SurveyController surveyController;
+    ReadOnlyQuestion question; //Current question (question being displayed)
+    Answer answer;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize activity.
-        surveyController = InCenseApplication.getInstance()
-                .getSurveyController();
+        // Get survey from intent
+        Intent intent = getIntent();
+        surveyController = (SurveyController) intent
+                .getSerializableExtra(SURVEY_CONTROLLER);
+
+        // InCenseApplication.getInstance()
+        // .getSurveyController();
         if (surveyController == null) {
             finish(); // Finish/quit this activity
         }
@@ -52,8 +56,11 @@ public class SurveyActivity extends Activity {
         if (surveyController.isEmpty()) {
             finish(); // Finish/quit this activity
         }
+        
+        question = surveyController.getQuestion();
+        answer = surveyController.getAnswer();
 
-        switch (surveyController.getType()) {
+        switch (question.getType()) {
         case CHECKBOXES:
             initCheckBoxes();
             break;
@@ -72,10 +79,7 @@ public class SurveyActivity extends Activity {
         }
 
         TextView questionTextView = (TextView) findViewById(R.id.question);
-        questionTextView.setText(surveyController.getStringQuestion());
-        questionTextView.setTextSize(28);
-        questionTextView.setTextColor(Color.WHITE);
-        // questionTextView.setTextSize(10);
+        questionTextView.setText(question.getQuestion());
 
         Button backButton = (Button) findViewById(R.id.back);
         Button skipButton = (Button) findViewById(R.id.skip);
@@ -92,7 +96,7 @@ public class SurveyActivity extends Activity {
             backButton.setEnabled(false);
         }
 
-        if (surveyController.isQuestionSkippable()) {
+        if (question.isSkippable()) {
             // Add click listener for SKIP button
             skipButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {
@@ -115,11 +119,12 @@ public class SurveyActivity extends Activity {
 
     private void startNewActivity(boolean available) {
         if (available) {
-            InCenseApplication.getInstance().setSurveyController(
-                    surveyController);
-            Intent intent = new Intent(InCenseApplication.getInstance(),
-                    SurveyActivity.class);
-
+            // InCenseApplication.getInstance().setSurveyController(
+            // surveyController);
+            // Intent intent = new Intent(InCenseApplication.getInstance(),
+            // SurveyActivity.class);
+            Intent intent = new Intent(this, SurveyActivity.class);
+            intent.putExtra(SURVEY_CONTROLLER, surveyController);
             startActivity(intent);
         }
         this.finish();
@@ -129,8 +134,8 @@ public class SurveyActivity extends Activity {
         setContentView(R.layout.survey_open);
         EditText openAnswer = (EditText) findViewById(R.id.open_answer);
         initEditText(openAnswer);
-        if (surveyController.isAnswered()) {
-            openAnswer.setText(surveyController.getStringAnswer());
+        if (answer.isAnswered()) {
+            openAnswer.setText(answer.getAnswer());
         }
     }
 
@@ -138,8 +143,8 @@ public class SurveyActivity extends Activity {
         setContentView(R.layout.survey_opennumeric);
         EditText openAnswer = (EditText) findViewById(R.id.open_answer);
         initEditText(openAnswer);
-        if (surveyController.isAnswered()) {
-            openAnswer.setText(surveyController.getStringAnswer());
+        if (answer.isAnswered()) {
+            openAnswer.setText(answer.getAnswer());
         }
     }
 
@@ -150,12 +155,12 @@ public class SurveyActivity extends Activity {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN)
                         && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Perform action on key press
-                    EditText answer = (EditText) v;
-                    surveyController.setAnswer(answer.getText().toString());
+                    EditText answerEditText = (EditText) v;
+                    answer.setAnswer(answerEditText.getText().toString());
                     return true;
                 }
-                EditText answer = (EditText) v;
-                surveyController.setAnswer(answer.getText().toString());
+                EditText answerEditText = (EditText) v;
+                answer.setAnswer(answerEditText.getText().toString());
                 // return true;
                 return false;
             }
@@ -165,16 +170,15 @@ public class SurveyActivity extends Activity {
 
     private void initCheckBoxes() {
         setContentView(R.layout.survey_checkboxes);
-        CompoundButton[] buttons = new CompoundButton[surveyController
-                .getOptionsSize()];
+        CompoundButton[] buttons = new CompoundButton[question.size()];
         buttons[0] = (CheckBox) findViewById(R.id.b_answer1);
         buttons[1] = (CheckBox) findViewById(R.id.b_answer2);
         buttons[2] = (CheckBox) findViewById(R.id.b_answer3);
         buttons[3] = (CheckBox) findViewById(R.id.b_answer4);
         buttons[4] = (CheckBox) findViewById(R.id.b_answer5);
         initButtons(buttons);
-        if (surveyController.isAnswered()) {
-            List<Integer> options = surveyController.getSelectedOptions();
+        if (answer.isAnswered()) {
+            List<Integer> options = answer.getSelectedOptions();
             for (Integer o : options) {
                 buttons[o].setChecked(true);
             }
@@ -183,48 +187,47 @@ public class SurveyActivity extends Activity {
 
     private void initRadioButtons() {
         setContentView(R.layout.survey_radiobuttons);
-        CompoundButton[] buttons = new CompoundButton[surveyController
-                .getOptionsSize()];
+        CompoundButton[] buttons = new CompoundButton[question.size()];
         buttons[0] = (RadioButton) findViewById(R.id.b_answer1);
         buttons[1] = (RadioButton) findViewById(R.id.b_answer2);
         buttons[2] = (RadioButton) findViewById(R.id.b_answer3);
         buttons[3] = (RadioButton) findViewById(R.id.b_answer4);
         buttons[4] = (RadioButton) findViewById(R.id.b_answer5);
         initButtons(buttons);
-        if (surveyController.isAnswered()) {
+        if (answer.isAnswered()) {
             Log.i(getClass().getName(),
-                    "Trying to select: " + surveyController.getSelectedOption());
-            buttons[surveyController.getSelectedOption()].setChecked(true);
+                    "Trying to select: " + answer.getSelectedOption());
+            buttons[answer.getSelectedOption()].setChecked(true);
         }
     }
 
     private void initButtons(Button[] buttons) {
-        String[] options = surveyController.getOptions();
+        String[] options = question.getOptions();
         for (int i = 0; (i < options.length)
-                && (i < surveyController.getOptionsSize()); i++) {
+                && (i < question.size()); i++) {
 
             buttons[i].setText(options[i]);
-            buttons[i].setTextSize(22);
-            buttons[i].setTextColor(Color.LTGRAY);
+            buttons[i].setTextAppearance(this, R.style.survey_options);
+            //buttons[i].setTextSize(22);
 
             buttons[i].setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {
 
                     switch (view.getId()) {
                     case R.id.b_answer1:
-                        surveyController.selectOption(0);
+                        answer.selectOption(0, question.getType());
                         break;
                     case R.id.b_answer2:
-                        surveyController.selectOption(1);
+                        answer.selectOption(1, question.getType());
                         break;
                     case R.id.b_answer3:
-                        surveyController.selectOption(2);
+                        answer.selectOption(2, question.getType());
                         break;
                     case R.id.b_answer4:
-                        surveyController.selectOption(3);
+                        answer.selectOption(3, question.getType());
                         break;
                     case R.id.b_answer5:
-                        surveyController.selectOption(4);
+                        answer.selectOption(4, question.getType());
                         break;
                     }
                     if (view.getClass() == RadioButton.class)
@@ -234,7 +237,7 @@ public class SurveyActivity extends Activity {
         }
 
         // Remove the rest of the CompoundButtons
-        for (int i = surveyController.getOptionsSize(); i < buttons.length; i++) {
+        for (int i = question.size(); i < buttons.length; i++) {
             // buttons[i].setClickable(false);
             Log.i(getClass().getName(), "Removing button: " + i);
             buttons[i].setVisibility(View.GONE); // It can be View.INVISIBLE too
@@ -254,13 +257,13 @@ public class SurveyActivity extends Activity {
     }
 
     private void next() {
-        QuestionType type = surveyController.getType();
+        QuestionType type = question.getType();
         if ((type == QuestionType.OPENTEXT || type == QuestionType.OPENNUMERIC)
-                && !surveyController.isAnswered()) {
+                && !answer.isAnswered()) {
             Toast.makeText(getBaseContext(), "Please provide an answer.",
                     Toast.LENGTH_LONG).show();
             return;
-        } else if (!surveyController.isAnswered()) {
+        } else if (!answer.isAnswered()) {
             Toast.makeText(getBaseContext(), "Please select an answer.",
                     Toast.LENGTH_LONG).show();
             return;

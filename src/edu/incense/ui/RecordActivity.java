@@ -1,8 +1,12 @@
 package edu.incense.ui;
 
+import java.util.UUID;
+
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -15,11 +19,12 @@ import edu.incense.R;
 import edu.incense.session.SessionService;
 
 /**
- * Activity where the user can start a recording session.
+ * Activity where the user can start a recording session by pressing the start
+ * button
  * 
  * @author Moises Perez (mxpxgx@gmail.com)
  * @since 2011/04/28?
- * @version 1.1 2011/05/20
+ * @version 1.6 2011/05/24
  */
 
 public class RecordActivity extends MainMenuActivity {
@@ -74,8 +79,6 @@ public class RecordActivity extends MainMenuActivity {
 
     /**
      * Get the username from SharedPreferences
-     * 
-     * @return username string
      */
     private String getUsernameFromPrefs() {
         SharedPreferences sp = PreferenceManager
@@ -108,17 +111,42 @@ public class RecordActivity extends MainMenuActivity {
         // that don't need to be updated when the Activity isn't
         // the active foreground activity.
         super.onPause();
+        unregisterReceiver(sessionCompleteReceiver);
         suspendRecordingSession();
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
         resetUI();
+        
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SessionService.SESSION_USER_ACTION_COMPLETE);
+        registerReceiver(sessionCompleteReceiver, filter);
     }
 
+    /*** BROADCAST_RECEIVER ***/
+    private BroadcastReceiver sessionCompleteReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().compareTo(
+                    SessionService.SESSION_USER_ACTION_COMPLETE) == 0) {
+                if (actionId == intent.getLongExtra(
+                        SessionService.ACTION_ID_FIELDNAME, 0)) {
+                    suspendRecordingSession();
+                    Toast.makeText(RecordActivity.this,
+                            getString(R.string.session_completed_message),
+                            Toast.LENGTH_LONG).show();
+                    startResultsActivity();
+                }
+            }
+        }
+
+    };
+
     /*** RECORDING SESSION ***/
-    private Intent sessionServiceIntent;
+    private long actionId;
 
     /**
      * Start recording session and the thread from this class, show the progress
@@ -127,34 +155,57 @@ public class RecordActivity extends MainMenuActivity {
     private void startSession() {
         startButton.setEnabled(false);
 
-        // Show progress dialog
-        Resources res = getResources();
-        progressDialog = ProgressDialog.show(this,
-                res.getText(R.string.session_title),
-                res.getText(R.string.session_active_message));
+//        // Show progress dialog
+//        Resources res = getResources();
+//        progressDialog = ProgressDialog.show(this,
+//                res.getText(R.string.session_title),
+//                res.getText(R.string.session_active_message));
 
+//        // Start service for it to run the recording session
+//        Intent sessionServiceIntent = new Intent(this, SessionService.class);
+//        // Point out this action was triggered by a user
+//        sessionServiceIntent.setAction(SessionService.SESSION_ACTION);
+//        // Send unique id for this action
+//        actionId = UUID.randomUUID().getLeastSignificantBits();
+//        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+//                actionId);
+//        startService(sessionServiceIntent);
+        
         // Start service for it to run the recording session
-        sessionServiceIntent = new Intent(this, SessionService.class);
+        Intent sessionServiceIntent = new Intent(this, SessionService.class);
         // Point out this action was triggered by a user
-        sessionServiceIntent.setAction(SessionService.SESSION_USER_ACTION);
+        sessionServiceIntent.setAction(SessionService.SURVEY_ACTION);
+        // Send unique id for this action
+        actionId = UUID.randomUUID().getLeastSignificantBits();
+        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+                actionId);
         startService(sessionServiceIntent);
     }
 
-    // Suspend recording session and the thread from this class, dismiss the
-    // progress dialog
+    /**
+     * Suspend recording session and the thread from this class, dismiss the
+     * progress dialog
+     */
     private void suspendRecordingSession() {
-        stopService(sessionServiceIntent);
         resetUI();
     }
-    
-    public void resetUI(){
+
+    /**
+     * Remove progress dialog and enable the start button again
+     */
+    private void resetUI() {
         if (progressDialog != null) {
             if (progressDialog.isShowing())
                 progressDialog.dismiss();
             progressDialog = null;
         }
-        
-        if(!startButton.isEnabled())
+
+        if (!startButton.isEnabled())
             startButton.setEnabled(true);
+    }
+    
+    private void startResultsActivity(){
+        Intent intent = new Intent(this, ResultsListActivity.class);
+        startActivity(intent);
     }
 }

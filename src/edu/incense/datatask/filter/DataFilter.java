@@ -2,8 +2,6 @@ package edu.incense.datatask.filter;
 
 import java.util.ArrayList;
 
-import android.util.Log;
-
 import edu.incense.datatask.DataTask;
 import edu.incense.datatask.Input;
 import edu.incense.datatask.InputEnabledTask;
@@ -33,13 +31,13 @@ public abstract class DataFilter extends DataTask implements OutputEnabledTask,
     protected void compute() {
         Data tempData;
         for (Input i : inputs) {
-            Log.i(getClass().getName(), "Asking for new data");
+            //Log.i(getClass().getName(), "Asking for new data");
             tempData = i.pullData();
             if (tempData != null) {
                 computeSingleData(tempData);
-                Log.i(getClass().getName(), "GOOD");
+                //Log.i(getClass().getName(), "GOOD");
             } else {
-                Log.i(getClass().getName(), "BAD");
+                //Log.i(getClass().getName(), "BAD");
             }
         }
     }

@@ -1,50 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/open"
-  android:orientation="vertical"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
-<TextView
-android:id="@+id/question"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="TextView"
->
-</TextView>
-<EditText
-android:id="@+id/open_answer"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:textSize="18sp"
->
-</EditText>
-<TableRow
-android:id="@+id/controlview"
-android:layout_width="fill_parent"
-android:layout_height="wrap_content"
-android:orientation="horizontal"
->
-<Button
-android:id="@+id/back"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Back"
->
-</Button>
-<Button
-android:id="@+id/skip"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Skip"
->
-</Button>
-<Button
-android:id="@+id/next"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="Next"
->
-</Button>
-</TableRow>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/open"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <include
+        layout="@layout/survey_question"
+        android:id="@+id/survey_question_ref"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/open_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp">
+    </EditText>
+    <include
+        layout="@layout/survey_control"
+        android:id="@+id/survey_control_ref"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 </TableLayout>
