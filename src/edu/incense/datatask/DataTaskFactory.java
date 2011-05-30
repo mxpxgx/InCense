@@ -40,6 +40,8 @@ public class DataTaskFactory {
             dataTask = new AccelerometerMeanFilter();
             break;
         case DataSink:
+            // Set SinkWritter type (Json)
+            // It will write results to a JSON file
             dataTask = new DataSink(new JsonSinkWritter(context));
             ((DataSink) dataTask).setName(task.getName());
             break;

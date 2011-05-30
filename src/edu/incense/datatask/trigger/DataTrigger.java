@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 
 import edu.incense.datatask.DataTask;
 import edu.incense.datatask.Input;
@@ -53,13 +52,13 @@ public abstract class DataTrigger extends DataTask implements InputEnabledTask {
     protected void compute() {
         Data tempData;
         for (Input i : inputs) {
-            Log.i(getClass().getName(), "Asking for new data");
+            //Log.i(getClass().getName(), "Asking for new data");
             tempData = i.pullData();
             if (tempData != null) {
                 computeSingleData(tempData);
-                Log.i(getClass().getName(), "GOOD");
+                //Log.i(getClass().getName(), "GOOD");
             } else {
-                Log.i(getClass().getName(), "BAD");
+                //Log.i(getClass().getName(), "BAD");
             }
         }
     }

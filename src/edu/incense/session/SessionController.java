@@ -16,11 +16,12 @@ import edu.incense.datatask.PipeBuffer;
 import edu.incense.datatask.model.Task;
 import edu.incense.datatask.model.TaskRelation;
 
-public class SessionController implements Runnable {
+public class SessionController {
+    private static final String TAG = "SessionController";
+
     private Session session;
     private List<DataTask> tasks;
     private Context context;
-    private Thread thread;
 
     public SessionController(Context context, Session session) {
         this.context = context;
@@ -29,6 +30,7 @@ public class SessionController implements Runnable {
     }
 
     public void prepareSession() {
+        // TODO The usage of this HashMap could be improved (?)
         Map<String, DataTask> taskCollection = InCenseApplication.getInstance()
                 .getTaskCollection();
 
@@ -60,14 +62,12 @@ public class SessionController implements Runnable {
     }
 
     public void start() {
-
-        thread = new Thread(this);
-        thread.start();
+        run();
     }
 
     public void stop() {
         for (DataTask dt : tasks) {
-            Log.i(getClass().getName(), "Stoping: " + dt.getClass().getName());
+            Log.i(TAG, "Stoping: " + dt.getClass().getName());
             dt.stop();
             dt.clear();
         }
@@ -77,9 +77,9 @@ public class SessionController implements Runnable {
         // }
     }
 
-    public void run() {
+    private void run() {
         for (DataTask dt : tasks) {
-            Log.i(getClass().getName(), "Starting: " + dt.getClass().getName());
+            Log.i(TAG, "Starting: " + dt.getClass().getName());
             dt.start();
         }
         Log.i(getClass().getName(), "Sleeping: " + session.getDuration()
@@ -87,8 +87,8 @@ public class SessionController implements Runnable {
         try {
             Thread.sleep(session.getDuration());
         } catch (InterruptedException e) {
-            Log.e(getClass().getName(),
-                    "Failed to sleep for " + session.getDuration() + " ms", e);
+            Log.e(TAG, "Failed to sleep for " + session.getDuration() + " ms",
+                    e);
         }
         stop();
     }

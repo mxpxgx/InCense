@@ -1,11 +1,11 @@
 package edu.incense.survey;
 
-import java.util.List;
+import java.io.Serializable;
 import java.util.Stack;
 
-public class SurveyController {
-    public final static int MAX_OPTIONS = 5; // Maximum number of answers
-    private Survey survey;
+public class SurveyController implements Serializable {
+    private static final long serialVersionUID = 3516516719837433621L;
+    private ReadOnlySurvey survey;
     private Answer[] answers;
     private int index; // Index of current question
     private Stack<Integer> surveyPath;
@@ -15,11 +15,6 @@ public class SurveyController {
         answers = new Answer[getSize()];
         surveyPath = new Stack<Integer>();
         index = 0;
-    }
-
-    public SurveyController(Survey survey, Answer[] answers) {
-        this(survey);
-        this.answers = answers;
     }
 
     public void saveAnswersTo(String fileName) {
@@ -58,66 +53,23 @@ public class SurveyController {
      * 
      * @return Answer - current answer
      */
-    private Answer getAnswer() {
+    public Answer getAnswer() {
         return initializeAnswer(index);
     }
-
-    public String getStringAnswer() {
-        return getAnswer().getAnswer();
-    }
-
-    public void setAnswer(int answer) {
-        initializeAnswer(index);
-        getAnswer().setAnswer(answer);
-    }
-
-    public void setAnswer(String answer) {
-        initializeAnswer(index);
-        getAnswer().setAnswer(answer);
-    }
-
-    /**
-     * Select the option number of a multiple-answers question.
+    
+    /** 
+     * Get current question
      * 
-     * @param option number/position/option of the answer
+     * @return
      */
-    public void selectOption(int option) {
-        getAnswer().selectOption(option, getQuestion().getType());
-    }
-
-    public boolean deselectOption(int option) {
-        return getAnswer().deselectOption(option);
-    }
-
-    public List<Integer> getSelectedOptions() {
-        return getAnswer().getSelectedOptions();
-    }
-
-    public int getSelectedOption() {
-        return getAnswer().getSelectedOption();
-    }
-
-    public boolean isAnswered() {
-        return getAnswer().isAnswered();
-    }
-
-    // Get current question
-    private Question getQuestion() {
+    public ReadOnlyQuestion getQuestion() {
         return survey.getQuestion(index);
-    }
-
-    public String getStringQuestion() {
-        return getQuestion().getQuestion();
     }
 
     public boolean isFirstQuestion() {
         if (index == 0)
             return true;
         return false;
-    }
-
-    public boolean isQuestionSkippable() {
-        return getQuestion().isSkippable();
     }
 
     public boolean isLastQuestion() {
@@ -139,28 +91,12 @@ public class SurveyController {
         return true;
     }
 
-    public String[] getOptions() {
-        return getQuestion().getOptions();
-    }
-
-    public int getOptionsSize() {
-        if (getOptions().length > MAX_OPTIONS) {
-            return MAX_OPTIONS;
-        } else {
-            return getOptions().length;
-        }
-    }
-
-    public QuestionType getType() {
-        return getQuestion().getType();
-    }
-
-    // Actions
+    // User Actions
     public boolean next() {
         surveyPath.push(index);
         int[] nextQuestions = getQuestion().getNextQuestions();
-        if (getType() == QuestionType.RADIOBUTTONS && nextQuestions != null
-                && isAnswered()) {
+        if (getQuestion().getType() == QuestionType.RADIOBUTTONS
+                && nextQuestions != null && getAnswer().isAnswered()) {
             index = nextQuestions[getAnswer().getSelectedOption()];
         } else {
             index = index < getSize() ? index + 1 : index;
@@ -179,7 +115,7 @@ public class SurveyController {
     }
 
     public boolean skip() {
-        if (isQuestionSkippable()) {
+        if (getQuestion().isSkippable()) {
             getAnswer().setSkipped(true);
             return next();
         }

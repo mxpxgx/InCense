@@ -14,6 +14,7 @@ import edu.incense.results.QueueFileTask;
 import edu.incense.results.ResultFile;
 
 public class JsonSinkWritter implements SinkWritter {
+    private static final String TAG = "JsonSinkWritter";
     private Context context;
     private ObjectMapper mapper;
 
@@ -28,11 +29,11 @@ public class JsonSinkWritter implements SinkWritter {
         try {
             mapper.writeValue(new File(resultFile.getFileName()), dataSink);
         } catch (JsonParseException e) {
-            Log.e(getClass().getName(), "Parsing JSON file failed", e);
+            Log.e(TAG, "Parsing JSON file failed", e);
         } catch (JsonMappingException e) {
-            Log.e(getClass().getName(), "Mapping JSON file failed", e);
+            Log.e(TAG, "Mapping JSON file failed", e);
         } catch (IOException e) {
-            Log.e(getClass().getName(), "Reading JSON file failed", e);
+            Log.e(TAG, "Reading JSON file failed", e);
         }
         new QueueFileTask(context).execute(resultFile);
     }

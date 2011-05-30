@@ -1,9 +1,11 @@
 package edu.incense.survey;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Answer {
+public class Answer implements Serializable {
+    private static final long serialVersionUID = 3111517536971905268L;
     private boolean answered;
     private boolean skipped;
     private String answer;

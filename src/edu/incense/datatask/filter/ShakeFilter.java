@@ -54,18 +54,18 @@ public class ShakeFilter extends DataFilter {
                     / diffTime * 10000);
             setLast(x, y, z, curTime);
             if (speed > SHAKE_THRESHOLD) {
-                Log.i(getClass().getName(), "SHAKE detected with speed: "
+                Log.v(getClass().getName(), "SHAKE detected with speed: "
                         + speed);
                 counter++;
                 if (counter > 0) {
-                    Log.i(getClass().getName(),
+                    Log.v(getClass().getName(),
                             "DOUBLE SHAKE detected with speed: " + speed);
                     return new BooleanData(true);
                 }
                 return new BooleanData(false);
             } else {
-                Log.i(getClass().getName(), "SHAKE NOT detected with speed: "
-                        + speed);
+//                Log.i(getClass().getName(), "SHAKE NOT detected with speed: "
+//                        + speed);
                 return new BooleanData(false);
             }
         }

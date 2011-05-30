@@ -13,4 +13,13 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+    
+    <style name="survey_options" >
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="survey_question" >
+        <item name="android:textSize">28sp</item>
+        <item name="android:background">#222222</item>
+    </style>
 </resources>

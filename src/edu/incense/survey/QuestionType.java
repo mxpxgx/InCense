@@ -1,5 +1,7 @@
 package edu.incense.survey;
 
-public enum QuestionType {
+import java.io.Serializable;
+
+public enum QuestionType implements Serializable {
     NULL, CHECKBOXES, OPENTEXT, OPENNUMERIC, RADIOBUTTONS
 }

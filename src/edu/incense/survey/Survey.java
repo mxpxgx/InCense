@@ -1,9 +1,11 @@
 package edu.incense.survey;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Survey {
+public class Survey implements Serializable, ReadOnlySurvey {
+    private static final long serialVersionUID = 5496128017069179229L;
     private int id;
     private String title;
     private List<Question> questions;
