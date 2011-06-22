@@ -15,11 +15,11 @@
     </style>
     
     <style name="survey_options" >
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">26sp</item>
     </style>
 
     <style name="survey_question" >
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">32sp</item>
         <item name="android:background">#222222</item>
     </style>
 </resources>

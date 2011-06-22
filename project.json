@@ -1,0 +1,68 @@
+{
+    "sessions": {
+        "mainSession": {
+            "duration": 10000,
+            "relations": [{
+                "task1": "AccelerometerSensor",
+                "task2": "ShakeFilter"
+            },
+            {
+                "task1": "ShakeFilter",
+                "task2": "SurveyTrigger"
+            }],
+            "tasks": [{
+                "jsonNode": null,
+                "name": "AccelerometerSensor",
+                "sampleFrequency": 40.0,
+                "taskType": "AccelerometerSensor"
+            },
+            {
+                "jsonNode": null,
+                "name": "ShakeFilter",
+                "sampleFrequency": 40.0,
+                "taskType": "ShakeFilter"
+            },
+            {
+                "jsonNode": {
+                    "surveyName": "mainSurvey"
+                },
+                "name": "SurveyTrigger",
+                "sampleFrequency": 40.0,
+                "taskType": "SurveyTrigger"
+            }]
+        }
+    },
+    "sessionsSize": 1,
+    "surveys": {
+        "mainSurvey": {
+            "id": 101,
+            "questions": [{
+                "nextQuestions": [1, 1, 1, 1, 1],
+                "options": ["Strongly agree", "Agree", "Neutral", "Disagree", "Strongly disagree"],
+                "question": "I am satisfied with my occupation:",
+                "size": 5,
+                "type": "RADIOBUTTONS",
+                "skippable": false
+            },
+            {
+                "nextQuestions": [2, 2, 2, 2, 2],
+                "options": ["Strongly agree", "Agree", "Neutral", "Disagree", "Strongly disagree"],
+                "question": "I teach too many classes:",
+                "size": 5,
+                "type": "RADIOBUTTONS",
+                "skippable": true
+            },
+            {
+                "nextQuestions": [0, 0, 0, 0, 0],
+                "options": ["Strongly agree", "Agree", "Neutral", "Disagree", "Strongly disagree"],
+                "question": "I'm satisfied with my income:",
+                "size": 5,
+                "type": "RADIOBUTTONS",
+                "skippable": false
+            }],
+            "size": 3,
+            "title": "Demo: Avance 2"
+        }
+    },
+    "surveysSize": 1
+}
