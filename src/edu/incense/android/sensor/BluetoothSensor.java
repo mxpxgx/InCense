@@ -61,7 +61,7 @@ public class BluetoothSensor extends Sensor {
                 bluetooth.cancelDiscovery();
             }
         }
-        context.unregisterReceiver(this.discoveryResult);
+        getContext().unregisterReceiver(this.discoveryResult);
     }
 
 }
