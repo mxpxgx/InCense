@@ -66,7 +66,7 @@ public class WifiSensor extends Sensor {
     }
 
     private void startWifiProcess() {
-        isSensing = wifi.startScan();
+        setSensing(wifi.startScan());
     }
 
     private void finishWifiProcess() {
@@ -74,7 +74,7 @@ public class WifiSensor extends Sensor {
         if (wifi.isWifiEnabled())
             wifi.setWifiEnabled(false);
 
-        context.unregisterReceiver(this.wifiBroadcastReceiver);
+        getContext().unregisterReceiver(this.wifiBroadcastReceiver);
     }
 
 }

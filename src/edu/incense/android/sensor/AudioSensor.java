@@ -23,7 +23,7 @@ public class AudioSensor extends Sensor implements Runnable {
     }
 
     public synchronized void run() {
-        while (isSensing) {
+        while (super.isSensing()) {
             try {
 
                 //Thread.sleep(getPeriodTime());
@@ -43,7 +43,7 @@ public class AudioSensor extends Sensor implements Runnable {
     public void start() {
         super.start();
         newData = new AudioData();
-        resultFile = ResultFile.createInstance(context, FileType.AUDIO);
+        resultFile = ResultFile.createInstance(getContext(), FileType.AUDIO);
         newData.setFilePath(resultFile.getFileName());
         startRecording(newData);
         thread.start();
@@ -96,7 +96,7 @@ public class AudioSensor extends Sensor implements Runnable {
         } catch (Exception e) {
             Log.e(getClass().getName(), "Audio stop recording failed.", e);
         }
-        new QueueFileTask(context).execute(resultFile);
+        new QueueFileTask(getContext()).execute(resultFile);
         currentData = newData;
     }
 

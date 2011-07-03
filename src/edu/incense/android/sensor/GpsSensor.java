@@ -119,7 +119,7 @@ public class GpsSensor extends Sensor implements LocationListener {
     public void onLocationChanged(Location location) {
         Log.i(getClass().getName(), "Location changed!");
         // Toast.makeText(context,"Location changed!",Toast.LENGTH_LONG).show();
-        if (isSensing) {
+        if (isSensing()) {
             Log.i(getClass().getName(), "...[Sensando]...");
             if (location != null) {
                 // latestLocation = location;
