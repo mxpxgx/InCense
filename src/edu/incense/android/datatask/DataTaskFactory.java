@@ -1,10 +1,12 @@
 package edu.incense.android.datatask;
 
 import android.content.Context;
-import edu.incense.android.datatask.filter.*;
+import edu.incense.android.datatask.filter.AccelerometerMeanFilter;
+import edu.incense.android.datatask.filter.ShakeFilter;
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.sink.DataSink;
 import edu.incense.android.datatask.sink.JsonSinkWritter;
+import edu.incense.android.datatask.sink.RawAudioSinkWritter;
 import edu.incense.android.datatask.trigger.SurveyTrigger;
 import edu.incense.android.sensor.AccelerometerSensor;
 import edu.incense.android.sensor.AudioSensor;
@@ -22,7 +24,9 @@ public class DataTaskFactory {
             dataTask = new DataSource(new AccelerometerSensor(context));
             break;
         case AudioSensor:
-            dataTask = new DataSource(new AudioSensor(context));
+            AudioSensor as = new AudioSensor(context);
+            dataTask = new AudioDataSource(as);
+            as.addSourceTask((AudioDataSource)dataTask); //AudioSensor is faster than DataTask
             break;
         case BluetoothSensor:
             dataTask = new DataSource(new BluetoothSensor(context));
@@ -43,6 +47,12 @@ public class DataTaskFactory {
             // Set SinkWritter type (Json)
             // It will write results to a JSON file
             dataTask = new DataSink(new JsonSinkWritter(context));
+            ((DataSink) dataTask).setName(task.getName());
+            break;
+        case AudioSink:
+            // Set SinkWritter type (Json)
+            // It will write results to a RAW file
+            dataTask = new DataSink(new RawAudioSinkWritter(context));
             ((DataSink) dataTask).setName(task.getName());
             break;
         case ShakeFilter:

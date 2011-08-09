@@ -1,116 +1,143 @@
 package edu.incense.android.sensor;
 
+import android.content.Context;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
+import android.media.MediaRecorder.AudioSource;
+import android.util.Log;
+import edu.incense.android.datatask.AudioDataSource;
 import edu.incense.android.datatask.data.AudioData;
-import edu.incense.android.results.FileType;
-import edu.incense.android.results.QueueFileTask;
 import edu.incense.android.results.ResultFile;
 
-import android.content.Context;
-import android.media.MediaRecorder;
-import android.util.Log;
-
 public class AudioSensor extends Sensor implements Runnable {
-
+    private final static String TAG = "AudioSensor";
     private MediaRecorder mediaRecorder = null;
     private AudioData newData = null;
     private ResultFile resultFile = null;
     private Thread thread = null;
 
+    private AudioRecord audioRecord;
+    private int bufferSize;
+    private short[] buffer;
+    private int mSamplesRead;
+    private AudioDataSource dataSource;
+
     public AudioSensor(Context context) {
         super(context);
         thread = new Thread(this);
-        this.setPeriodTime(10000); // 10 seconds of audio
+        // this.setPeriodTime(10000); // 10 seconds of audio
+        //this.setSampleFrequency(8000);
     }
 
-    public synchronized void run() {
+    public void run() {
+        // We’re important…
+        android.os.Process
+                .setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+        
         while (super.isSensing()) {
             try {
 
-                //Thread.sleep(getPeriodTime());
-                // TODO Verify this is not affected by wait
-                wait(getPeriodTime());
+                //if (audioRecord.getState() == AudioRecord.RECORDSTATE_RECORDING) {
+                    //Log.i(TAG, "Starting to read");
+                    mSamplesRead = audioRecord.read(buffer, 0, bufferSize);
 
-                newData = new AudioData();
-                saveAndRestartRecording(newData);
+//                    if (mSamplesRead != AudioRecord.ERROR_BAD_VALUE
+//                            && mSamplesRead != AudioRecord.ERROR_INVALID_OPERATION) {
+                        //Log.i(TAG, "Valid reading");
+                        //short[] tempBuffer = new short[bufferSize];
+                        //System.arraycopy(buffer, 0, tempBuffer, 0, bufferSize);
+                        
+                        
+                        if(dataSource != null){
+                            dataSource.pushDataToBuffer(buffer, mSamplesRead);
+                        }
+//                        } else {
+//                            newData = new AudioData();
+//                            newData.pushDataToBuffer(buffer);
+//                            currentData = newData;
+//                        }
+                    //}
+                //}
 
             } catch (Exception e) {
                 Log.e(getClass().getName(), "Sleep: " + e);
             }
         }
+        audioRecord.stop();
+    }
+    
+    public void addSourceTask(AudioDataSource ds){
+        dataSource = ds;
     }
 
     @Override
     public void start() {
+        Log.i(TAG, "Starting sensor");
         super.start();
         newData = new AudioData();
-        resultFile = ResultFile.createInstance(getContext(), FileType.AUDIO);
-        newData.setFilePath(resultFile.getFileName());
-        startRecording(newData);
+        audioRecord = findAudioRecord((new Float(getSampleFrequency()))
+                .intValue());
+        Log.i(TAG, "AudioRecord initialized with buffer size: "+bufferSize);
+        buffer = new short[bufferSize]; // bufferSize was obtained in the
+                                        // finAudioRecord method
+        startRecording();
         thread.start();
+    }
+
+    // private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100
+    // };
+
+    public AudioRecord findAudioRecord(int wantedRate) {
+        int[] mSampleRates = new int[] { wantedRate, 8000, 11025, 22050, 44100 };
+        for (int rate : mSampleRates) {
+            for (short audioFormat : new short[] {
+                    AudioFormat.ENCODING_PCM_8BIT,
+                    AudioFormat.ENCODING_PCM_16BIT }) {
+                for (short channelConfig : new short[] {
+                        AudioFormat.CHANNEL_IN_MONO,
+                        AudioFormat.CHANNEL_IN_STEREO }) {
+                    try {
+                        Log.d(TAG, "Attempting rate " + rate + "Hz, bits: "
+                                + audioFormat + ", channel: " + channelConfig);
+                        bufferSize = AudioRecord.getMinBufferSize(rate,
+                                channelConfig, audioFormat);
+
+                        if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
+                            // check if we can instantiate and have a success
+                            AudioRecord recorder = new AudioRecord(
+                                    AudioSource.DEFAULT, rate, channelConfig,
+                                    audioFormat, bufferSize);
+
+                            if (recorder.getState() == AudioRecord.STATE_INITIALIZED)
+                                return recorder;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, rate + "Exception, keep trying.", e);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public void stop() {
-        super.stop();
-        finishRecording();
+        Log.i(TAG, "Trying to stop");
+        ///super.stop();
+        super.setSensing(false);
+        Log.i(TAG, "Thread stopped");
+        Log.i(TAG, "Sensor stopped");
+        //audioRecord.release();
+        //Log.i(TAG, "Stopped and released");
     }
 
-    private void configureRecording(AudioData newData) {
-        // Configure the input sources
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);// MIC);
-        // Set the output format
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        // Specify the audio encoding
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-        mediaRecorder.setMaxDuration(1000 * 10);
-
-        // Specify the output file
-        // mediaRecorder.setOutputFile(AUDIO_FILE_PATH);
-        mediaRecorder.setOutputFile(newData.getFilePath());
-    }
-
-    private void startRecording(AudioData newData) {
-
-        // Start audio recording
-        mediaRecorder = new MediaRecorder();
-        configureRecording(newData);
-
-        // Prepare to record
+    private void startRecording() {
         try {
-            mediaRecorder.prepare();
-            mediaRecorder.start();
+            audioRecord.startRecording();
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Audio recording failed.", e);
-            finishRecording();
+            Log.e("AudioRecord", "Recording start failed", e);
         }
-
-    }
-
-    private void finishRecording() {
-        // Stop audio recording
-        try {
-            mediaRecorder.stop();
-            mediaRecorder.release();
-
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Audio stop recording failed.", e);
-        }
-        new QueueFileTask(getContext()).execute(resultFile);
-        currentData = newData;
-    }
-
-    private void saveAndRestartRecording(AudioData newData) {
-        try {
-            mediaRecorder.stop(); // reset?
-            configureRecording(newData);
-            // Prepare to record
-            mediaRecorder.prepare();
-            mediaRecorder.start();
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Audio restart recording failed.", e);
-        }
-        currentData = newData;
     }
 
 }

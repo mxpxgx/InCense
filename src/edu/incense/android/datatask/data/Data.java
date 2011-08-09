@@ -1,8 +1,11 @@
 package edu.incense.android.datatask.data;
 
+import android.os.Bundle;
+
 public abstract class Data {// implements Comparable<Data> {
     private long timestamp;
     private DataType dataType = DataType.NULL;
+    private Bundle extras;
 
     public Data(DataType dataType) {
         setTimestamp(System.currentTimeMillis());
@@ -23,6 +26,23 @@ public abstract class Data {// implements Comparable<Data> {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    /**
+     * @param bundle the bundle to set
+     */
+    public void setExtras(Bundle extras) {
+        this.extras = extras;
+    }
+
+    /**
+     * @return the bundle
+     */
+    public Bundle getExtras() {
+        if(extras == null){
+            extras = new Bundle();
+        }
+        return extras;
     }
 
     // public abstract int compareTo(Data data);

@@ -3,12 +3,14 @@ package edu.incense.android.datatask.sink;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import edu.incense.android.datatask.DataTask;
 import edu.incense.android.datatask.Input;
 import edu.incense.android.datatask.InputEnabledTask;
 import edu.incense.android.datatask.data.Data;
 
 public class DataSink extends DataTask implements InputEnabledTask {
+    private final static String TAG = "DataSink";
     private String name;
     private List<Data> sink = null;
     private SinkWritter sinkWritter;
@@ -47,10 +49,10 @@ public class DataSink extends DataTask implements InputEnabledTask {
             do {
                 latestData = i.pullData();
                 if (latestData != null) {
-                    System.out.println("Data added to sink!");
+                    //Log.d(TAG, "Data added to sink!");
                     sink.add(latestData);
                 } else {
-                    System.out.println("Data NOT added to sink!");
+                    //Log.d(TAG, "Data NOT added to sink!");
                 }
             } while (latestData != null);
         }

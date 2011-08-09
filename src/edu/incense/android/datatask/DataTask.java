@@ -68,8 +68,9 @@ public abstract class DataTask implements Runnable {
             try {
 
                 compute();
-
-                Thread.sleep(getPeriodTime());
+                if(getPeriodTime() > 1){
+                    Thread.sleep(getPeriodTime());
+                }
             } catch (Exception e) {
                 Log.e(getClass().getName(), "Sleep: " + e);
             }

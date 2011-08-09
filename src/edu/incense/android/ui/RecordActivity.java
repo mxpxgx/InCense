@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -156,29 +157,29 @@ public class RecordActivity extends MainMenuActivity {
         startButton.setEnabled(false);
 
         // Show progress dialog
-//        Resources res = getResources();
-//        progressDialog = ProgressDialog.show(this,
-//                res.getText(R.string.session_title),
-//                res.getText(R.string.session_active_message));
-//        // Start service for it to run the recording session
-//        Intent sessionServiceIntent = new Intent(this, SessionService.class);
-//        // Point out this action was triggered by a user
-//        sessionServiceIntent.setAction(SessionService.SESSION_ACTION);
-//        // Send unique id for this action
-//        actionId = UUID.randomUUID().getLeastSignificantBits();
-//        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
-//                actionId);
-//        startService(sessionServiceIntent);
-        
+        Resources res = getResources();
+        progressDialog = ProgressDialog.show(this,
+                res.getText(R.string.session_title),
+                res.getText(R.string.session_active_message));
         // Start service for it to run the recording session
-        Intent surveyIntent = new Intent(this, SurveyService.class);
+        Intent sessionServiceIntent = new Intent(this, SessionService.class);
         // Point out this action was triggered by a user
-        surveyIntent.setAction(SurveyService.SURVEY_ACTION);
+        sessionServiceIntent.setAction(SessionService.SESSION_ACTION);
         // Send unique id for this action
         actionId = UUID.randomUUID().getLeastSignificantBits();
-        surveyIntent.putExtra(SurveyService.ACTION_ID_FIELDNAME,
+        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
                 actionId);
-        this.startService(surveyIntent);
+        startService(sessionServiceIntent);
+        
+//        // Start service for it to run the recording session
+//        Intent surveyIntent = new Intent(this, SurveyService.class);
+//        // Point out this action was triggered by a user
+//        surveyIntent.setAction(SurveyService.SURVEY_ACTION);
+//        // Send unique id for this action
+//        actionId = UUID.randomUUID().getLeastSignificantBits();
+//        surveyIntent.putExtra(SurveyService.ACTION_ID_FIELDNAME,
+//                actionId);
+//        this.startService(surveyIntent);
     }
 
     /**

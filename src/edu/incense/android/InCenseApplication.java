@@ -45,7 +45,7 @@ public class InCenseApplication extends Application {
     @Override
     public final void onCreate() {
         super.onCreate();
-        SurveyGenerator.buildProjectJson(getResources());
+        SurveyGenerator.buildProjectJsonA(getResources());
         Log.i(getClass().getName(), "Project.json saved");
         singleton = this;
         taskCollection = new HashMap<String, DataTask>();

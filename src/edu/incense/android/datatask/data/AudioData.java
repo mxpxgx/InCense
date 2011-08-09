@@ -1,23 +1,23 @@
 package edu.incense.android.datatask.data;
 
 public class AudioData extends Data {
-    private String filePath;
+    private byte[] audioFrame;
 
     public AudioData() {
         super(DataType.AUDIO);
-        this.setFilePath(generateFilePath());
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    /**
+     * @param audioFrame the audioFrame to set
+     */
+    public void setAudioFrame(byte[] audioFrame) {
+        this.audioFrame = audioFrame;
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
-
-    private String generateFilePath() {
-        String fileName = "/sdcard/audio-" + getTimestamp() + ".3gp";
-        return fileName;
+    /**
+     * @return the audioFrame
+     */
+    public byte[] getAudioFrame() {
+        return audioFrame;
     }
 }
