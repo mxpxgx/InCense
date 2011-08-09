@@ -28,6 +28,7 @@ public class DataSink extends DataTask implements InputEnabledTask {
         super.stop();
         clearOutputs();
         sinkWritter.writeSink(this);
+        Log.d(TAG, "Sink sent to writter");
     }
 
     protected void clearOutputs() {

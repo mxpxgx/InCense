@@ -3,7 +3,6 @@ package edu.incense.android.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import edu.incense.android.InCenseApplication;
 
 public class StartResultsActivityTask extends AsyncTask<Void, Integer, Boolean> {
     public final static int STARTED = 0;
@@ -19,7 +18,7 @@ public class StartResultsActivityTask extends AsyncTask<Void, Integer, Boolean> 
     @Override
     protected Boolean doInBackground(Void... params) {
         publishProgress(STARTED);
-        Intent intent = new Intent(InCenseApplication.getInstance(),
+        Intent intent = new Intent(context.getApplicationContext(),
                 ResultsListActivity.class);
         context.startActivity(intent);
         publishProgress(COMPLETED);

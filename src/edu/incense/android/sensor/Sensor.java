@@ -3,9 +3,8 @@ package edu.incense.android.sensor;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.incense.android.datatask.data.Data;
-
 import android.content.Context;
+import edu.incense.android.datatask.data.Data;
 
 /**
  * Abstract class with basic sensor functionality. This class cannot be
@@ -18,6 +17,7 @@ import android.content.Context;
  * 
  */
 public abstract class Sensor {
+//    private final static String TAG = "Sensor";
     private Context context; // Most sensors need context access
     private float sampleFrequency; // Sample frequency
     private int periodTime; // Sleep time for each cycle (period time in

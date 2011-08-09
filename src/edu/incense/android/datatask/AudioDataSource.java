@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import android.util.Log;
 import edu.incense.android.datatask.data.AudioData;
-import edu.incense.android.datatask.data.Data;
 import edu.incense.android.sensor.Sensor;
 
 public class AudioDataSource extends DataTask implements OutputEnabledTask {
@@ -55,7 +54,7 @@ public class AudioDataSource extends DataTask implements OutputEnabledTask {
             dos.close();
             bos.close();
         } catch (IOException e) {
-            Log.e("Prueba", "Writing RAW audio file failed", e);
+            Log.e(TAG, "Writing RAW audio file failed", e);
         }
     }
 
@@ -90,9 +89,10 @@ public class AudioDataSource extends DataTask implements OutputEnabledTask {
             if (newData != null) {
                 this.pushToOutputs(newData);
                 // Log.i(getClass().getName(), "NEW DATA: " + newData.toString());
-            } else {
-                // Log.i(getClass().getName(), "NO DATA");
-            }
+            } 
+//            else {
+//                // Log.i(getClass().getName(), "NO DATA");
+//            }
         }
     }
 

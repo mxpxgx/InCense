@@ -8,6 +8,7 @@ import edu.incense.android.datatask.data.Data;
 import android.util.Log;
 
 public abstract class DataTask implements Runnable {
+    private final static String TAG = "DataTask";
     protected List<Input> inputs;
     protected List<Output> outputs;
     private float sampleFrequency; // Sample frequency
@@ -85,6 +86,11 @@ public abstract class DataTask implements Runnable {
 
     public void stop() {
         isRunning = false;
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Task thread join failed", e);
+        }
         if (thread != null) {
             // thread.interrupt();
             thread = null;

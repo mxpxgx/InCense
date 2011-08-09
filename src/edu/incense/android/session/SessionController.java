@@ -31,8 +31,11 @@ public class SessionController {
 
     public void prepareSession() {
         // TODO The usage of this HashMap could be improved (?)
-        Map<String, DataTask> taskCollection = InCenseApplication.getInstance()
-                .getTaskCollection();
+        // Map<String, DataTask> taskCollection =
+        // InCenseApplication.getInstance()
+        // .getTaskCollection();
+        Map<String, DataTask> taskCollection = ((InCenseApplication) context
+                .getApplicationContext()).getTaskCollection();
 
         // Initializes DataTasks if necessary
         List<Task> tasks = session.getTasks();

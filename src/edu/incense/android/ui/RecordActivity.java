@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.incense.android.R;
 import edu.incense.android.session.SessionService;
-import edu.incense.android.survey.SurveyService;
 
 /**
  * Activity where the user can start a recording session by pressing the start

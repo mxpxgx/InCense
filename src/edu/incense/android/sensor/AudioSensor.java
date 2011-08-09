@@ -3,20 +3,13 @@ package edu.incense.android.sensor;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.media.MediaRecorder.AudioSource;
 import android.util.Log;
 import edu.incense.android.datatask.AudioDataSource;
-import edu.incense.android.datatask.data.AudioData;
-import edu.incense.android.results.ResultFile;
 
 public class AudioSensor extends Sensor implements Runnable {
     private final static String TAG = "AudioSensor";
-    private MediaRecorder mediaRecorder = null;
-    private AudioData newData = null;
-    private ResultFile resultFile = null;
     private Thread thread = null;
-
     private AudioRecord audioRecord;
     private int bufferSize;
     private short[] buffer;
@@ -75,9 +68,7 @@ public class AudioSensor extends Sensor implements Runnable {
     public void start() {
         Log.i(TAG, "Starting sensor");
         super.start();
-        newData = new AudioData();
-        audioRecord = findAudioRecord((new Float(getSampleFrequency()))
-                .intValue());
+        audioRecord = findAudioRecord((int)getSampleFrequency());
         Log.i(TAG, "AudioRecord initialized with buffer size: "+bufferSize);
         buffer = new short[bufferSize]; // bufferSize was obtained in the
                                         // finAudioRecord method
@@ -126,6 +117,11 @@ public class AudioSensor extends Sensor implements Runnable {
         Log.i(TAG, "Trying to stop");
         ///super.stop();
         super.setSensing(false);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Sensor thread join failed", e);
+        }
         Log.i(TAG, "Thread stopped");
         Log.i(TAG, "Sensor stopped");
         //audioRecord.release();
