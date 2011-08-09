@@ -7,9 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.os.BatteryManager;
-import edu.incense.android.datatask.data.Data;
+import edu.incense.android.datatask.data.BatteryLevelData;
 
 /**
  * Based on: http://mobile.dzone.com/news/getting-battery-level-android
@@ -21,7 +20,6 @@ import edu.incense.android.datatask.data.Data;
  * 
  */
 public class BatteryLevelSensor extends Sensor {
-    private int batteryLevel = -1;
 
     /**
      * @param context
@@ -38,6 +36,12 @@ public class BatteryLevelSensor extends Sensor {
                 Intent.ACTION_BATTERY_CHANGED);
         getContext().registerReceiver(batteryLevelReceiver, batteryLevelFilter);
     }
+    
+    @Override
+    public void stop() {
+        super.stop();
+        getContext().unregisterReceiver(batteryLevelReceiver);
+    }
 
     BroadcastReceiver batteryLevelReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -53,12 +57,7 @@ public class BatteryLevelSensor extends Sensor {
     };
     
     private void setNewLevel(int level){
-        batteryLevel = level;
-        
-    }
-
-    private void batteryLevel() {
-        
+        currentData = new BatteryLevelData(level);
     }
 
 }
