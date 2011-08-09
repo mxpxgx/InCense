@@ -6,8 +6,6 @@ import java.util.Map;
 import android.app.Application;
 import android.util.Log;
 import edu.incense.android.datatask.DataTask;
-import edu.incense.android.survey.Survey;
-import edu.incense.android.survey.SurveyController;
 import edu.incense.android.test.SurveyGenerator;
 
 /**
@@ -25,9 +23,9 @@ import edu.incense.android.test.SurveyGenerator;
 
 public class InCenseApplication extends Application {
     // Static singleton of this application
-    private static InCenseApplication singleton; 
+//    private static InCenseApplication singleton; 
     // Temporary SurveyController reference to be started
-    private SurveyController surveyController;
+//    private SurveyController surveyController;
     private Map<String, DataTask> taskCollection; // TODO
 
     /**
@@ -35,9 +33,9 @@ public class InCenseApplication extends Application {
      * 
      * @return the instance of this application (an static singleton).
      */
-    public static InCenseApplication getInstance() {
-        return singleton;
-    }
+//    public static InCenseApplication getInstance() {
+//        return singleton;
+//    }
 
     /**
      * @see android.app.Application#onCreate()
@@ -47,9 +45,9 @@ public class InCenseApplication extends Application {
         super.onCreate();
         SurveyGenerator.buildProjectJsonA(getResources());
         Log.i(getClass().getName(), "Project.json saved");
-        singleton = this;
+//        singleton = this;
         taskCollection = new HashMap<String, DataTask>();
-        surveyController = null;
+//        surveyController = null;
     }
     
     public Map<String, DataTask> getTaskCollection() {
