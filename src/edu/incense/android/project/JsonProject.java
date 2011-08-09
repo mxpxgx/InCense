@@ -100,7 +100,7 @@ public class JsonProject {
             JsonNode attribute = root.get(SESSIONSSIZE);
             project.setSessionsSize(attribute.getValueAsInt());
 
-            attribute = root.get(SESSIONSSIZE);
+            attribute = root.get(SURVEYSSIZE);
             project.setSurveysSize(attribute.getValueAsInt());
 
             attribute = root.get(SESSIONS);
@@ -116,20 +116,24 @@ public class JsonProject {
                         jsonSession.toSession(entry.getValue()));
             }
             project.setSessions(sessions);
-
-            attribute = root.get(SURVEYS);
-            map = mapper.readValue(attribute,
-                    new TypeReference<Map<String, JsonNode>>() {
-                    });
-
-            JsonSurvey jsonSurvey = new JsonSurvey(mapper);
-            Map<String, Survey> surveys = new HashMap<String, Survey>(
-                    map.size());
-            for (Entry<String, JsonNode> entry : map.entrySet()) {
-                surveys.put(entry.getKey(),
-                        jsonSurvey.toSurvey(entry.getValue()));
+            
+            if(project.getSurveysSize() > 0){
+                attribute = root.get(SURVEYS);
+                map = mapper.readValue(attribute,
+                        new TypeReference<Map<String, JsonNode>>() {
+                });
+                
+                JsonSurvey jsonSurvey = new JsonSurvey(mapper);
+                Map<String, Survey> surveys = new HashMap<String, Survey>(
+                        map.size());
+                for (Entry<String, JsonNode> entry : map.entrySet()) {
+                    surveys.put(entry.getKey(),
+                            jsonSurvey.toSurvey(entry.getValue()));
+                }
+                project.setSurveys(surveys);
+            } else {
+                project.setSurveys(new HashMap<String, Survey>());
             }
-            project.setSurveys(surveys);
 
         } catch (JsonParseException e) {
             Log.e(getClass().getName(), "Parsing JSON file failed", e);

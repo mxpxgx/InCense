@@ -29,7 +29,7 @@ public class DataSource extends DataTask implements OutputEnabledTask {
 
     public void setSampleFrequency(float sampleFrequency) {
         sensor.setSampleFrequency(sampleFrequency);
-        super.setSampleFrequency(sampleFrequency);
+        super.setSampleFrequency(sampleFrequency * 2 * 2);
     }
 
     protected void clearInputs() {
@@ -41,13 +41,13 @@ public class DataSource extends DataTask implements OutputEnabledTask {
     protected void compute() {
         Data newData;// = sensor.getData();
         // do{
-        //Log.i(getClass().getName(), "Asking for new data");
+        // Log.i(getClass().getName(), "Asking for new data");
         newData = sensor.getData();
         if (newData != null) {
             this.pushToOutputs(newData);
-            //Log.i(getClass().getName(), "NEW DATA: " + newData.toString());
+            // Log.i(getClass().getName(), "NEW DATA: " + newData.toString());
         } else {
-            //Log.i(getClass().getName(), "NO DATA");
+            // Log.i(getClass().getName(), "NO DATA");
         }
 
         // }while(newData != null);

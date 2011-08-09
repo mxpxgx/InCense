@@ -4,10 +4,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -192,21 +191,20 @@ public class SurveyActivity extends Activity {
     }
 
     private void initEditText(EditText et) {
-        et.setOnKeyListener(new OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                        && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on key press
-                    EditText answerEditText = (EditText) v;
-                    answer.setAnswer(answerEditText.getText().toString());
-                    return true;
-                }
-                EditText answerEditText = (EditText) v;
-                answer.setAnswer(answerEditText.getText().toString());
-                // return true;
-                return false;
+        et.addTextChangedListener(new TextWatcher(){
+
+            public void afterTextChanged(Editable arg0) {
             }
+
+            public void beforeTextChanged(CharSequence arg0, int arg1,
+                    int arg2, int arg3) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                    int count) {
+                answer.setAnswer(s.toString());
+            }
+            
         });
 
     }

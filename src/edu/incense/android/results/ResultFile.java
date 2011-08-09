@@ -71,6 +71,20 @@ public class ResultFile {
         File file = new File(parent, child + extraName + timestamp + extension);
         return new ResultFile(timestamp, file.getAbsolutePath(), FileType.DATA);
     }
+    
+    public static ResultFile createAudioInstance(Context context,
+            String extraName) {
+        long timestamp = System.currentTimeMillis();
+        String parent = "./";
+        String child = "audio";
+        String extension = ".raw";
+        parent = context.getResources().getString(R.string.results_audio_parent);
+        child = context.getResources().getString(R.string.results_audio_child);
+        extension = context.getResources().getString(
+                R.string.results_audio_extension);
+        File file = new File(parent, child + extraName + timestamp + extension);
+        return new ResultFile(timestamp, file.getAbsolutePath(), FileType.AUDIO);
+    }
 
     public String getFileName() {
         return fileName;

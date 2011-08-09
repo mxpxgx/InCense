@@ -15,7 +15,7 @@
     <string name="server_project_path">/downloads/project</string>
     <string name="results_audio_parent">/sdcard/</string>
     <string name="results_audio_child">audio</string>
-    <string name="results_audio_extension">.3gp</string>
+    <string name="results_audio_extension">.raw</string>
     <string name="results_data_parent">/sdcard/</string>
     <string name="results_data_child">data</string>
     <string name="results_data_extension">.json</string>
