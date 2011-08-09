@@ -14,8 +14,9 @@ public class BatteryLevelData extends Data {
     /**
      * @param dataType
      */
-    public BatteryLevelData(DataType dataType) {
-        super(dataType);
+    public BatteryLevelData(int level) {
+        super(DataType.BATTERY_LEVEL);
+        this.level = level;
     }
 
     /**
