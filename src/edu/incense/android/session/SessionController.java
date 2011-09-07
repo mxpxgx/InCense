@@ -52,15 +52,17 @@ public class SessionController {
 
         // Establish relationships
         List<TaskRelation> relations = session.getRelations();
-        PipeBuffer pipeBuffer;
-        OutputEnabledTask outputTask;
-        InputEnabledTask inputTask;
-        for (TaskRelation tr : relations) {
-            outputTask = (OutputEnabledTask) taskCollection.get(tr.getTask1());
-            inputTask = (InputEnabledTask) taskCollection.get(tr.getTask2());
-            pipeBuffer = new PipeBuffer();
-            outputTask.addOutput(pipeBuffer);
-            inputTask.addInput(pipeBuffer);
+        if(relations != null){
+            PipeBuffer pipeBuffer;
+            OutputEnabledTask outputTask;
+            InputEnabledTask inputTask;
+            for (TaskRelation tr : relations) {
+                outputTask = (OutputEnabledTask) taskCollection.get(tr.getTask1());
+                inputTask = (InputEnabledTask) taskCollection.get(tr.getTask2());
+                pipeBuffer = new PipeBuffer();
+                outputTask.addOutput(pipeBuffer);
+                inputTask.addInput(pipeBuffer);
+            }
         }
     }
 

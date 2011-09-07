@@ -10,6 +10,7 @@ import edu.incense.android.datatask.sink.RawAudioSinkWritter;
 import edu.incense.android.datatask.trigger.SurveyTrigger;
 import edu.incense.android.sensor.AccelerometerSensor;
 import edu.incense.android.sensor.AudioSensor;
+import edu.incense.android.sensor.BluetoothConnectionSensor;
 import edu.incense.android.sensor.BluetoothSensor;
 import edu.incense.android.sensor.GpsSensor;
 import edu.incense.android.sensor.PhoneCallSensor;
@@ -21,7 +22,7 @@ public class DataTaskFactory {
 
         switch (task.getTaskType()) {
         case AccelerometerSensor:
-            dataTask = new DataSource(new AccelerometerSensor(context));
+            dataTask = new DataSource(AccelerometerSensor.createAccelerometer(context));
             break;
         case AudioSensor:
             AudioSensor as = new AudioSensor(context);
@@ -31,8 +32,14 @@ public class DataTaskFactory {
         case BluetoothSensor:
             dataTask = new DataSource(new BluetoothSensor(context));
             break;
+        case BluetoothConnectionSensor:
+            dataTask = new DataSource(new BluetoothConnectionSensor(context, task.getString("address", "")));
+            break;
         case GpsSensor:
             dataTask = new DataSource(new GpsSensor(context));
+            break;
+        case GyroscopeSensor:
+            dataTask = new DataSource(AccelerometerSensor.createGyroscope(context));
             break;
         case CallSensor:
             dataTask = new DataSource(new PhoneCallSensor(context));

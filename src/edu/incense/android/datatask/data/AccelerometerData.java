@@ -39,6 +39,10 @@ public class AccelerometerData extends Data {
     public String toString() {
         return "x: " + axisX + ", y: " + axisY + ", z:" + axisZ;
     }
+    
+    public void setTimestamp(long timestamp){
+        super.setTimestamp(timestamp);
+    }
 
     /*
      * @Override public int compareTo(Data data) { // TODO Auto-generated method
