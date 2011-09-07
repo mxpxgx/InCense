@@ -211,4 +211,60 @@ public class SurveyGenerator {
             System.out.println(e);
         }
     }
+    
+    public static void buildProjectJsonC(Resources resources) {
+        ObjectMapper mapper = new ObjectMapper();
+ 
+        
+        // Session
+        Session session = new Session();
+        session.setDuration(60*1000);
+        // session.setStartDate(new Calendar())
+        
+        List<Task> tasks = new ArrayList<Task>();
+        
+        Task task1 = new Task();
+        task1.setName("BluetoothConnectionSensor");
+        task1.setTaskType(TaskType.BluetoothConnectionSensor);
+        task1.setSampleFrequency(0.1f);
+        JsonNode surveyNameNode = mapper.createObjectNode();
+        ((ObjectNode) surveyNameNode).put("address", "00:0C:78:7A:BE:6D");
+        task1.setJsonNode(surveyNameNode);
+        tasks.add(task1);
+
+        Task task2 = new Task();
+        task2.setName("Sink");
+        task2.setTaskType(TaskType.DataSink);
+        task2.setSampleFrequency(44100);
+        tasks.add(task2);
+
+        List<TaskRelation> relations = Arrays.asList(new TaskRelation[] {
+                new TaskRelation(task1.getName(), task2.getName()) });
+        
+        session.setTasks(tasks);
+        session.setRelations(relations);
+        
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(0);
+        
+        String projectFilename = resources.getString(R.string.project_filename);
+        try {
+            File file = new File(projectFilename);
+            mapper.writeValue(file, project);
+        } catch (JsonGenerationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println(e);
+        } catch (JsonMappingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println(e);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println(e);
+        }
+    }
 }
