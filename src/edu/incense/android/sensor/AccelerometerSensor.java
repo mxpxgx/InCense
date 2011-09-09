@@ -19,9 +19,8 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
     private static final String TAG = "AccelerometerSensor";
     private SensorManager sm;
     private Sensor accelerometer;
-    private int sensorType;
 
-    public AccelerometerSensor(Context context, int SensorType) {
+    public AccelerometerSensor(Context context, int sensorType) {
         super(context);
 
         // Accelerometer initialization
