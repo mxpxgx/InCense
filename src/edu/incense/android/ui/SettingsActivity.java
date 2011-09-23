@@ -124,7 +124,7 @@ public class SettingsActivity extends PreferenceActivity {
 
             if (!bluetooth.isEnabled()) {
                 // Provider not enabled, prompt user to enable it
-                Toast.makeText(this, "Please turn WiFi on", Toast.LENGTH_LONG)
+                Toast.makeText(this, "Please turn Bluetooth on", Toast.LENGTH_LONG)
                         .show();
                 Intent myIntent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
                 myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

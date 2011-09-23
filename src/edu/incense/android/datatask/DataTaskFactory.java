@@ -13,6 +13,7 @@ import edu.incense.android.sensor.AudioSensor;
 import edu.incense.android.sensor.BluetoothConnectionSensor;
 import edu.incense.android.sensor.BluetoothSensor;
 import edu.incense.android.sensor.GpsSensor;
+import edu.incense.android.sensor.NfcSensor;
 import edu.incense.android.sensor.PhoneCallSensor;
 import edu.incense.android.sensor.PhoneStateSensor;
 
@@ -46,6 +47,9 @@ public class DataTaskFactory {
             break;
         case StateSensor:
             dataTask = new DataSource(new PhoneStateSensor(context));
+            break;
+        case NfcSensor:
+            dataTask = new DataSource(new NfcSensor(context));
             break;
         case AccelerometerMeanFilter:
             dataTask = new AccelerometerMeanFilter();

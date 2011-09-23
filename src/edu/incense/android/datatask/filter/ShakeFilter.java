@@ -51,7 +51,7 @@ public class ShakeFilter extends DataFilter {
         } else {
             float velocity = (float) (Math.abs(x + y + z - last_x - last_y
                     - last_z)
-                    / diffTime * 10000);
+                    / diffTime * 10000000000L);
             setLast(x, y, z, curTime);
             if (velocity > SHAKE_THRESHOLD) {
                 Log.v(getClass().getName(), "SHAKE detected with speed: "
@@ -64,8 +64,8 @@ public class ShakeFilter extends DataFilter {
                 }
                 return new BooleanData(false);
             } else {
-//                Log.i(getClass().getName(), "SHAKE NOT detected with speed: "
-//                        + speed);
+//                Log.i(getClass().getName(), "SHAKE NOT detected with velocity: "
+//                        + velocity);
                 return new BooleanData(false);
             }
         }
