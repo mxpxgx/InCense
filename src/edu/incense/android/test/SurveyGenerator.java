@@ -180,6 +180,12 @@ public class SurveyGenerator {
         task3.setJsonNode(surveyNameNode);
         tasks.add(task3);
         
+        Task task4 = new Task();
+        task4.setName("NfcSensor");
+        task4.setTaskType(TaskType.NfcSensor);
+        task4.setSampleFrequency(44100);
+        tasks.add(task4);
+        
         List<TaskRelation> relations = Arrays.asList(new TaskRelation[] {
                 new TaskRelation(task1.getName(), task2.getName()),
                 new TaskRelation(task2.getName(), task3.getName()) });
@@ -237,6 +243,12 @@ public class SurveyGenerator {
         task2.setTaskType(TaskType.DataSink);
         task2.setSampleFrequency(44100);
         tasks.add(task2);
+        
+        Task task3 = new Task();
+        task3.setName("NFC");
+        task3.setTaskType(TaskType.NfcSensor);
+        task3.setSampleFrequency(44100);
+        tasks.add(task3);
 
         List<TaskRelation> relations = Arrays.asList(new TaskRelation[] {
                 new TaskRelation(task1.getName(), task2.getName()) });
