@@ -17,19 +17,16 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
-import android.text.Editable;
 import android.util.Log;
-import android.widget.EditText;
 import edu.incense.android.R;
 
 /**
  * @author mxpxgx
  * 
  */
-public class NfcActivity extends Activity {
+public class NfcPlainActivity extends Activity {
     private static final String TAG = "NfcActivity";
     private NfcAdapter mNfcAdapter;
-    private EditText nfcText;
     private MediaPlayer ring;
 
     private PendingIntent mNfcPendingIntent;
@@ -42,8 +39,7 @@ public class NfcActivity extends Activity {
         super.onCreate(savedInstanceState);
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        setContentView(R.layout.nfc);
-        nfcText = (EditText) findViewById(R.id.edittext_nfcmessage);
+        setContentView(R.layout.nfc_plain);
 
         // Handle all of our received NFC intents in this activity.
         mNfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
@@ -81,7 +77,6 @@ public class NfcActivity extends Activity {
             NdefMessage[] messages = getNdefMessages(getIntent());
             byte[] payload = messages[0].getRecords()[0].getPayload();
             String message = new String(payload);
-            setNoteBody(message);
             setIntent(new Intent()); // Consume this intent.
             sendBroadcast(message);
         }
@@ -112,7 +107,6 @@ public class NfcActivity extends Activity {
             NdefMessage[] messages = getNdefMessages(intent);
             byte[] payload = messages[0].getRecords()[0].getPayload();
             String message = new String(payload);
-            setNoteBody(message);
             this.setIntent(intent);
 
             sendBroadcast(message);
@@ -161,14 +155,8 @@ public class NfcActivity extends Activity {
                     Log.e(TAG, "Sleep failed", e);
                 }
             }
-            NfcActivity.this.finish();
+            NfcPlainActivity.this.finish();
         }
-    }
-
-    private void setNoteBody(String body) {
-        Editable text = nfcText.getText();
-        text.clear();
-        text.append(body);
     }
 
     NdefMessage[] getNdefMessages(Intent intent) {

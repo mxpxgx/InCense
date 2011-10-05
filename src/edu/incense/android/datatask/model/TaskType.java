@@ -17,5 +17,6 @@ public enum TaskType {
     SurveyTrigger, 
     ShakeFilter, 
     BluetoothConnectionSensor,
-    NfcSensor
+    NfcSensor,
+    WifiLocationFilter
 }

@@ -4,12 +4,12 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import edu.incense.android.R;
-
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import edu.incense.android.R;
 
 public class Downloader extends Connection {
 
@@ -64,7 +64,9 @@ public class Downloader extends Connection {
             // Set streams
             FileOutputStream fos;
             if (!isResource) {
-                File file = new File(filePath);
+                File parent = new File(Environment.getExternalStorageDirectory(), parentDirectory);
+                parent.mkdirs();
+                File file = new File(parent, filePath);
                 fos = new FileOutputStream(file);
             } else {
                 fos = context.openFileOutput(filePath, 0);

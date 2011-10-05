@@ -22,4 +22,8 @@
         <item name="android:textSize">32sp</item>
         <item name="android:background">#222222</item>
     </style>
+    <style name="nfc_confirmation" >
+        <!-- <item name="android:background">#00FF00</item> -->
+        <item name="android:background">#78DC78</item>
+    </style>
 </resources>

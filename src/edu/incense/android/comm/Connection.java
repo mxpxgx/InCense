@@ -3,9 +3,9 @@ package edu.incense.android.comm;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import edu.incense.android.R;
 import android.content.Context;
 import android.util.Log;
+import edu.incense.android.R;
 
 public abstract class Connection {
     protected final static String JSON_TYPE = "application/json";
@@ -15,6 +15,7 @@ public abstract class Connection {
 
     protected HttpURLConnection connection;
     protected String httpClientId;
+    protected String parentDirectory;
     protected Context context;
 
     protected Connection(Context context) {
@@ -29,6 +30,8 @@ public abstract class Connection {
     protected void setPathsFromResource() {
         httpClientId = context.getResources()
                 .getString(R.string.http_client_id);
+        parentDirectory = context.getResources()
+        .getString(R.string.application_root_directory);
     }
 
     protected enum ConnectionType {
