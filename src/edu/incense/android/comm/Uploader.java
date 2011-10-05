@@ -8,6 +8,7 @@ import edu.incense.android.R;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -84,7 +85,9 @@ public class Uploader extends Connection {
             // Set streams
             FileInputStream fis;
             if (!isResource) {
-                File file = new File(filePath);
+                File parent = new File(Environment.getExternalStorageDirectory(), parentDirectory);
+                parent.mkdirs();
+                File file = new File(parent, filePath);
                 fis = new FileInputStream(file);
             } else {
                 fis = context.openFileInput(filePath);

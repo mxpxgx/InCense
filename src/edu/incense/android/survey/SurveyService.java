@@ -3,8 +3,11 @@
  */
 package edu.incense.android.survey;
 
+import java.io.File;
+
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Environment;
 import android.util.Log;
 import edu.incense.android.R;
 import edu.incense.android.project.JsonProject;
@@ -100,7 +103,11 @@ public class SurveyService extends IntentService {
         JsonProject jsonProject = new JsonProject();
         String projectFilename = getResources().getString(
                 R.string.project_filename);
-        project = jsonProject.getProject(projectFilename);
+        String parentDirectory = getResources()
+        .getString(R.string.application_root_directory);
+        File parent = new File(Environment.getExternalStorageDirectory(), parentDirectory);
+        File file = new File(parent, projectFilename);
+        project = jsonProject.getProject(file);
     }
 
     private void startSurvey(Survey survey) {

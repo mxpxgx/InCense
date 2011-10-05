@@ -11,6 +11,7 @@ import edu.incense.android.R;
 import edu.incense.android.comm.Uploader;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 public class ResultsUploader {
@@ -21,12 +22,17 @@ public class ResultsUploader {
 
     public ResultsUploader(Context context) {
         this.context = context;
-        queueFile = new File(context.getResources().getString(
+        String parentDirectory = context.getResources().getString(
+                R.string.application_root_directory);
+        File parent = new File(Environment.getExternalStorageDirectory(),
+                parentDirectory);
+        queueFile = new File(parent, context.getResources().getString(
                 R.string.filequeue_filename));
         jsonResults = new JsonResults();
 
-        if (queueFile.exists())
+        if (queueFile.exists()){
             fileQueue = loadQueue();
+        }
         if (fileQueue == null) {
             fileQueue = new FileQueue();
             int maxFiles = Integer.parseInt(context.getResources().getString(
@@ -35,6 +41,15 @@ public class ResultsUploader {
             Queue<ResultFile> queue = new LinkedList<ResultFile>();
             fileQueue.setFileQueue(queue);
             saveQueue();
+        } else {
+            //Check every file exist. If it doesn't exist, remove from queue.
+            Queue<ResultFile> queue = fileQueue.getFileQueue();
+            for(ResultFile rf: queue){
+                File file = new File(rf.getFileName());
+                if(!file.exists()){
+                    queue.remove(rf);
+                }
+            }
         }
     }
 

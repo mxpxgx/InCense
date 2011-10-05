@@ -1,5 +1,7 @@
 package edu.incense.android.datatask.model;
 
+import java.util.ArrayList;
+
 import org.codehaus.jackson.JsonNode;
 
 public class Task {
@@ -78,6 +80,20 @@ public class Task {
             return value;
         }
         return defValue;
+    }
+    public String[] getStringArray(String key) {
+        if (jsonNode == null)
+            return null;
+        JsonNode attribute = jsonNode.get(key);
+        if (attribute != null) {
+            ArrayList<String> list = new ArrayList<String>();
+            for (JsonNode node : attribute) {
+                list.add(node.getValueAsText());
+            }
+            String[] array = new String[list.size()];
+            return list.toArray(array);
+        }
+        return null;
     }
 
     public void setSampleFrequency(float sampleFrequency) {

@@ -3,6 +3,7 @@ package edu.incense.android.datatask;
 import android.content.Context;
 import edu.incense.android.datatask.filter.AccelerometerMeanFilter;
 import edu.incense.android.datatask.filter.ShakeFilter;
+import edu.incense.android.datatask.filter.WifiLocationFilter;
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.sink.DataSink;
 import edu.incense.android.datatask.sink.JsonSinkWritter;
@@ -68,6 +69,13 @@ public class DataTaskFactory {
             break;
         case ShakeFilter:
             dataTask = new ShakeFilter();
+            break;
+        case WifiLocationFilter:
+            dataTask = new WifiLocationFilter();
+            String[] ap = task.getStringArray("accessPoints");
+            for(int i=0; i<ap.length; i++){
+                ((WifiLocationFilter) dataTask).addAP(ap[i]);
+            }
             break;
         case SurveyTrigger:
             dataTask = new SurveyTrigger(context);
