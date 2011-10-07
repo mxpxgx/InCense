@@ -13,11 +13,11 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 
-public class WifiSensor extends Sensor {
+public class WifiScanSensor extends Sensor {
 
     private WifiManager wifi;
 
-    public WifiSensor(Context context) {
+    public WifiScanSensor(Context context) {
         super(context);
         // Initialize list where results will be stored
         dataList = new ArrayList<Data>();

@@ -21,15 +21,18 @@ public class SurveyTrigger extends DataTrigger {
 
     @Override
     protected void trigger() {
-        //(new StartSurveyTask(context)).execute(surveyName);
+        // (new StartSurveyTask(context)).execute(surveyName);
         // Start service for it to run the recording session
         Intent surveyIntent = new Intent(context, SurveyService.class);
         // Point out this action was triggered by a user
         surveyIntent.setAction(SurveyService.SURVEY_ACTION);
         // Send unique id for this action
         actionId = UUID.randomUUID().getLeastSignificantBits();
-        surveyIntent.putExtra(SurveyService.ACTION_ID_FIELDNAME,
-                actionId);
+        surveyIntent.putExtra(SurveyService.ACTION_ID_FIELDNAME, actionId);
+        if (surveyName != null){
+            surveyIntent.putExtra(SurveyService.SURVEY_NAME_FIELDNAME,
+                    surveyName);
+        }
         context.startService(surveyIntent);
     }
 

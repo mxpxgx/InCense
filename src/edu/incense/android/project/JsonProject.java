@@ -2,6 +2,8 @@ package edu.incense.android.project;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +34,21 @@ public class JsonProject {
         mapper = new ObjectMapper(); // can reuse, share globally
     }
 
-    public ProjectSignature getProjectSignature(File signatureFile) {
+    public ProjectSignature getProjectSignature(InputStream input) {
+        if(input == null) return null;
+        JsonNode root = getRoot(input);
+        return getProjectSignature(root);
+    }
+
+    public ProjectSignature getProjectSignature(File file) {
+        JsonNode root = getRoot(file);
+        return getProjectSignature(root);
+    }
+
+    private ProjectSignature getProjectSignature(JsonNode root) {
+        if(root == null) return null;
         ProjectSignature projectSignature = null;
         try {
-            JsonNode root = mapper.readValue(signatureFile, JsonNode.class);
             projectSignature = new ProjectSignature();
 
             JsonNode attribute = root.get(TIMESTAMP);
@@ -70,6 +83,18 @@ public class JsonProject {
         toJson(new File(fileName), projectSignature);
     }
 
+    public void toJson(OutputStream output, ProjectSignature projectSignature) {
+        try {
+            mapper.writeValue(output, projectSignature);
+        } catch (JsonParseException e) {
+            Log.e(getClass().getName(), "Parsing JSON file failed", e);
+        } catch (JsonMappingException e) {
+            Log.e(getClass().getName(), "Mapping JSON file failed", e);
+        } catch (IOException e) {
+            Log.e(getClass().getName(), "Reading JSON file failed", e);
+        }
+    }
+
     public void toJson(File file, ProjectSignature projectSignature) {
         try {
             mapper.writeValue(file, projectSignature);
@@ -91,10 +116,21 @@ public class JsonProject {
         return getProject(new File(filename));
     }
 
-    public Project getProject(File projectFile) {
+    public Project getProject(File file) {
+        JsonNode root = getRoot(file);
+        return getProject(root);
+    }
+
+    public Project getProject(InputStream input) {
+        if(input == null) return null;
+        JsonNode root = getRoot(input);
+        return getProject(root);
+    }
+
+    private Project getProject(JsonNode root) {
+        if(root == null) return null;
         Project project = null;
         try {
-            JsonNode root = mapper.readValue(projectFile, JsonNode.class);
             project = new Project();
 
             JsonNode attribute = root.get(SESSIONSSIZE);
@@ -116,13 +152,13 @@ public class JsonProject {
                         jsonSession.toSession(entry.getValue()));
             }
             project.setSessions(sessions);
-            
-            if(project.getSurveysSize() > 0){
+
+            if (project.getSurveysSize() > 0) {
                 attribute = root.get(SURVEYS);
                 map = mapper.readValue(attribute,
                         new TypeReference<Map<String, JsonNode>>() {
-                });
-                
+                        });
+
                 JsonSurvey jsonSurvey = new JsonSurvey(mapper);
                 Map<String, Survey> surveys = new HashMap<String, Survey>(
                         map.size());
@@ -146,5 +182,37 @@ public class JsonProject {
             return null;
         }
         return project;
+    }
+
+    private JsonNode getRoot(File file) {
+        try {
+            JsonNode root = mapper.readValue(file, JsonNode.class);
+            return root;
+        } catch (JsonParseException e) {
+            Log.e(getClass().getName(), "Parsing JSON file failed", e);
+            return null;
+        } catch (JsonMappingException e) {
+            Log.e(getClass().getName(), "Mapping JSON file failed", e);
+            return null;
+        } catch (IOException e) {
+            Log.e(getClass().getName(), "Reading JSON file failed", e);
+            return null;
+        }
+    }
+
+    private JsonNode getRoot(InputStream input) {
+        try {
+            JsonNode root = mapper.readValue(input, JsonNode.class);
+            return root;
+        } catch (JsonParseException e) {
+            Log.e(getClass().getName(), "Parsing JSON file failed", e);
+            return null;
+        } catch (JsonMappingException e) {
+            Log.e(getClass().getName(), "Mapping JSON file failed", e);
+            return null;
+        } catch (IOException e) {
+            Log.e(getClass().getName(), "Reading JSON file failed", e);
+            return null;
+        }
     }
 }

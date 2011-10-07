@@ -1,13 +1,19 @@
 package edu.incense.android.datatask;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.content.Context;
 import edu.incense.android.datatask.filter.AccelerometerMeanFilter;
 import edu.incense.android.datatask.filter.ShakeFilter;
-import edu.incense.android.datatask.filter.WifiLocationFilter;
+import edu.incense.android.datatask.filter.WifiTimeConnectedFilter;
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.sink.DataSink;
 import edu.incense.android.datatask.sink.JsonSinkWritter;
 import edu.incense.android.datatask.sink.RawAudioSinkWritter;
+import edu.incense.android.datatask.trigger.Condition;
+import edu.incense.android.datatask.trigger.GeneralTrigger;
+import edu.incense.android.datatask.trigger.JsonTrigger;
 import edu.incense.android.datatask.trigger.SurveyTrigger;
 import edu.incense.android.sensor.AccelerometerSensor;
 import edu.incense.android.sensor.AudioSensor;
@@ -17,6 +23,8 @@ import edu.incense.android.sensor.GpsSensor;
 import edu.incense.android.sensor.NfcSensor;
 import edu.incense.android.sensor.PhoneCallSensor;
 import edu.incense.android.sensor.PhoneStateSensor;
+import edu.incense.android.sensor.WifiConnectionSensor;
+import edu.incense.android.sensor.WifiScanSensor;
 
 public class DataTaskFactory {
     public static DataTask createDataTask(Task task, Context context) {
@@ -52,6 +60,14 @@ public class DataTaskFactory {
         case NfcSensor:
             dataTask = new DataSource(new NfcSensor(context));
             break;
+        case WifiScanSensor:
+            dataTask = new DataSource(new WifiScanSensor(context));
+            break;
+        case WifiConnectionSensor:
+            String[] ap = task.getStringArray("accessPoints");
+            List<String> apList = Arrays.asList(ap);
+            dataTask = new DataSource(new WifiConnectionSensor(context, apList));
+            break;
         case AccelerometerMeanFilter:
             dataTask = new AccelerometerMeanFilter();
             break;
@@ -70,23 +86,25 @@ public class DataTaskFactory {
         case ShakeFilter:
             dataTask = new ShakeFilter();
             break;
-        case WifiLocationFilter:
-            dataTask = new WifiLocationFilter();
-            String[] ap = task.getStringArray("accessPoints");
-            for(int i=0; i<ap.length; i++){
-                ((WifiLocationFilter) dataTask).addAP(ap[i]);
-            }
+        case WifiTimeConnectedFilter:
+            dataTask = new WifiTimeConnectedFilter();
             break;
         case SurveyTrigger:
             dataTask = new SurveyTrigger(context);
             ((SurveyTrigger) dataTask).setSurveyName("mainSurvey");// task.getString("surveyName",
-                                                                   // "mainSurvey"));
+            break;
+        case Trigger:
+            String matches = task.getString(JsonTrigger.MATCHES, null);
+            JsonTrigger jsonTrigger = new JsonTrigger();
+            List<Condition> conditionsList = jsonTrigger.toConditions(task.getJsonNode());
+            dataTask = new GeneralTrigger(context, conditionsList, matches);
             break;
         default:
             return null;
         }
-
-        dataTask.setSampleFrequency(task.getSampleFrequency());
+//        dataTask.setSampleFrequency(task.getSampleFrequency());
+        dataTask.setPeriodTime(1000);
+        dataTask.setTaskType(task.getTaskType());
         return dataTask;
     }
 }

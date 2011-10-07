@@ -1,36 +1,47 @@
 package edu.incense.android.results;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import android.content.Context;
+import android.util.Log;
 import edu.incense.android.R;
 import edu.incense.android.comm.Uploader;
 
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
-
 public class ResultsUploader {
+    private final static String TAG = "ResultsUploader";
     private FileQueue fileQueue;
     private JsonResults jsonResults;
     private File queueFile;
+    private String filename;
     private Context context;
 
     public ResultsUploader(Context context) {
         this.context = context;
-        String parentDirectory = context.getResources().getString(
-                R.string.application_root_directory);
-        File parent = new File(Environment.getExternalStorageDirectory(),
-                parentDirectory);
-        queueFile = new File(parent, context.getResources().getString(
-                R.string.filequeue_filename));
+
+        // Public file
+        // String parentDirectory = context.getResources().getString(
+        // R.string.application_root_directory);
+        // File parent = new File(Environment.getExternalStorageDirectory(),
+        // parentDirectory);
+        // queueFile = new File(parent, context.getResources().getString(
+        // R.string.filequeue_filename));
+
+        // Private file
+        filename = context.getResources()
+                .getString(R.string.filequeue_filename);
+        queueFile = context.getFileStreamPath(filename);
+
         jsonResults = new JsonResults();
 
-        if (queueFile.exists()){
+        if (queueFile.exists()) {
             fileQueue = loadQueue();
         }
         if (fileQueue == null) {
@@ -42,11 +53,11 @@ public class ResultsUploader {
             fileQueue.setFileQueue(queue);
             saveQueue();
         } else {
-            //Check every file exist. If it doesn't exist, remove from queue.
+            // Check every file exist. If it doesn't exist, remove from queue.
             Queue<ResultFile> queue = fileQueue.getFileQueue();
-            for(ResultFile rf: queue){
+            for (ResultFile rf : queue) {
                 File file = new File(rf.getFileName());
-                if(!file.exists()){
+                if (!file.exists()) {
                     queue.remove(rf);
                 }
             }
@@ -54,11 +65,32 @@ public class ResultsUploader {
     }
 
     private FileQueue loadQueue() {
-        return jsonResults.toFileQueue(queueFile);
+        // Public
+        // return jsonResults.toFileQueue(queueFile);
+
+        // Private
+        Log.i(getClass().getName(),
+                "Writting file to: " + queueFile.getAbsoluteFile());
+        try {
+            InputStream input = context.openFileInput(filename);
+            return jsonResults.toFileQueue(input);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "File [" + filename + "] not found", e);
+        }
+        return null;
     }
 
     private void saveQueue() {
-        jsonResults.toJson(queueFile, fileQueue);
+        // Public
+        // jsonResults.toJson(queueFile, fileQueue);
+        
+        // Private
+        try {
+            OutputStream output = context.openFileOutput(filename, 0);
+            jsonResults.toJson(output, fileQueue);
+        } catch (FileNotFoundException e) {
+            Log.i(TAG, "File [" + filename + "] not found", e);
+        }
     }
 
     public void offerFile(ResultFile resultFile) {
@@ -68,11 +100,11 @@ public class ResultsUploader {
 
     public void deleteFile(String fileName) {
         File file = new File(fileName);
-        if (file.exists()){
-            try{
+        if (file.exists()) {
+            try {
                 file.delete();
-            } catch(Exception e){
-                Log.e(getClass().getName(), "Deleting file" , e);
+            } catch (Exception e) {
+                Log.e(getClass().getName(), "Deleting file", e);
             }
         }
     }

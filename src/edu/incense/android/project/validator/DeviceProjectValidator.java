@@ -81,7 +81,10 @@ public class DeviceProjectValidator implements ProjectValidator {
         case StateSensor:
             enabled = true; // Mobile Phones always include states
             break;
-        case WifiSensor:
+        case WifiScanSensor:
+            enabled = isWifiAvailabe();
+            break;
+        case WifiConnectionSensor:
             enabled = isWifiAvailabe();
             break;
         default:

@@ -50,7 +50,7 @@ public class Downloader extends Connection {
             return false;
         return getData(filePath, false);
     }
-
+    
     // GET implemented with HttpURLConnection
     private boolean getData(String filePath, boolean isResource) {
 

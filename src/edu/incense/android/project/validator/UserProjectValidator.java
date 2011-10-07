@@ -37,7 +37,10 @@ public class UserProjectValidator implements ProjectValidator {
         case StateSensor:
             enabled = sp.getBoolean("checkboxState", false);
             break;
-        case WifiSensor:
+        case WifiScanSensor:
+            enabled = sp.getBoolean("checkboxWifi", false);
+            break;
+        case WifiConnectionSensor:
             enabled = sp.getBoolean("checkboxWifi", false);
             break;
         default:

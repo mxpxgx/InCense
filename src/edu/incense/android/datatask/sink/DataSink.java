@@ -13,6 +13,7 @@ public class DataSink extends DataTask implements InputEnabledTask {
     private final static String TAG = "DataSink";
     private String name;
     private List<Data> sink = null;
+
     private SinkWritter sinkWritter;
 
     public DataSink(SinkWritter sinkWritter) {
@@ -24,10 +25,15 @@ public class DataSink extends DataTask implements InputEnabledTask {
         setPeriodTime(1000);
     }
 
+    public void start() {
+        super.start();
+        initSinkList();
+    }
+    
     public void stop() {
         super.stop();
         clearOutputs();
-        sinkWritter.writeSink(this);
+        sinkWritter.writeSink(name, sink);
         Log.d(TAG, "Sink sent to writter");
     }
 
@@ -52,6 +58,9 @@ public class DataSink extends DataTask implements InputEnabledTask {
                 if (latestData != null) {
                     //Log.d(TAG, "Data added to sink!");
                     sink.add(latestData);
+                    if(sink.size() >= 100){
+                        sinkWritter.writeSink(name, removeSink());
+                    }
                 } else {
                     //Log.d(TAG, "Data NOT added to sink!");
                 }
@@ -59,8 +68,15 @@ public class DataSink extends DataTask implements InputEnabledTask {
         }
     }
 
-    private List<Data> getSink() {
+    public List<Data> getSink() {
         return sink;
+    }
+    
+    /**
+     * @param sink the sink to set
+     */
+    public void setSink(List<Data> sink) {
+        this.sink = sink;
     }
 
     public List<Data> removeSink() {

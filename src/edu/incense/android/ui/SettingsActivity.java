@@ -4,22 +4,27 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 import edu.incense.android.R;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity implements
+        OnSharedPreferenceChangeListener {
     SharedPreferences sharedPreferences;
     CheckBoxPreference bluetoothCheckBoxPreference;
     CheckBoxPreference wifiCheckBoxPreference;
@@ -30,6 +35,12 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+        
+        EditTextPreference usernameEtp = (EditTextPreference) getPreferenceScreen()
+        .findPreference("editTextUsername");
+        usernameEtp.getEditText().setFilters(new InputFilter[] { usernameFilter });
 
         bluetoothCheckBoxPreference = (CheckBoxPreference) getPreferenceScreen()
                 .findPreference("checkboxBluetooth");
@@ -69,6 +80,23 @@ public class SettingsActivity extends PreferenceActivity {
                     }
                 });
     }
+    
+    InputFilter usernameFilter = new InputFilter() {
+        public CharSequence filter(CharSequence source, int start, int end,
+                Spanned dest, int dstart, int dend) {
+            if(dstart == 0 && (end-start)>0 && !Character.isLetter(source.charAt(start))){
+                Toast.makeText(SettingsActivity.this, "It should start with a letter.", Toast.LENGTH_SHORT).show();
+                return "";
+            }
+            for (int i = start; i < end; i++) {
+                if (!Character.isLetterOrDigit(source.charAt(i))) {
+                    Toast.makeText(SettingsActivity.this, "Only letters and numbers please.", Toast.LENGTH_SHORT).show();
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
 
     // Called at the start of the visible lifetime.
     @Override
@@ -124,8 +152,8 @@ public class SettingsActivity extends PreferenceActivity {
 
             if (!bluetooth.isEnabled()) {
                 // Provider not enabled, prompt user to enable it
-                Toast.makeText(this, "Please turn Bluetooth on", Toast.LENGTH_LONG)
-                        .show();
+                Toast.makeText(this, "Please turn Bluetooth on",
+                        Toast.LENGTH_LONG).show();
                 Intent myIntent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
                 myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(myIntent);
@@ -182,5 +210,22 @@ public class SettingsActivity extends PreferenceActivity {
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * @see android.content.SharedPreferences.OnSharedPreferenceChangeListener#onSharedPreferenceChanged(android.content.SharedPreferences,
+     *      java.lang.String)
+     */
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+            String key) {
+        // if (key.equals("editTextUsername")) {
+        // // Search for a valid mail pattern
+        // String pattern = "mailpattern";
+        // String value = sharedPreferences.getString(key, null);
+        // if (!Pattern.matches(pattern, value)) {
+        // // The value is not a valid email address.
+        // // Do anything like advice the user or change the value
+        // }
+        // }
     }
 }

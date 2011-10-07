@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.incense.android.datatask.data.Data;
+import edu.incense.android.datatask.model.TaskType;
 
 import android.util.Log;
 
@@ -12,8 +13,9 @@ public abstract class DataTask implements Runnable {
     protected List<Input> inputs;
     protected List<Output> outputs;
     private float sampleFrequency; // Sample frequency
-    private int periodTime = 10000; // Sleep time for each cycle (period time in
+    protected int periodTime = 10000; // Sleep time for each cycle (period time in
                                     // milliseconds)
+    private TaskType taskType;
     private Thread thread = null;
     protected boolean isRunning = false;
 
@@ -70,6 +72,7 @@ public abstract class DataTask implements Runnable {
 
                 compute();
                 if(getPeriodTime() > 1){
+                    Log.d(TAG, "sleeping: "+getPeriodTime());
                     Thread.sleep(getPeriodTime());
                 }
             } catch (Exception e) {
@@ -125,5 +128,19 @@ public abstract class DataTask implements Runnable {
 
     protected int getPeriodTime() {
         return periodTime;
+    }
+
+    /**
+     * @param taskType the taskType to set
+     */
+    public void setTaskType(TaskType taskType) {
+        this.taskType = taskType;
+    }
+
+    /**
+     * @return the taskType
+     */
+    public TaskType getTaskType() {
+        return taskType;
     }
 }

@@ -6,6 +6,7 @@ import edu.incense.android.datatask.data.Data;
 import edu.incense.android.datatask.data.others.BooleanData;
 
 public class ShakeFilter extends DataFilter {
+    private static final String ATT_ISSHAKE = "isShake";
     private static final int SHAKE_THRESHOLD = 500; //900;
     private double last_x, last_y, last_z;
     private long lastUpdate;
@@ -47,7 +48,9 @@ public class ShakeFilter extends DataFilter {
         if (!last) {
             setLast(x, y, z, curTime);
             last = true;
-            return new BooleanData(false);
+            //return new BooleanData(false);
+            data.getExtras().putBoolean(ATT_ISSHAKE, false);
+            return data;
         } else {
             float velocity = (float) (Math.abs(x + y + z - last_x - last_y
                     - last_z)
@@ -60,13 +63,19 @@ public class ShakeFilter extends DataFilter {
                 if (counter > 0) {
                     Log.v(getClass().getName(),
                             "DOUBLE SHAKE detected with speed: " + velocity);
-                    return new BooleanData(true);
+//                    return new BooleanData(true);
+                    data.getExtras().putBoolean(ATT_ISSHAKE, true);
+                    return data;
                 }
-                return new BooleanData(false);
+//                return new BooleanData(false);
+                data.getExtras().putBoolean(ATT_ISSHAKE, false);
+                return data;
             } else {
 //                Log.i(getClass().getName(), "SHAKE NOT detected with velocity: "
 //                        + velocity);
-                return new BooleanData(false);
+//                return new BooleanData(false);
+                data.getExtras().putBoolean(ATT_ISSHAKE, false);
+                return data;
             }
         }
 
