@@ -6,6 +6,7 @@
         <EditTextPreference
             android:key="editTextUsername"
             android:title="Username"
+            android:inputType="textPersonName"
             android:summary="Set/modify username"
             android:defaultValue="perezg" />
         <EditTextPreference

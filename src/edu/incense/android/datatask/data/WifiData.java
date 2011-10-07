@@ -1,6 +1,7 @@
 package edu.incense.android.datatask.data;
 
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 
 public class WifiData extends Data {
     private String bssid;
@@ -16,6 +17,12 @@ public class WifiData extends Data {
         setLevel(scanResult.level);
         setSsid(scanResult.SSID);
         setCapabilities(scanResult.capabilities);
+    }
+    
+    public WifiData(WifiConfiguration config) {
+        super(DataType.WIFI);
+        setBssid(config.BSSID);
+        setSsid(config.SSID);
     }
 
     public void setBssid(String bssid) {

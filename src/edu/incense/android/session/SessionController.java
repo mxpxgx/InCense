@@ -6,7 +6,6 @@ import java.util.Map;
 
 import android.content.Context;
 import android.util.Log;
-
 import edu.incense.android.InCenseApplication;
 import edu.incense.android.datatask.DataTask;
 import edu.incense.android.datatask.DataTaskFactory;
@@ -15,6 +14,8 @@ import edu.incense.android.datatask.OutputEnabledTask;
 import edu.incense.android.datatask.PipeBuffer;
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.model.TaskRelation;
+import edu.incense.android.datatask.model.TaskType;
+import edu.incense.android.datatask.trigger.GeneralTrigger;
 
 public class SessionController {
     private static final String TAG = "SessionController";
@@ -57,11 +58,27 @@ public class SessionController {
             OutputEnabledTask outputTask;
             InputEnabledTask inputTask;
             for (TaskRelation tr : relations) {
-                outputTask = (OutputEnabledTask) taskCollection.get(tr.getTask1());
-                inputTask = (InputEnabledTask) taskCollection.get(tr.getTask2());
-                pipeBuffer = new PipeBuffer();
-                outputTask.addOutput(pipeBuffer);
-                inputTask.addInput(pipeBuffer);
+                DataTask task1 = taskCollection.get(tr.getTask1());
+                //When first task is a trigger
+                if(task1.getTaskType() == TaskType.Trigger){
+                    GeneralTrigger trigger = (GeneralTrigger)task1;
+                    if(tr.getTask2().endsWith("Survey")){
+                        trigger.addSurvey(tr.getTask2());
+                    } else if(tr.getTask2().endsWith("Session")){
+                        trigger.addSession(tr.getTask2());
+                    } else {
+                        DataTask task2 = (DataTask)taskCollection.get(tr.getTask2());
+                        trigger.addTask(task2);
+                    }
+                } 
+                //When is not a trigger
+                else {
+                    outputTask = (OutputEnabledTask) taskCollection.get(tr.getTask1());
+                    inputTask = (InputEnabledTask) taskCollection.get(tr.getTask2());
+                    pipeBuffer = new PipeBuffer();
+                    outputTask.addOutput(pipeBuffer);
+                    inputTask.addInput(pipeBuffer);
+                }
             }
         }
     }

@@ -9,14 +9,16 @@ public enum TaskType {
     GpsSensor, 
     CallSensor, 
     StateSensor, 
-    WifiSensor, 
+    WifiScanSensor, 
+    WifiConnectionSensor, 
     AccelerometerMeanFilter, 
     DataSink, 
     AudioSink, 
     SessionTrigger, 
     SurveyTrigger, 
+    Trigger,
     ShakeFilter, 
     BluetoothConnectionSensor,
     NfcSensor,
-    WifiLocationFilter
+    WifiTimeConnectedFilter
 }

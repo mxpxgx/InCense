@@ -1,16 +1,18 @@
 package edu.incense.android.project;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
 import edu.incense.android.R;
 import edu.incense.android.comm.Downloader;
 import edu.incense.android.project.validator.DeviceProjectValidator;
 import edu.incense.android.project.validator.ProjectValidator;
 import edu.incense.android.project.validator.UserProjectValidator;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.Log;
 
 /***
  * ProjectUpdater checks if there is a new version of the project assigned to
@@ -22,6 +24,7 @@ import android.util.Log;
  */
 
 public class ProjectUpdater {
+    private final static String TAG = "ProjectUpdater";
     private Context context;
     private ProjectSignature projectSignature;
     private volatile boolean updating;
@@ -112,10 +115,18 @@ public class ProjectUpdater {
     }
 
     private boolean isDifferentProject(ProjectSignature newSignature) {
-        File oldFile = new File(context.getResources().getString(
-                R.string.project_signature_filename));
+        String filename = context.getResources().getString(
+                R.string.project_signature_filename);
+//        File oldFile = new File(context.getResources().getString(
+//                R.string.project_signature_filename));
+        InputStream input=null;
+        try {
+            input = context.openFileInput(filename);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "File [" + filename + "] not found", e);
+        }
         ProjectSignature oldSignature = jsonProject
-                .getProjectSignature(oldFile);
+                .getProjectSignature(input);
         if (oldSignature == null) {
             Log.i(getClass().getName(),
                     "Failed to parse JSON to ProjectSignature.");
@@ -152,7 +163,14 @@ public class ProjectUpdater {
                 updating = true;
                 replaceOldSignatureWith(getProjectSignature());
                 File projectFile = getJsonProjectFromServer();
-                Project project = jsonProject.getProject(projectFile);
+                InputStream input = null;
+                try {
+                    input = context.openFileInput(projectFile.getName());
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, "File [" + projectFile.getName() + "] not found", e);
+                }
+//                Project project = jsonProject.getProject(projectFile);
+                Project project = jsonProject.getProject(input);
                 if (listener != null && project != null) {
                     listener.update(project);
                 }

@@ -1,6 +1,8 @@
 package edu.incense.android.session;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -102,6 +104,22 @@ public class SessionService extends IntentService {
      * Reads project from JSON
      */
     private void loadProject() {
+        JsonProject jsonProject = new JsonProject();
+        String projectFilename = getResources().getString(
+                R.string.project_filename);
+        InputStream input = null;
+        try {
+            input = this.openFileInput(projectFilename);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "File [" + projectFilename + "] not found", e);
+        }
+        project = jsonProject.getProject(input);
+    }
+    
+    /**
+     * Reads project from JSON
+     */
+    private void loadPublicProject() {
         JsonProject jsonProject = new JsonProject();
         String projectFilename = getResources().getString(
                 R.string.project_filename);

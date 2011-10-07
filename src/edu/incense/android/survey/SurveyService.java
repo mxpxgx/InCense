@@ -4,6 +4,8 @@
 package edu.incense.android.survey;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -14,15 +16,15 @@ import edu.incense.android.project.JsonProject;
 import edu.incense.android.project.Project;
 
 /**
- * Service that runs surveys according to the project and
- * user settings and context.
+ * Service that runs surveys according to the project and user settings and
+ * context.
  * 
  * @author Moises Perez (incense.cicese@gmail.com)
  * @version 0.1, 2011/05/31
  * 
  */
 public class SurveyService extends IntentService {
-    
+
     private static final String TAG = "SurveyService";
 
     /**
@@ -32,7 +34,7 @@ public class SurveyService extends IntentService {
     public SurveyService() {
         super("SurveyService");
     }
-    
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -62,12 +64,12 @@ public class SurveyService extends IntentService {
             Log.e(TAG, "Project is null. It wasn't loaded correctly.");
             return;
         }
-        
+
         /* SURVEY ACTION */
         if (intent.getAction().compareTo(SURVEY_ACTION) == 0) {
             String surveyName = intent.getStringExtra(SURVEY_NAME_FIELDNAME);
-            if(surveyName == null)
-                surveyName="mainSurvey";
+            if (surveyName == null)
+                surveyName = "mainSurvey";
             Survey survey = project.getSurvey(surveyName);
             if (survey == null) {
                 Log.e(TAG, "Survey is null. Session [" + surveyName
@@ -79,7 +81,7 @@ public class SurveyService extends IntentService {
             Log.d(TAG, "Survey action [" + surveyName + "] finished");
 
             // Send broadcast the end of this process
-            //TODO The following code is repeated, please improve.
+            // TODO The following code is repeated, please improve.
             Intent broadcastIntent = new Intent(SURVEY_ACTION_COMPLETE);
             broadcastIntent.putExtra(ACTION_ID_FIELDNAME,
                     intent.getLongExtra(ACTION_ID_FIELDNAME, -1));
@@ -87,7 +89,7 @@ public class SurveyService extends IntentService {
             Log.d(TAG, "Completion message for [" + surveyName
                     + "] was broadcasted");
         } else {
-            Log.e(TAG, "Non-survey action received: "+intent.getAction());
+            Log.e(TAG, "Non-survey action received: " + intent.getAction());
             return;
         }
     }
@@ -99,15 +101,32 @@ public class SurveyService extends IntentService {
     /**
      * Reads project from JSON
      */
+    private void loadPublicProject() {
+        JsonProject jsonProject = new JsonProject();
+        String projectFilename = getResources().getString(
+                R.string.project_filename);
+        String parentDirectory = getResources().getString(
+                R.string.application_root_directory);
+        File parent = new File(Environment.getExternalStorageDirectory(),
+                parentDirectory);
+        File file = new File(parent, projectFilename);
+        project = jsonProject.getProject(file);
+    }
+
+    /**
+     * Reads project from JSON
+     */
     private void loadProject() {
         JsonProject jsonProject = new JsonProject();
         String projectFilename = getResources().getString(
                 R.string.project_filename);
-        String parentDirectory = getResources()
-        .getString(R.string.application_root_directory);
-        File parent = new File(Environment.getExternalStorageDirectory(), parentDirectory);
-        File file = new File(parent, projectFilename);
-        project = jsonProject.getProject(file);
+        InputStream input = null;
+        try {
+            input = this.openFileInput(projectFilename);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "File [" + projectFilename + "] not found", e);
+        }
+        project = jsonProject.getProject(input);
     }
 
     private void startSurvey(Survey survey) {

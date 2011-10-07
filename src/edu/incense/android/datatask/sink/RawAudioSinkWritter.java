@@ -71,4 +71,12 @@ public class RawAudioSinkWritter implements SinkWritter {
         new QueueFileTask(context).execute(resultFile);
     }
 
+    /* (non-Javadoc)
+     * @see edu.incense.android.datatask.sink.SinkWritter#writeSink(java.lang.String, java.util.List)
+     */
+    public void writeSink(String name, List<Data> sink) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
