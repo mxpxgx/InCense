@@ -2,10 +2,12 @@ package edu.incense.android.datatask;
 
 import java.util.ArrayList;
 
+import android.util.Log;
 import edu.incense.android.datatask.data.Data;
 import edu.incense.android.sensor.Sensor;
 
 public class DataSource extends DataTask implements OutputEnabledTask {
+    private final static String TAG = "DataSource";
     Sensor sensor;
 
     public DataSource(Sensor sensor) {
@@ -27,11 +29,6 @@ public class DataSource extends DataTask implements OutputEnabledTask {
         sensor.stop();
     }
 
-    public void setSampleFrequency(float sampleFrequency) {
-        sensor.setSampleFrequency(sampleFrequency);
-        super.setSampleFrequency(sampleFrequency * 2 * 2);
-    }
-
     protected void clearInputs() {
         // No inputs for DataSource
         inputs = null;
@@ -45,7 +42,7 @@ public class DataSource extends DataTask implements OutputEnabledTask {
         newData = sensor.getData();
         if (newData != null) {
             this.pushToOutputs(newData);
-            // Log.i(getClass().getName(), "NEW DATA: " + newData.toString());
+            //Log.i(TAG, "New data pushed");
         } else {
             // Log.i(getClass().getName(), "NO DATA");
         }

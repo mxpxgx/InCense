@@ -1,15 +1,14 @@
 package edu.incense.android.datatask.filter;
 
 import android.util.Log;
-import edu.incense.android.datatask.data.AccelerometerData;
+import edu.incense.android.datatask.data.AccelerometerFrameData;
 import edu.incense.android.datatask.data.Data;
-import edu.incense.android.datatask.data.others.BooleanData;
 
 public class ShakeFilter extends DataFilter {
     private static final String ATT_ISSHAKE = "isShake";
     private static final int SHAKE_THRESHOLD = 500; //900;
     private double last_x, last_y, last_z;
-    private long lastUpdate;
+    private double lastUpdate;
     private boolean last;
     private int counter;
 
@@ -38,23 +37,36 @@ public class ShakeFilter extends DataFilter {
     }
 
     private Data seekForShake(Data data) {
-        AccelerometerData accData = (AccelerometerData) data;
-        double x = accData.getAxisX();
-        double y = accData.getAxisY();
-        double z = accData.getAxisZ();
-        long curTime = accData.getTimestamp();
-        long diffTime = (curTime - lastUpdate);
+        AccelerometerFrameData accData = (AccelerometerFrameData) data;
+        double[][] frame = accData.getFrame();
+        boolean shake = false;
+        for(int i=0; i<accData.getSize(); i++){
+            shake = seekForShake(frame[i]);
+            if(shake){
+                data.getExtras().putBoolean(ATT_ISSHAKE, true);
+                return data;
+            }
+        }
+        data.getExtras().putBoolean(ATT_ISSHAKE, shake);
+        return data;
+    }
+    
+    private boolean seekForShake(double[] data) {
+        double x = data[0];
+        double y = data[1];
+        double z = data[2];
+        double curTime = data[3];
+        double diffTime = (curTime - lastUpdate);
 
         if (!last) {
             setLast(x, y, z, curTime);
             last = true;
             //return new BooleanData(false);
-            data.getExtras().putBoolean(ATT_ISSHAKE, false);
-            return data;
+            return false;
         } else {
-            float velocity = (float) (Math.abs(x + y + z - last_x - last_y
+            double velocity = (double) (Math.abs(x + y + z - last_x - last_y
                     - last_z)
-                    / diffTime * 10000000000L);
+                    / diffTime * 10000000000.0f);
             setLast(x, y, z, curTime);
             if (velocity > SHAKE_THRESHOLD) {
                 Log.v(getClass().getName(), "SHAKE detected with speed: "
@@ -64,24 +76,21 @@ public class ShakeFilter extends DataFilter {
                     Log.v(getClass().getName(),
                             "DOUBLE SHAKE detected with speed: " + velocity);
 //                    return new BooleanData(true);
-                    data.getExtras().putBoolean(ATT_ISSHAKE, true);
-                    return data;
+                    return true;
                 }
 //                return new BooleanData(false);
-                data.getExtras().putBoolean(ATT_ISSHAKE, false);
-                return data;
+                return false;
             } else {
 //                Log.i(getClass().getName(), "SHAKE NOT detected with velocity: "
 //                        + velocity);
 //                return new BooleanData(false);
-                data.getExtras().putBoolean(ATT_ISSHAKE, false);
-                return data;
+                return false;
             }
         }
 
     }
 
-    public void setLast(double x, double y, double z, long lastUpdate) {
+    public void setLast(double x, double y, double z, double lastUpdate) {
         last_x = x;
         last_y = y;
         last_z = z;

@@ -3,11 +3,15 @@ package edu.incense.android.session;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.UUID;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.commonsware.cwac.wakeful.WakefulIntentService;
+
 import edu.incense.android.R;
 import edu.incense.android.project.JsonProject;
 import edu.incense.android.project.Project;
@@ -21,9 +25,9 @@ import edu.incense.android.project.Project;
  * @version 0.6, 2011/05/31
  * 
  */
-public class SessionService extends IntentService {
-
+public class SessionService extends WakefulIntentService{//extends IntentService {
     private static final String TAG = "SessionService";
+    private volatile boolean sessionRunning;
 
     /**
      * This constructor is never used directly, it is used by the superclass
@@ -37,12 +41,15 @@ public class SessionService extends IntentService {
     public void onCreate() {
         super.onCreate();
         loadProject();
+        sessionRunning = false;
+        Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         // TODO Auto-generated method stub
+        Log.d(TAG, "Service destroyed");
     }
     
     /* INTENT_SERVICE METHODS */
@@ -58,7 +65,8 @@ public class SessionService extends IntentService {
     /**
      * This method is invoked on the worker thread with a request to process.
      */
-    protected void onHandleIntent(Intent intent) {
+    protected void doWakefulWork(Intent intent) {
+//    protected synchronized void onHandleIntent(Intent intent) {
         // Do not proceed if project wasn't loaded
         if (project == null) {
             Log.e(TAG, "Project is null. It wasn't loaded correctly.");
@@ -67,6 +75,13 @@ public class SessionService extends IntentService {
 
         /* SESSION ACTION */
         if (intent.getAction().compareTo(SESSION_ACTION) == 0) {
+            if(sessionRunning){
+                Toast.makeText(this, "Session currently running, please wait...", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "Session currently running, please wait...");
+                return;
+            }
+            sessionRunning = true;
+            
             String sessionName = intent.getStringExtra(SESSION_NAME_FIELDNAME);
             if (sessionName == null)
                 sessionName = "mainSession";
@@ -88,6 +103,7 @@ public class SessionService extends IntentService {
             sendBroadcast(broadcastIntent);
             Log.d(TAG, "Completion message for [" + sessionName
                     + "] was broadcasted");
+            sessionRunning = false;
         } else{
             Log.e(TAG, "Non-recording-session action received: "+intent.getAction());
             return;
@@ -135,5 +151,21 @@ public class SessionService extends IntentService {
         controller.prepareSession();
         controller.start();
     }
+    
+    private Thread.UncaughtExceptionHandler onRuntimeError= new Thread.UncaughtExceptionHandler() {
+        private long actionId;
+        public void uncaughtException(Thread thread, Throwable ex) {
+            // Start service for it to run the recording session
+            Intent sessionServiceIntent = new Intent(SessionService.this.getApplicationContext(), SessionService.class);
+            // Point out this action was triggered by a user
+            sessionServiceIntent.setAction(SessionService.SESSION_ACTION);
+            // Send unique id for this action
+            actionId = UUID.randomUUID().getLeastSignificantBits();
+            sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+                    actionId);
+//            startService(sessionServiceIntent);
+            WakefulIntentService.sendWakefulWork(SessionService.this.getApplicationContext(), sessionServiceIntent);
+        }
+    };
 
 }

@@ -6,7 +6,7 @@ import java.util.Map;
 import android.app.Application;
 import android.util.Log;
 import edu.incense.android.datatask.DataTask;
-import edu.incense.android.test.SurveyGenerator;
+import edu.incense.android.test.ProjectGenerator;
 
 /**
  * InCenseApplication is a subclass of android.app.Application, a base class for
@@ -43,7 +43,7 @@ public class InCenseApplication extends Application {
     @Override
     public final void onCreate() {
         super.onCreate();
-        SurveyGenerator.buildProjectJsonE(this);
+        ProjectGenerator.buildProjectJsonE(this);
         Log.i(getClass().getName(), "Project.json saved");
 //        singleton = this;
         taskCollection = new HashMap<String, DataTask>();

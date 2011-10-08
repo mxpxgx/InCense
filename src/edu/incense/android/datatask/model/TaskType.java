@@ -20,5 +20,7 @@ public enum TaskType {
     ShakeFilter, 
     BluetoothConnectionSensor,
     NfcSensor,
-    WifiTimeConnectedFilter
+    WifiTimeConnectedFilter,
+    StopTrigger,
+    TimerSensor,
 }
