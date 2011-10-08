@@ -59,7 +59,7 @@ public class GpsSensor extends Sensor implements LocationListener {
         if (locationManager.isProviderEnabled(provider)) {
             Log.i(getClass().getName(), "Location Provider: " + provider);
 
-            locationManager.requestLocationUpdates(provider, 0L, 0.0F, this);
+            locationManager.requestLocationUpdates(provider, 20000L, 0.0F, this);
 
             // Initialize it with the last known location (it is better than
             // nothing at all).

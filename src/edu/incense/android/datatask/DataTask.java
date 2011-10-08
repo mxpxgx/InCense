@@ -10,19 +10,34 @@ import android.util.Log;
 
 public abstract class DataTask implements Runnable {
     private final static String TAG = "DataTask";
+    private final static int DEFAULT_PERIOD_TIME = 1000;
     protected List<Input> inputs;
     protected List<Output> outputs;
     private float sampleFrequency; // Sample frequency
-    protected int periodTime = 10000; // Sleep time for each cycle (period time in
-                                    // milliseconds)
+    protected long periodTime; // Sleep time for each cycle (period time in
+                               // milliseconds)
     private TaskType taskType;
     private Thread thread = null;
     protected boolean isRunning = false;
 
+    /**
+     * @return the isRunning
+     */
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    /**
+     * @param isRunning the isRunning to set
+     */
+    public void setRunning(boolean isRunning) {
+        this.isRunning = isRunning;
+    }
+
     public DataTask() {
         // thread = new Thread(this);
         isRunning = false;
-        periodTime = 5000;
+        setPeriodTime(DEFAULT_PERIOD_TIME);
     }
 
     protected void clearInputs() {
@@ -71,12 +86,11 @@ public abstract class DataTask implements Runnable {
             try {
 
                 compute();
-                if(getPeriodTime() > 1){
-                    Log.d(TAG, "sleeping: "+getPeriodTime());
+                if (getPeriodTime() > 1) {
                     Thread.sleep(getPeriodTime());
                 }
             } catch (Exception e) {
-                Log.e(getClass().getName(), "Sleep: " + e);
+                Log.e(TAG, "Sleep: " + e);
             }
         }
     }
@@ -89,49 +103,61 @@ public abstract class DataTask implements Runnable {
 
     public void stop() {
         isRunning = false;
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Task thread join failed", e);
-        }
+//        try {
+//            thread.join();
+//        } catch (InterruptedException e) {
+//            Log.e(TAG, "Task thread join failed", e);
+//        }
         if (thread != null) {
-            // thread.interrupt();
             thread = null;
         }
     }
 
-    /*** Frequency & Period Times ***/
-
-    private int obtainPeriodTime(float sampleFrequency) {
-        int periodTime = (int) ((1 / sampleFrequency) * 1000);
-        return periodTime;
-    }
-
-    private float obtainSampleFrequency(float periodTime) {
-        float sampleFrequency = ((1 / periodTime) * 1000);
-        return sampleFrequency;
-    }
-
-    public void setSampleFrequency(float sampleFrequency) {
-        this.sampleFrequency = sampleFrequency;
-        periodTime = obtainPeriodTime(sampleFrequency);
-    }
-
-    public void setPeriodTime(int periodTime) {
-        this.periodTime = periodTime;
-        sampleFrequency = obtainSampleFrequency(periodTime);
-    }
-
-    protected float getSampleFrequency() {
-        return sampleFrequency;
-    }
-
-    protected int getPeriodTime() {
+    /**
+     * Computes the period time (milliseconds) based on a sample frequency in Hz
+     * 
+     * @param sampleFrequency
+     * @return
+     */
+    private long computePeriodTime(float sampleFrequency) {
+        long periodTime = (long) ((1.0f / sampleFrequency) * 1000f);
         return periodTime;
     }
 
     /**
-     * @param taskType the taskType to set
+     * Computes the sample frequency (Hz) based on a period time in milliseconds
+     * 
+     * @param periodTime
+     * @return
+     */
+    private float computeSampleFrequency(float periodTime) {
+        float sampleFrequency = (float) ((1f / periodTime) * 1000f);
+        return sampleFrequency;
+    }
+
+    /* SETS AND GETS */
+
+    public void setSampleFrequency(float sampleFrequency) {
+        this.sampleFrequency = sampleFrequency;
+        periodTime = computePeriodTime(sampleFrequency);
+    }
+
+    public float getSampleFrequency() {
+        return sampleFrequency;
+    }
+
+    public void setPeriodTime(long periodTime) {
+        this.periodTime = periodTime;
+        sampleFrequency = computeSampleFrequency(periodTime);
+    }
+
+    protected long getPeriodTime() {
+        return periodTime;
+    }
+
+    /**
+     * @param taskType
+     *            the taskType to set
      */
     public void setTaskType(TaskType taskType) {
         this.taskType = taskType;

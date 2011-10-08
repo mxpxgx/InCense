@@ -11,10 +11,11 @@ import edu.incense.android.datatask.data.Data;
 
 public class DataSink extends DataTask implements InputEnabledTask {
     private final static String TAG = "DataSink";
-    private String name;
-    private List<Data> sink = null;
+    private final static int DEFAUL_MAX_SINK_SIZE = 50;
+    protected String name;
+    protected List<Data> sink = null;
 
-    private SinkWritter sinkWritter;
+    protected SinkWritter sinkWritter;
 
     public DataSink(SinkWritter sinkWritter) {
         this.sinkWritter = sinkWritter;
@@ -33,8 +34,8 @@ public class DataSink extends DataTask implements InputEnabledTask {
     public void stop() {
         super.stop();
         clearOutputs();
-        sinkWritter.writeSink(name, sink);
-        Log.d(TAG, "Sink sent to writter");
+        sinkWritter.writeSink(name, removeSink());
+        Log.d(TAG, "Sink sent to writter with size: "+sink.size());
     }
 
     protected void clearOutputs() {
@@ -56,13 +57,14 @@ public class DataSink extends DataTask implements InputEnabledTask {
             do {
                 latestData = i.pullData();
                 if (latestData != null) {
-                    //Log.d(TAG, "Data added to sink!");
                     sink.add(latestData);
-                    if(sink.size() >= 100){
+                    //Log.d(TAG, "Data added to sink!");
+                    if(sink.size() >= DEFAUL_MAX_SINK_SIZE){
+                        //Log.d(TAG, "Trying to write data...");
                         sinkWritter.writeSink(name, removeSink());
                     }
                 } else {
-                    //Log.d(TAG, "Data NOT added to sink!");
+//                    Log.d(TAG, "Data NOT added to sink!");
                 }
             } while (latestData != null);
         }

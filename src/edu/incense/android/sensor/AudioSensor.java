@@ -18,7 +18,6 @@ public class AudioSensor extends Sensor implements Runnable {
 
     public AudioSensor(Context context) {
         super(context);
-        thread = new Thread(this);
         // this.setPeriodTime(10000); // 10 seconds of audio
         //this.setSampleFrequency(8000);
     }
@@ -27,7 +26,7 @@ public class AudioSensor extends Sensor implements Runnable {
         // We’re important…
         android.os.Process
                 .setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
-        
+        Log.i(TAG, "Audio sensor REALLY STARTED");
         while (super.isSensing()) {
             try {
 
@@ -54,7 +53,7 @@ public class AudioSensor extends Sensor implements Runnable {
                 //}
 
             } catch (Exception e) {
-                Log.e(getClass().getName(), "Sleep: " + e);
+                Log.e(getClass().getName(), "Audio recording failed: " + e);
             }
         }
         audioRecord.stop();
@@ -66,14 +65,15 @@ public class AudioSensor extends Sensor implements Runnable {
 
     @Override
     public void start() {
-        Log.i(TAG, "Starting sensor");
         super.start();
         audioRecord = findAudioRecord((int)getSampleFrequency());
         Log.i(TAG, "AudioRecord initialized with buffer size: "+bufferSize);
         buffer = new short[bufferSize]; // bufferSize was obtained in the
                                         // finAudioRecord method
         startRecording();
+        thread = new Thread(this);
         thread.start();
+        Log.i(TAG, "AudioSensor started");
     }
 
     // private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100
@@ -114,18 +114,18 @@ public class AudioSensor extends Sensor implements Runnable {
 
     @Override
     public void stop() {
-        Log.i(TAG, "Trying to stop");
+//        Log.i(TAG, "Trying to stop");
         ///super.stop();
         super.setSensing(false);
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Sensor thread join failed", e);
-        }
-        Log.i(TAG, "Thread stopped");
-        Log.i(TAG, "Sensor stopped");
-        //audioRecord.release();
-        //Log.i(TAG, "Stopped and released");
+//        try {
+//            thread.join();
+//        } catch (InterruptedException e) {
+//            Log.e(TAG, "Sensor thread join failed", e);
+//        }
+//        Log.i(TAG, "Thread stopped");
+//        Log.i(TAG, "Sensor stopped");
+        audioRecord.release();
+        Log.i(TAG, "AudioSensor Stopped and released");
     }
 
     private void startRecording() {

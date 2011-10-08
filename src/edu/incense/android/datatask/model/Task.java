@@ -8,10 +8,13 @@ public class Task {
     private TaskType taskType;
     private String name;
     private float sampleFrequency;
+    private long periodTime;
     private JsonNode jsonNode;
 
     public Task() {
         taskType = TaskType.NULL;
+        sampleFrequency = -1.0f;
+        periodTime = -1L;
     }
 
     public JsonNode getJsonNode() {
@@ -102,5 +105,19 @@ public class Task {
 
     public float getSampleFrequency() {
         return sampleFrequency;
+    }
+
+    /**
+     * @param periodTime the periodTime to set
+     */
+    public void setPeriodTime(long periodTime) {
+        this.periodTime = periodTime;
+    }
+
+    /**
+     * @return the periodTime
+     */
+    public long getPeriodTime() {
+        return periodTime;
     }
 }

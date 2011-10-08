@@ -18,9 +18,10 @@ import edu.incense.android.datatask.data.Data;
  */
 public abstract class Sensor {
 //    private final static String TAG = "Sensor";
+    private final static int DEFAULT_PERIOD_TIME = 1000;
     private Context context; // Most sensors need context access
     private float sampleFrequency; // Sample frequency
-    private int periodTime; // Sleep time for each cycle (period time in
+    private long periodTime; // Sleep time for each cycle (period time in
                             // milliseconds)
     private volatile boolean sensing = false; // True when sensor is
                                               // active/running
@@ -33,6 +34,7 @@ public abstract class Sensor {
     private Sensor() {
         sensing = false;
         dataList = null;
+        setPeriodTime(DEFAULT_PERIOD_TIME);
     }
 
     protected Sensor(Context context) {
@@ -95,24 +97,24 @@ public abstract class Sensor {
     }
 
     /**
-     * Computes the period time based on a sample frequency
+     * Computes the period time (milliseconds) based on a sample frequency in Hz
      * 
      * @param sampleFrequency
      * @return
      */
-    private int computePeriodTime(float sampleFrequency) {
-        int periodTime = (int) ((1 / sampleFrequency) * 1000);
+    private long computePeriodTime(float sampleFrequency) {
+        long periodTime = (long) ((1.0f / sampleFrequency) * 1000f);
         return periodTime;
     }
 
     /**
-     * Computes the sample frequency based on a period time
+     * Computes the sample frequency (Hz) based on a period time in milliseconds
      * 
      * @param periodTime
      * @return
      */
     private float computeSampleFrequency(float periodTime) {
-        float sampleFrequency = ((1 / periodTime) * 1000);
+        float sampleFrequency = (float) ((1f / periodTime) * 1000f);
         return sampleFrequency;
     }
 
@@ -127,12 +129,12 @@ public abstract class Sensor {
         return sampleFrequency;
     }
 
-    public void setPeriodTime(int periodTime) {
+    public void setPeriodTime(long periodTime) {
         this.periodTime = periodTime;
         sampleFrequency = computeSampleFrequency(periodTime);
     }
 
-    protected int getPeriodTime() {
+    protected long getPeriodTime() {
         return periodTime;
     }
 

@@ -3,11 +3,14 @@
  */
 package edu.incense.android.project;
 
+import java.util.UUID;
+
 import android.content.Intent;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 
 import edu.incense.android.session.Session;
+import edu.incense.android.session.SessionService;
 
 /**
  * @author mxpxgx
@@ -15,6 +18,7 @@ import edu.incense.android.session.Session;
  */
 public class ProjectManager extends WakefulIntentService {
     private static final String TAG = "ProjectManager";
+    private long actionId;
 
     public ProjectManager() {
         super(TAG);
@@ -25,8 +29,15 @@ public class ProjectManager extends WakefulIntentService {
      */
     @Override
     protected void doWakefulWork(Intent intent) {
-        // TODO Auto-generated method stub
-        
+     // Start service for it to run the recording session
+        Intent sessionServiceIntent = new Intent(this, SessionService.class);
+        // Point out this action was triggered by a user
+        sessionServiceIntent.setAction(SessionService.SESSION_ACTION);
+        // Send unique id for this action
+        actionId = UUID.randomUUID().getLeastSignificantBits();
+        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+                actionId);
+        startService(sessionServiceIntent);
     }
     
     public void setUpdateAlarm(){

@@ -90,7 +90,9 @@ public class SessionController {
     public void stop() {
         for (DataTask dt : tasks) {
             Log.i(TAG, "Stoping: " + dt.getClass().getName());
-            dt.stop();
+            if(dt.isRunning()){
+                dt.stop();
+            }
             dt.clear();
         }
         // if(thread != null){

@@ -55,12 +55,17 @@ public class ResultsUploader {
         } else {
             // Check every file exist. If it doesn't exist, remove from queue.
             Queue<ResultFile> queue = fileQueue.getFileQueue();
+            List<ResultFile> nonexistantFiles = new ArrayList<ResultFile>();
             for (ResultFile rf : queue) {
                 File file = new File(rf.getFileName());
                 if (!file.exists()) {
-                    queue.remove(rf);
+                    nonexistantFiles.add(rf);
                 }
             }
+            for (ResultFile rf : nonexistantFiles) {
+                queue.remove(rf);
+            }
+            
         }
     }
 

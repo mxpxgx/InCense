@@ -2,6 +2,8 @@ package edu.incense.android.ui;
 
 import java.util.UUID;
 
+import com.commonsware.cwac.wakeful.WakefulIntentService;
+
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -168,7 +170,8 @@ public class RecordActivity extends MainMenuActivity {
         actionId = UUID.randomUUID().getLeastSignificantBits();
         sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
                 actionId);
-        startService(sessionServiceIntent);
+        WakefulIntentService.sendWakefulWork(this, sessionServiceIntent);
+//        startService(sessionServiceIntent);
         
 //        // Start service for it to run the recording session
 //        Intent surveyIntent = new Intent(this, SurveyService.class);
