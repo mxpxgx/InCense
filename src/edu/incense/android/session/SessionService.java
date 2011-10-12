@@ -1,12 +1,10 @@
 package edu.incense.android.session;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.UUID;
 
 import android.content.Intent;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -132,24 +130,27 @@ public class SessionService extends WakefulIntentService{//extends IntentService
         project = jsonProject.getProject(input);
     }
     
-    /**
-     * Reads project from JSON
-     */
-    private void loadPublicProject() {
-        JsonProject jsonProject = new JsonProject();
-        String projectFilename = getResources().getString(
-                R.string.project_filename);
-        String parentDirectory = getResources()
-        .getString(R.string.application_root_directory);
-        File parent = new File(Environment.getExternalStorageDirectory(), parentDirectory);
-        File file = new File(parent, projectFilename);
-        project = jsonProject.getProject(file);
-    }
+//    /**
+//     * Reads project from JSON
+//     */
+//    private void loadPublicProject() {
+//        JsonProject jsonProject = new JsonProject();
+//        String projectFilename = getResources().getString(
+//                R.string.project_filename);
+//        String parentDirectory = getResources()
+//        .getString(R.string.application_root_directory);
+//        File parent = new File(Environment.getExternalStorageDirectory(), parentDirectory);
+//        File file = new File(parent, projectFilename);
+//        project = jsonProject.getProject(file);
+//    }
 
     private void startSession(Session session) {
         SessionController controller = new SessionController(this, session);
+        Log.d(TAG, "Session controller initiated");
         controller.prepareSession();
+        Log.d(TAG, "Session controller prepared");
         controller.start();
+        Log.d(TAG, "Session started");
     }
     
     private Thread.UncaughtExceptionHandler onRuntimeError= new Thread.UncaughtExceptionHandler() {

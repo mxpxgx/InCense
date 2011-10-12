@@ -26,15 +26,15 @@ public class AudioDataSource extends DataTask implements OutputEnabledTask {
     }
 
     private ByteArrayOutputStream baos;
-    private BufferedOutputStream bos;
+    // private BufferedOutputStream bos;
     private DataOutputStream dos;
-    private int outPos = 0;
+    private int baosCurrentPosition = 0;
     private byte[] bufferArray = null;
     private byte[] tempArray;
 
     @Override
     public void start() {
-        outPos = 0;
+        baosCurrentPosition = 0;
         Log.d(TAG, "Starting...");
         startTime = System.currentTimeMillis();
         // File file = new File("/sdcard/audio.raw");
@@ -43,25 +43,25 @@ public class AudioDataSource extends DataTask implements OutputEnabledTask {
         // }
         // file.createNewFile();
         // bos = new BufferedOutputStream(new FileOutputStream(file));
-        baos = new ByteArrayOutputStream(256);
-        bos = new BufferedOutputStream(baos);
-        dos = new DataOutputStream(bos);
 
         sensor.start();
+        baos = new ByteArrayOutputStream(sensor.getBufferSize());
+        BufferedOutputStream bos = new BufferedOutputStream(baos);
+        dos = new DataOutputStream(bos);
         super.start();
     }
 
     @Override
     public void stop() {
-//        Log.d(TAG, "Stoping AudioDataSource...");
+        // Log.d(TAG, "Stoping AudioDataSource...");
         super.stop();
-//        Log.d(TAG, "Stoping AudioSensor...");
+        // Log.d(TAG, "Stoping AudioSensor...");
         sensor.stop();
-//        Log.d(TAG, "Stoped AudioSensor...");
+        // Log.d(TAG, "Stoped AudioSensor...");
         try {
             dos.flush();
             dos.close();
-            bos.close();
+            // bos.close();
         } catch (IOException e) {
             Log.e(TAG, "Stoping AudioDataSource failed", e);
         }
@@ -76,16 +76,16 @@ public class AudioDataSource extends DataTask implements OutputEnabledTask {
         // No inputs for DataSource
         inputs = null;
     }
-    
+
     @Override
     public void run() {
         while (isRunning) {
             try {
 
                 compute();
-//                if (getPeriodTime() > 1) {
-//                    Thread.sleep(getPeriodTime());
-//                }
+                // if (getPeriodTime() > 1) {
+                // Thread.sleep(getPeriodTime());
+                // }
             } catch (Exception e) {
                 Log.e(TAG, "Running failed: " + e);
             }
@@ -96,57 +96,67 @@ public class AudioDataSource extends DataTask implements OutputEnabledTask {
     protected void compute() {
         try {
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Failed to sleep", e);
-        }
-        
-        synchronized (mutex){
-            bufferArray = baos.toByteArray();
-        }
-        
-        if(bufferArray.length > outPos){
-            tempArray = new byte[bufferArray.length-outPos];
-            System.arraycopy(bufferArray, outPos, tempArray, 0, tempArray.length);
-            AudioData newData = new AudioData();
-            newData.setAudioFrame(tempArray);
-            outPos = bufferArray.length;
-            if (newData != null) {
-                this.pushToOutputs(newData);
-//                Log.i(getClass().getName(), "Pushed new audio data");
+
+            synchronized (mutex) {
+                bufferArray = baos.toByteArray();
+
+                // if (bufferArray.length > baosCurrentPosition) {
+                if (bufferArray.length > 0) {
+                    tempArray = new byte[bufferArray.length
+                            - baosCurrentPosition];
+                    System.arraycopy(bufferArray, 0, tempArray, 0,
+                            tempArray.length);
+                    // System.arraycopy(bufferArray, baosCurrentPosition,
+                    // tempArray, 0,
+                    // tempArray.length);
+                    AudioData newData = new AudioData();
+                    newData.setAudioFrame(tempArray);
+                    // newData.setAudioFrame(bufferArray);
+                    // baosCurrentPosition = bufferArray.length;
+                    if (newData != null) {
+                        this.pushToOutputs(newData);
+                        // Log.d(TAG, "Pushed new audio data");
+                    }
+                    baos.reset();
+
+                    // System.gc();
+                    // System.runFinalization();
+                    // System.gc();
+                    // else {
+                    // // Log.i(getClass().getName(), "NO DATA");
+                    // }
+                }
             }
-            
-//            System.gc();
-//            System.runFinalization();
-//            System.gc();
-//            else {
-//                // Log.i(getClass().getName(), "NO DATA");
-//            }
-        }
-        
-        if(duration >= 0){
-            long timeRunning = System.currentTimeMillis() - startTime;
-//            Log.d(TAG, "Comparing "+timeRunning+" >= "+duration);
-            if(this.isRunning && timeRunning >= duration){
-//                Log.d(TAG, "Stoping "+timeRunning+" >= "+duration);
-                this.stop();
+
+            if (duration >= 0) {
+                long timeRunning = System.currentTimeMillis() - startTime;
+                // Log.d(TAG, "Comparing "+timeRunning+" >= "+duration);
+                if (this.isRunning && timeRunning >= duration) {
+                    // Log.d(TAG, "Stoping "+timeRunning+" >= "+duration);
+                    this.stop();
+                }
             }
+        } catch (Exception e) {
+            Log.e(TAG, "Buffered failed", e);
         }
     }
 
     public void pushDataToBuffer(short[] tempBuffer, int bufferSize) {
-        synchronized(mutex){
+        if (!isRunning())
+            return;
+        synchronized (mutex) {
             try {
                 for (int i = 0; i < bufferSize; i++) {
                     dos.writeShort(tempBuffer[i]);
                 }
-//                if(dos.size()%20 < 1 || dos.size()%20 == 0){
-//                    Log.e(TAG, "New buffered received");
-//                }
-                
+                // if(dos.size()%20 < 1 || dos.size()%20 == 0){
+                // Log.e(TAG, "New buffered received");
+                // }
+
             } catch (IOException e) {
                 Log.e(TAG, "Writing RAW audio file failed", e);
             }
-            
+
             // AudioData newData = new AudioData();
             // newData.setAudioFrame(tempBuffer);
             // pushToOutputs(newData);

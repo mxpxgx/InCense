@@ -40,7 +40,7 @@ public class ShakeFilter extends DataFilter {
         AccelerometerFrameData accData = (AccelerometerFrameData) data;
         double[][] frame = accData.getFrame();
         boolean shake = false;
-        for(int i=0; i<accData.getSize(); i++){
+        for(int i=0; i<accData.getFrame().length; i++){
             shake = seekForShake(frame[i]);
             if(shake){
                 data.getExtras().putBoolean(ATT_ISSHAKE, true);

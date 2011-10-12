@@ -13,7 +13,7 @@ import edu.incense.android.survey.Survey;
  */
 public class SurveyGenerator {
     
-    public static Survey createWanderingSurvey(){
+    public static Survey createWanderingMindSurvey(){
         Survey survey = new Survey();
         survey.setId(101);
         survey.setTitle("Wandering Mind");

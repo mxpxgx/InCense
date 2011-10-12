@@ -36,8 +36,9 @@ public class DataTaskFactory {
         switch (task.getTaskType()) {
         case AccelerometerSensor:
             long frameTime = task.getLong(AccelerometerSensor.ATT_FRAMETIME, 1000);
+            long duration = task.getLong(AccelerometerSensor.ATT_DURATION, 500);
             Sensor sensor = AccelerometerSensor.createAccelerometer(
-                    context, frameTime);
+                    context, frameTime, duration);
             if (task.getSampleFrequency() > 0) {
                 sensor.setSampleFrequency(task.getSampleFrequency());
             } else if (task.getPeriodTime() > 0) {
@@ -52,9 +53,9 @@ public class DataTaskFactory {
             dataTask = new DataSource(new TimerSensor(context, period));
             break;
         case AudioSensor:
-            long duration = task.getLong("duration", -1);
-            AudioSensor as = new AudioSensor(context);
-            dataTask = new AudioDataSource(as, duration);
+            long audioDuration = task.getLong("duration", -1);
+            AudioSensor as = new AudioSensor(context, task.getSampleFrequency());
+            dataTask = new AudioDataSource(as, audioDuration);
             as.addSourceTask((AudioDataSource) dataTask); // AudioSensor is
                                                           // faster than
                                                           // DataTask
@@ -71,8 +72,9 @@ public class DataTaskFactory {
             break;
         case GyroscopeSensor:
             long frameTime2 = task.getLong(AccelerometerSensor.ATT_FRAMETIME, 1000);
+            long duration2 = task.getLong(AccelerometerSensor.ATT_DURATION, 500);
             Sensor sensor2 = AccelerometerSensor.createGyroscope(
-                    context, frameTime2);
+                    context, frameTime2, duration2);
             if (task.getSampleFrequency() > 0) {
                 sensor2.setSampleFrequency(task.getSampleFrequency());
             } else if (task.getPeriodTime() > 0) {

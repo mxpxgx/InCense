@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
+import android.os.Looper;
 import android.util.Log;
 import edu.incense.android.datatask.AudioDataSource;
 
@@ -16,13 +17,18 @@ public class AudioSensor extends Sensor implements Runnable {
     private int mSamplesRead;
     private AudioDataSource dataSource;
 
-    public AudioSensor(Context context) {
+    public AudioSensor(Context context, float sampleFrequency) {
         super(context);
         // this.setPeriodTime(10000); // 10 seconds of audio
-        //this.setSampleFrequency(8000);
+        this.setSampleFrequency(sampleFrequency);
+        audioRecord = findAudioRecord((int)getSampleFrequency());
+        Log.i(TAG, "AudioRecord initialized with buffer size: "+bufferSize);
+        buffer = new short[bufferSize]; // bufferSize was obtained in the
+                                        // finAudioRecord method
     }
 
     public void run() {
+        Looper.prepare();
         // We’re important…
         android.os.Process
                 .setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
@@ -33,10 +39,11 @@ public class AudioSensor extends Sensor implements Runnable {
                 //if (audioRecord.getState() == AudioRecord.RECORDSTATE_RECORDING) {
                     //Log.i(TAG, "Starting to read");
                     mSamplesRead = audioRecord.read(buffer, 0, bufferSize);
+//                    Log.i(TAG, "Buffer size: "+buffer.length);
 
 //                    if (mSamplesRead != AudioRecord.ERROR_BAD_VALUE
 //                            && mSamplesRead != AudioRecord.ERROR_INVALID_OPERATION) {
-                        //Log.i(TAG, "Valid reading");
+//                        Log.i(TAG, "Valid reading");
                         //short[] tempBuffer = new short[bufferSize];
                         //System.arraycopy(buffer, 0, tempBuffer, 0, bufferSize);
                         
@@ -53,23 +60,30 @@ public class AudioSensor extends Sensor implements Runnable {
                 //}
 
             } catch (Exception e) {
-                Log.e(getClass().getName(), "Audio recording failed: " + e);
+                Log.e(TAG, "Audio recording failed: " + e);
             }
         }
-        audioRecord.stop();
+        try{
+            audioRecord.stop();
+//            audioRecord.release();
+            Log.i(TAG, "AudioSensor stopped and released");
+        } catch (Exception e) {
+            Log.e(TAG, "Audio stoping failed: " + e);
+        }
     }
     
     public void addSourceTask(AudioDataSource ds){
         dataSource = ds;
     }
+    
+    public int getBufferSize(){
+        return bufferSize;
+    }
 
     @Override
     public void start() {
         super.start();
-        audioRecord = findAudioRecord((int)getSampleFrequency());
-        Log.i(TAG, "AudioRecord initialized with buffer size: "+bufferSize);
-        buffer = new short[bufferSize]; // bufferSize was obtained in the
-                                        // finAudioRecord method
+
         startRecording();
         thread = new Thread(this);
         thread.start();
@@ -89,16 +103,30 @@ public class AudioSensor extends Sensor implements Runnable {
                         AudioFormat.CHANNEL_IN_MONO,
                         AudioFormat.CHANNEL_IN_STEREO }) {
                     try {
-                        Log.d(TAG, "Attempting rate " + rate + "Hz, bits: "
-                                + audioFormat + ", channel: " + channelConfig);
-                        bufferSize = AudioRecord.getMinBufferSize(rate,
+                        int minBufferSize = AudioRecord.getMinBufferSize(rate,
                                 channelConfig, audioFormat);
 
-                        if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
+                        if (minBufferSize != AudioRecord.ERROR_BAD_VALUE && minBufferSize != AudioRecord.ERROR) {
+                            //bytes per sample
+                            int bytes=1;
+                            if(audioFormat == AudioFormat.ENCODING_PCM_8BIT){
+                                bytes = 1;
+                            } else if(audioFormat == AudioFormat.ENCODING_PCM_16BIT){
+                                bytes = 2;
+                            }
+                            
+                            bufferSize = (bytes * rate) / 2;
+                            bufferSize = bufferSize * 2;
+                            bufferSize = bufferSize < minBufferSize? minBufferSize : bufferSize;
+
+                            Log.d(TAG, "Attempting rate " + rate + "Hz, bits: "
+                                    + bytes*2 + ", channel: " + channelConfig);
+                                
                             // check if we can instantiate and have a success
                             AudioRecord recorder = new AudioRecord(
                                     AudioSource.DEFAULT, rate, channelConfig,
                                     audioFormat, bufferSize);
+                            
 
                             if (recorder.getState() == AudioRecord.STATE_INITIALIZED)
                                 return recorder;
@@ -124,8 +152,6 @@ public class AudioSensor extends Sensor implements Runnable {
 //        }
 //        Log.i(TAG, "Thread stopped");
 //        Log.i(TAG, "Sensor stopped");
-        audioRecord.release();
-        Log.i(TAG, "AudioSensor Stopped and released");
     }
 
     private void startRecording() {
