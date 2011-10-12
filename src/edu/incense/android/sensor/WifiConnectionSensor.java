@@ -14,6 +14,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
+import android.provider.Settings;
 import android.util.Log;
 import edu.incense.android.datatask.data.Data;
 import edu.incense.android.datatask.data.WifiData;
@@ -23,23 +25,24 @@ import edu.incense.android.datatask.data.WifiData;
  * 
  */
 public class WifiConnectionSensor extends Sensor {
-    public final static String TAG = "WifiConnectionFilter";
+    public final static String TAG = "WifiConnectionSensor";
     public final static String ATT_ISCONNECTED = "isConnected";
     private boolean connected;
     private WifiConfiguration connectedConfig;
     private WifiInfo connectedWifiInfo;
-    private WifiManager wifi;
+    private WifiManager wifiManager;
 
     public WifiConnectionSensor(Context context) {
         super(context);
 
         // WifiManager initiation
         String service = Context.WIFI_SERVICE;
-        wifi = (WifiManager) context.getSystemService(service);
+        wifiManager = (WifiManager) context.getSystemService(service);
 
         // Initiate other attributes
         connectedConfig = null;
         connectedWifiInfo = null;
+
     }
 
     @Override
@@ -49,16 +52,18 @@ public class WifiConnectionSensor extends Sensor {
         enableWifi();
 
         connectedConfig = getConnectedConfig();
-        if (connectedConfig != null){
-            connectedWifiInfo = wifi.getConnectionInfo();;
+        if (connectedConfig != null) {
+            connectedWifiInfo = wifiManager.getConnectionInfo();
             setConnected(true);
         } else {
-            //Generate empty data
+            // Generate empty data
             Data newData = new WifiData();
             newData.getExtras().putBoolean(ATT_ISCONNECTED, false);
             currentData = newData;
         }
         registerBroadcastReceivers();
+        
+        forceWifiToStayOn();
     }
     
     @Override
@@ -66,15 +71,50 @@ public class WifiConnectionSensor extends Sensor {
         super.stop();
         setSensing(false);
         unregisterBroadcastReceivers();
+        disableWifi();
+        
+        letWifiToTurnOff();
+    }
+    
+    private WifiLock wifiLock;
+    private void forceWifiToStayOn(){
+        // Set WiFi sleep policy to never
+        Settings.System.putInt(getContext().getContentResolver(),
+                Settings.System.WIFI_SLEEP_POLICY,
+                Settings.System.WIFI_SLEEP_POLICY_NEVER);
+        
+        WifiLock wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL , "MyWifiLock");
+        if(!wifiLock.isHeld()){
+            wifiLock.acquire();
+        }
+    }
+    
+    private void letWifiToTurnOff(){
+        // Set WiFi sleep policy to default
+        Settings.System.putInt(getContext().getContentResolver(),
+                Settings.System.WIFI_SLEEP_POLICY,
+                Settings.System.WIFI_SLEEP_POLICY_DEFAULT);
+        wifiLock.release();
     }
 
     /**
      * Enable wifi, if needed
      */
+    boolean wasEnabled = false;
+
     private void enableWifi() {
-        if (!wifi.isWifiEnabled()) {
-            if (wifi.getWifiState() != WifiManager.WIFI_STATE_ENABLING) {
-                wifi.setWifiEnabled(true);
+        wasEnabled = wifiManager.isWifiEnabled();
+        if (!wasEnabled) {
+            if (wifiManager.getWifiState() != WifiManager.WIFI_STATE_ENABLING) {
+                wifiManager.setWifiEnabled(true);
+            }
+        }
+    }
+
+    private void disableWifi() {
+        if (wifiManager.isWifiEnabled() && !wasEnabled) {
+            if (wifiManager.getWifiState() != WifiManager.WIFI_STATE_DISABLING) {
+                wifiManager.setWifiEnabled(false);
             }
         }
     }
@@ -97,7 +137,7 @@ public class WifiConnectionSensor extends Sensor {
      * @return
      */
     private WifiConfiguration getConnectedConfig() {
-        List<WifiConfiguration> configList = wifi.getConfiguredNetworks();
+        List<WifiConfiguration> configList = wifiManager.getConfiguredNetworks();
         for (WifiConfiguration config : configList) {
             Log.d(TAG, config.SSID + ", status: " + config.status);
             if (config.status == WifiConfiguration.Status.CURRENT) {
@@ -108,7 +148,7 @@ public class WifiConnectionSensor extends Sensor {
     }
 
     private void setConnected(boolean connected) {
-        if(connectedWifiInfo != null){
+        if (connectedWifiInfo != null) {
             this.connected = connected;
             Data newData = new WifiData(connectedWifiInfo);
             newData.getExtras().putBoolean(ATT_ISCONNECTED, connected);
@@ -140,16 +180,17 @@ public class WifiConnectionSensor extends Sensor {
                 if (isConnected() && disconnected && isWifi) {
                     Log.d(TAG, "WiFi connection lost!");
                     setConnected(false);
-//                    Toast.makeText(context, "WiFi connection lost",
-//                            Toast.LENGTH_LONG).show();
+                    // Toast.makeText(context, "WiFi connection lost",
+                    // Toast.LENGTH_LONG).show();
+                    //TODO should try to reconnect
                 }
 
                 if (!isConnected() && !disconnected && isWifi) {
                     Log.d(TAG, "WiFi connection established!");
-                    connectedWifiInfo = wifi.getConnectionInfo();
+                    connectedWifiInfo = wifiManager.getConnectionInfo();
                     setConnected(true);
-//                    Toast.makeText(context, "WiFi connection established",
-//                            Toast.LENGTH_LONG).show();
+                    // Toast.makeText(context, "WiFi connection established",
+                    // Toast.LENGTH_LONG).show();
                 }
 
             }

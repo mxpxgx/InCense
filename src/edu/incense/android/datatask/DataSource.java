@@ -2,12 +2,11 @@ package edu.incense.android.datatask;
 
 import java.util.ArrayList;
 
-import android.util.Log;
 import edu.incense.android.datatask.data.Data;
 import edu.incense.android.sensor.Sensor;
 
 public class DataSource extends DataTask implements OutputEnabledTask {
-    private final static String TAG = "DataSource";
+//    private final static String TAG = "DataSource";
     Sensor sensor;
 
     public DataSource(Sensor sensor) {

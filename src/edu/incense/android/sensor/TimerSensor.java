@@ -11,12 +11,13 @@ import edu.incense.android.datatask.data.others.BooleanData;
 
 /**
  * @author mxpxgx
- *
+ * 
  */
-public class TimerSensor extends Sensor{
+public class TimerSensor extends Sensor {
+//    private final static String TAG = "TimerSensor";
     private ScheduledThreadPoolExecutor stpe;
     private long period;
-    
+
     /**
      * @param context
      */
@@ -24,7 +25,7 @@ public class TimerSensor extends Sensor{
         super(context);
         this.period = period;
     }
-    
+
     /**
      * @return the period
      */
@@ -33,7 +34,8 @@ public class TimerSensor extends Sensor{
     }
 
     /**
-     * @param period the period to set
+     * @param period
+     *            the period to set
      */
     public void setPeriod(long period) {
         this.period = period;
@@ -46,7 +48,8 @@ public class TimerSensor extends Sensor{
     public synchronized void start() {
         super.start();
         stpe = new ScheduledThreadPoolExecutor(1);
-        stpe.scheduleAtFixedRate(timerRunnable, 0, period, TimeUnit.MILLISECONDS);
+        stpe.scheduleAtFixedRate(timerRunnable, 0, period,
+                TimeUnit.MILLISECONDS);
     }
 
     /**

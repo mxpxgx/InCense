@@ -35,51 +35,62 @@ public class SessionController {
         // Map<String, DataTask> taskCollection =
         // InCenseApplication.getInstance()
         // .getTaskCollection();
-        Map<String, DataTask> taskCollection = ((InCenseApplication) context
-                .getApplicationContext()).getTaskCollection();
+        try {
+            Map<String, DataTask> taskCollection = ((InCenseApplication) context
+                    .getApplicationContext()).getTaskCollection();
 
-        // Initializes DataTasks if necessary
-        List<Task> tasks = session.getTasks();
-        DataTask dataTask = null;
-        for (Task t : tasks) {
-            dataTask = taskCollection.get(t.getName());
-            if (dataTask == null) {
-                dataTask = DataTaskFactory.createDataTask(t, context);
-                taskCollection.put(t.getName(), dataTask);
-                Log.i(getClass().getName(), "DataTask added: " + t.getName());
+            // Initializes DataTasks if necessary
+            List<Task> tasks = session.getTasks();
+            DataTask dataTask = null;
+            for (Task t : tasks) {
+                dataTask = taskCollection.get(t.getName());
+                if (dataTask == null) {
+                    dataTask = DataTaskFactory.createDataTask(t, context);
+                    taskCollection.put(t.getName(), dataTask);
+                    Log.i(TAG, "DataTask added: " + t.getName());
+                }
+                this.tasks.add(dataTask);
             }
-            this.tasks.add(dataTask);
-        }
 
-        // Establish relationships
-        List<TaskRelation> relations = session.getRelations();
-        if(relations != null){
-            PipeBuffer pipeBuffer;
-            OutputEnabledTask outputTask;
-            InputEnabledTask inputTask;
-            for (TaskRelation tr : relations) {
-                DataTask task1 = taskCollection.get(tr.getTask1());
-                //When first task is a trigger
-                if(task1.getTaskType() == TaskType.Trigger){
-                    GeneralTrigger trigger = (GeneralTrigger)task1;
-                    if(tr.getTask2().endsWith("Survey")){
-                        trigger.addSurvey(tr.getTask2());
-                    } else if(tr.getTask2().endsWith("Session")){
-                        trigger.addSession(tr.getTask2());
-                    } else {
-                        DataTask task2 = (DataTask)taskCollection.get(tr.getTask2());
-                        trigger.addTask(task2);
+            // Establish relationships
+            List<TaskRelation> relations = session.getRelations();
+            Log.d(TAG, "Starting to add relations: "+relations.size());
+            if (relations != null) {
+                PipeBuffer pipeBuffer;
+                OutputEnabledTask outputTask;
+                InputEnabledTask inputTask;
+                for (TaskRelation tr : relations) {
+                    DataTask task1 = taskCollection.get(tr.getTask1());
+                    // When first task is a trigger
+                    if (task1.getTaskType() == TaskType.Trigger
+                            || task1.getTaskType() == TaskType.StopTrigger) {
+                        GeneralTrigger trigger = (GeneralTrigger) task1;
+                        if (tr.getTask2().endsWith("Survey")) {
+                            trigger.addSurvey(tr.getTask2());
+                        } else if (tr.getTask2().endsWith("Session")) {
+                            trigger.addSession(tr.getTask2());
+                        } else {
+                            DataTask task2 = (DataTask) taskCollection.get(tr
+                                    .getTask2());
+                            
+                            trigger.addTask(task2);
+                        }
                     }
-                } 
-                //When is not a trigger
-                else {
-                    outputTask = (OutputEnabledTask) taskCollection.get(tr.getTask1());
-                    inputTask = (InputEnabledTask) taskCollection.get(tr.getTask2());
-                    pipeBuffer = new PipeBuffer();
-                    outputTask.addOutput(pipeBuffer);
-                    inputTask.addInput(pipeBuffer);
+                    // When is not a trigger
+                    else {
+                        outputTask = (OutputEnabledTask) taskCollection.get(tr
+                                .getTask1());
+                        inputTask = (InputEnabledTask) taskCollection.get(tr
+                                .getTask2());
+                        pipeBuffer = new PipeBuffer();
+                        outputTask.addOutput(pipeBuffer);
+                        inputTask.addInput(pipeBuffer);
+                    }
+                    Log.d(TAG, "Relation added: "+tr.getTask1()+" and "+tr.getTask2());
                 }
             }
+        } catch (Exception e) {
+            Log.e(TAG, "Preparing controller failed", e);
         }
     }
 
@@ -90,7 +101,7 @@ public class SessionController {
     public void stop() {
         for (DataTask dt : tasks) {
             Log.i(TAG, "Stoping: " + dt.getClass().getName());
-            if(dt.isRunning()){
+            if (dt.isRunning()) {
                 dt.stop();
             }
             dt.clear();
@@ -102,19 +113,19 @@ public class SessionController {
     }
 
     private void run() {
-        for (DataTask dt : tasks) {
-            Log.i(TAG, "Starting: " + dt.getClass().getName());
-            dt.start();
-        }
-        Log.i(getClass().getName(), "Sleeping: " + session.getDuration()
-                + " ms");
         try {
+            for (DataTask dt : tasks) {
+                Log.i(TAG, "Starting: " + dt.getClass().getName());
+                dt.start();
+            }
+            Log.i(getClass().getName(), "Sleeping: " + session.getDuration()
+                    + " ms");
             Thread.sleep(session.getDuration());
-        } catch (InterruptedException e) {
+            stop();
+        } catch (Exception e) {
             Log.e(TAG, "Failed to sleep for " + session.getDuration() + " ms",
                     e);
         }
-        stop();
     }
 
 }

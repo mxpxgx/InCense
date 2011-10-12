@@ -6,6 +6,7 @@ import java.util.List;
 import edu.incense.android.datatask.data.Data;
 import edu.incense.android.datatask.model.TaskType;
 
+import android.os.Looper;
 import android.util.Log;
 
 public abstract class DataTask implements Runnable {
@@ -82,6 +83,7 @@ public abstract class DataTask implements Runnable {
     /*** Threads & Runnable ***/
 
     public void run() {
+        Looper.prepare();
         while (isRunning) {
             try {
 

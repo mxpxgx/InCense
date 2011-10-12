@@ -14,7 +14,7 @@ public class PipeBuffer implements Input, Output {
 
     public Data pullData() {
         if (!dataBuffer.isEmpty())
-            return dataBuffer.poll();
+            return dataBuffer.remove();
         else
             return null;
     }

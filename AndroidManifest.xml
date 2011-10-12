@@ -6,7 +6,7 @@
     android:versionName="1.0">
 
     <uses-sdk
-        android:minSdkVersion="7"
+        android:minSdkVersion="9"
         android:targetSdkVersion="10" />
 
     <supports-screens
@@ -44,6 +44,8 @@
         android:name="android.permission.WAKE_LOCK" />
     <uses-permission
         android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS" />
 
     <uses-feature
         android:name="android.hardware.nfc"
