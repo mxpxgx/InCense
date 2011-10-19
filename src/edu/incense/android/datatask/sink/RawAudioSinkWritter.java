@@ -22,7 +22,7 @@ public class RawAudioSinkWritter implements SinkWritter {
     private static final String TAG = "RawAudioSinkWritter";
     private Context context;
     private ResultFile resultFile;
-    private BufferedOutputStream bos;
+//    private BufferedOutputStream bos;
     private DataOutputStream dos;
 
     public RawAudioSinkWritter(Context context) {
@@ -85,7 +85,7 @@ public class RawAudioSinkWritter implements SinkWritter {
         Log.d(TAG, "Saving to file: " + resultFile.getFileName());
         try {
             File file = new File(resultFile.getFileName());
-            bos = new BufferedOutputStream(new FileOutputStream(file));
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
             dos = new DataOutputStream(bos);
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Initializing writing streams failed", e);
@@ -96,7 +96,7 @@ public class RawAudioSinkWritter implements SinkWritter {
         try {
             dos.flush();
             dos.close();
-            bos.close();
+//            bos.close();
         } catch (IOException e) {
             Log.e(TAG, "Closing writing streams failed", e);
         }
