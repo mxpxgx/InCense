@@ -17,6 +17,13 @@ import edu.incense.android.datatask.model.TaskRelation;
 import edu.incense.android.datatask.model.TaskType;
 import edu.incense.android.datatask.trigger.GeneralTrigger;
 
+/**
+ * Prepares/starts/stops the actual recording session using a thread(?).
+ * 
+ * @author mxpxgx
+ * 
+ */
+
 public class SessionController {
     private static final String TAG = "SessionController";
 
@@ -96,7 +103,8 @@ public class SessionController {
     }
 
     public void start() {
-        run();
+        Thread thread = new Thread(sessionRunnable);
+        thread.start();
     }
 
     public void stop() {
@@ -132,19 +140,21 @@ public class SessionController {
         return duration;
     }
 
-    private void run() {
-        long duration = getDuration(session);
-        try {
-            for (DataTask dt : tasks) {
-                Log.i(TAG, "Starting: " + dt.getClass().getName());
-                dt.start();
+    Runnable sessionRunnable = new Runnable() {
+        public void run() {
+            long duration = getDuration(session);
+            try {
+                for (DataTask dt : tasks) {
+                    Log.i(TAG, "Starting: " + dt.getClass().getName());
+                    dt.start();
+                }
+                Log.i(getClass().getName(), "Sleeping: " + duration + " ms");
+                Thread.sleep(duration);
+                stop();
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to sleep for " + duration + " ms", e);
             }
-            Log.i(getClass().getName(), "Sleeping: " + duration + " ms");
-            Thread.sleep(duration);
-            stop();
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to sleep for " + duration + " ms", e);
         }
-    }
+    };
 
 }

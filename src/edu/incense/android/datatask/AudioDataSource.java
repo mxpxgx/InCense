@@ -79,7 +79,7 @@ public class AudioDataSource extends DataTask implements OutputEnabledTask {
 
     @Override
     public void run() {
-        while (isRunning) {
+        while (isRunning()) {
             try {
 
                 compute();
@@ -131,7 +131,7 @@ public class AudioDataSource extends DataTask implements OutputEnabledTask {
             if (duration >= 0) {
                 long timeRunning = System.currentTimeMillis() - startTime;
                 // Log.d(TAG, "Comparing "+timeRunning+" >= "+duration);
-                if (this.isRunning && timeRunning >= duration) {
+                if (this.isRunning() && timeRunning >= duration) {
                     // Log.d(TAG, "Stoping "+timeRunning+" >= "+duration);
                     this.stop();
                 }

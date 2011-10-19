@@ -42,7 +42,8 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(1000 * 60 * 60);
+        session.setDurationUnits(60);
+        session.setDurationMeasure("minutes");
 
         List<Task> tasks = new ArrayList<Task>();
 
@@ -100,7 +101,8 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(60 * 1000);
+        session.setDurationUnits(1);
+        session.setDurationMeasure("minutes");
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();
@@ -159,7 +161,8 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(1000L * 60L * 60L * 24L * 4L); // 4days
+        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();
@@ -288,7 +291,8 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(1000 * 50);
+        session.setDurationUnits(1); //1 minute
+        session.setDurationMeasure("minutes");
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();
@@ -363,7 +367,8 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(1000L * 60L * 60L * 24L * 4L); // 4days
+        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();
@@ -401,7 +406,7 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(1000L * 60L * 60L * 24L * 4L); // 4days
+        session.setDurationUnits(1000L * 60L * 60L * 24L * 4L); // 4days
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();
@@ -438,7 +443,8 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(1000L * 60L * 60L * 24L * 4L); // 4days
+        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();
@@ -478,7 +484,8 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(1000L * 60L * 60L * 24L * 4L); // 4days
+        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();
@@ -586,7 +593,8 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(1000L * 60L * 60L * 24L * 4L); // 4days
+        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();

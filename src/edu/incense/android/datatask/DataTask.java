@@ -19,25 +19,25 @@ public abstract class DataTask implements Runnable {
                                // milliseconds)
     private TaskType taskType;
     private Thread thread = null;
-    protected boolean isRunning = false;
+    private boolean running = false;
 
     /**
      * @return the isRunning
      */
-    public boolean isRunning() {
-        return isRunning;
+    public synchronized boolean isRunning() {
+        return running;
     }
 
     /**
      * @param isRunning the isRunning to set
      */
-    public void setRunning(boolean isRunning) {
-        this.isRunning = isRunning;
+    public synchronized void setRunning(boolean running) {
+        this.running = running;
     }
 
     public DataTask() {
         // thread = new Thread(this);
-        isRunning = false;
+        running = false;
         setPeriodTime(DEFAULT_PERIOD_TIME);
     }
 
@@ -84,7 +84,7 @@ public abstract class DataTask implements Runnable {
 
     public void run() {
         Looper.prepare();
-        while (isRunning) {
+        while (isRunning()) {
             try {
 
                 compute();
@@ -99,12 +99,12 @@ public abstract class DataTask implements Runnable {
 
     public void start() {
         thread = new Thread(this);
-        isRunning = true;
+        setRunning(true);
         thread.start();
     }
 
     public void stop() {
-        isRunning = false;
+        setRunning(false);
 //        try {
 //            thread.join();
 //        } catch (InterruptedException e) {
