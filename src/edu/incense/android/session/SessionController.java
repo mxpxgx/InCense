@@ -54,7 +54,7 @@ public class SessionController {
 
             // Establish relationships
             List<TaskRelation> relations = session.getRelations();
-            Log.d(TAG, "Starting to add relations: "+relations.size());
+            Log.d(TAG, "Starting to add relations: " + relations.size());
             if (relations != null) {
                 PipeBuffer pipeBuffer;
                 OutputEnabledTask outputTask;
@@ -72,7 +72,7 @@ public class SessionController {
                         } else {
                             DataTask task2 = (DataTask) taskCollection.get(tr
                                     .getTask2());
-                            
+
                             trigger.addTask(task2);
                         }
                     }
@@ -86,7 +86,8 @@ public class SessionController {
                         outputTask.addOutput(pipeBuffer);
                         inputTask.addInput(pipeBuffer);
                     }
-                    Log.d(TAG, "Relation added: "+tr.getTask1()+" and "+tr.getTask2());
+                    Log.d(TAG, "Relation added: " + tr.getTask1() + " and "
+                            + tr.getTask2());
                 }
             }
         } catch (Exception e) {
@@ -112,19 +113,37 @@ public class SessionController {
         // }
     }
 
+    /**
+     * Returns duration in milliseconds based on the measure and units of the
+     * duration of the session. If measure type is not valid, returns the
+     * duration units.
+     * 
+     * @param session
+     * @return
+     */
+    private long getDuration(Session session) {
+        long duration = session.getDurationUnits();
+        String measure = session.getDurationMeasure();
+        if (measure.compareTo("minutes") == 0) {
+            duration = duration * 1000L * 60L;
+        } else if (measure.compareTo("hours") == 0) {
+            duration = duration * 1000L * 60L * 60L;
+        }
+        return duration;
+    }
+
     private void run() {
+        long duration = getDuration(session);
         try {
             for (DataTask dt : tasks) {
                 Log.i(TAG, "Starting: " + dt.getClass().getName());
                 dt.start();
             }
-            Log.i(getClass().getName(), "Sleeping: " + session.getDuration()
-                    + " ms");
-            Thread.sleep(session.getDuration());
+            Log.i(getClass().getName(), "Sleeping: " + duration + " ms");
+            Thread.sleep(duration);
             stop();
         } catch (Exception e) {
-            Log.e(TAG, "Failed to sleep for " + session.getDuration() + " ms",
-                    e);
+            Log.e(TAG, "Failed to sleep for " + duration + " ms", e);
         }
     }
 

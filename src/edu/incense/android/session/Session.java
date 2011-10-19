@@ -1,26 +1,52 @@
 package edu.incense.android.session;
 
 import java.util.List;
-
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.model.TaskRelation;
 
+/**
+ * Session model, contains the session configuration.
+ * Used by the session manager to start a recording session.
+ * @author mxpxgx
+ * @version 1.0
+ * @since 10/18/2011
+ */
+
 public class Session {
+    private String name;
     private List<Task> tasks;
     private List<TaskRelation> relations;
-    private long duration; // Time length of recording session
+    private String durationMeasure; // Time length of recording session
+    private long durationUnits; // Time length of recording session
     private boolean autoTriggered; // automatically triggered
     private long startDate; // The date when this session will be executed for
                             // the first time
     private long endDate; // If it's repeating, the date it will stop repeating.
-    private RepeatType repeatType; // Type of repeating units (eg. Hours)
+    private String repeatMeasure; // Type of repeating units (eg. Hours)
     private int repeatUnits; // The repeating units length (eg. 8)
                              // If repeatType = hours and repeatUnits = 8, then
                              // this session will repeat every 8 hours
+    private boolean repeat;
+    private boolean notices;
+    private String sessionType;
 
     public enum RepeatType {
         NOT_REPEATABLE, MINUTES, HOURS, DAYS, WEEKS, MONTHS
     };
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
     public List<Task> getTasks() {
         return tasks;
@@ -38,12 +64,20 @@ public class Session {
         this.relations = relations;
     }
 
-    public void setDuration(long duration) {
-        this.duration = duration;
+    public void setDurationMeasure(String durationMeasure) {
+        this.durationMeasure = durationMeasure;
     }
 
-    public long getDuration() {
-        return duration;
+    public String getDurationMeasure() {
+        return durationMeasure;
+    }
+    
+    public void setDurationUnits(long durationUnits) {
+        this.durationUnits = durationUnits;
+    }
+    
+    public long getDurationUnits() {
+        return durationUnits;
     }
 
     /**
@@ -92,15 +126,15 @@ public class Session {
     /**
      * @param repeatType the repeatType to set
      */
-    public void setRepeatType(RepeatType repeatType) {
-        this.repeatType = repeatType;
+    public void setRepeatMeasure(String repeatMeasure) {
+        this.repeatMeasure = repeatMeasure;
     }
 
     /**
-     * @return the repeatType
+     * @return the type
      */
-    public RepeatType getRepeatType() {
-        return repeatType;
+    public String getRepeatMeasure() {
+        return repeatMeasure;
     }
 
     /**
@@ -117,4 +151,45 @@ public class Session {
         return repeatUnits;
     }
 
+    /**
+     * @return the repeat
+     */
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    /**
+     * @param repeat the repeat to set
+     */
+    public void setRepeat(boolean repeatType) {
+        this.repeat = repeatType;
+    }
+
+    /**
+     * @return the notices
+     */
+    public boolean isNotices() {
+        return notices;
+    }
+
+    /**
+     * @param notices the notices to set
+     */
+    public void setNotices(boolean notices) {
+        this.notices = notices;
+    }
+
+    /**
+     * @param sessionType the sessionType to set
+     */
+    public void setSessionType(String sessionType) {
+        this.sessionType = sessionType;
+    }
+
+    /**
+     * @return the sessionType
+     */
+    public String getSessionType() {
+        return sessionType;
+    }
 }
