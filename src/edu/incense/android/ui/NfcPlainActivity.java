@@ -14,6 +14,8 @@ import android.media.MediaPlayer;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
@@ -25,7 +27,7 @@ import edu.incense.android.R;
  * 
  */
 public class NfcPlainActivity extends Activity {
-    private static final String TAG = "NfcActivity";
+    private static final String TAG = "NfcPlainActivity";
     private NfcAdapter mNfcAdapter;
     private MediaPlayer ring;
 
@@ -51,8 +53,12 @@ public class NfcPlainActivity extends Activity {
         try {
             ndefDetected.addDataType("application/incense-nfctag");
         } catch (MalformedMimeTypeException e) {
+            Log.e(TAG, "Ndef intent filter failed", e);
         }
-        mNdefExchangeFilters = new IntentFilter[] { ndefDetected };
+        IntentFilter techDetected = new IntentFilter(
+                NfcAdapter.ACTION_TECH_DISCOVERED);
+        
+        mNdefExchangeFilters = new IntentFilter[] { ndefDetected, techDetected };
 
         // Intent filters for writing to a tag
         IntentFilter tagDetected = new IntentFilter(
@@ -112,6 +118,13 @@ public class NfcPlainActivity extends Activity {
             sendBroadcast(message);
 
             runnable.resetEventTime();
+        } else if(NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())){
+            String message = getNfcAMessage(intent);
+            this.setIntent(intent);
+
+            sendBroadcast(message);
+
+            runnable.resetEventTime();
         }
 
     }
@@ -159,7 +172,7 @@ public class NfcPlainActivity extends Activity {
         }
     }
 
-    NdefMessage[] getNdefMessages(Intent intent) {
+    private NdefMessage[] getNdefMessages(Intent intent) {
         // Parse the intent
         NdefMessage[] msgs = null;
         String action = intent.getAction();
@@ -185,6 +198,19 @@ public class NfcPlainActivity extends Activity {
             finish();
         }
         return msgs;
+    }
+    private String getNfcAMessage(Intent intent) {
+        // Parse the intent
+        String msg = null;
+        String action = intent.getAction();
+        if(NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)){
+            Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.ACTION_TECH_DISCOVERED);
+            if(tag != null){
+                NfcA nfcA = NfcA.get(tag);
+                msg = new String(nfcA.getAtqa());
+            }
+        }
+        return msg;
     }
 
     public final static String NFC_TAG_ACTION = "edu.incense.android.NFC_TAG_ACTION";

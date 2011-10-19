@@ -42,7 +42,7 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDuration(60 * 1000 * 5);
+        session.setDuration(1000 * 60 * 60);
 
         List<Task> tasks = new ArrayList<Task>();
 

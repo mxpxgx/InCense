@@ -11,7 +11,7 @@ import edu.incense.android.datatask.data.Data;
 
 public class DataSink extends DataTask implements InputEnabledTask {
     private final static String TAG = "DataSink";
-    private final static int DEFAUL_MAX_SINK_SIZE = 50;
+    private final static int DEFAUL_MAX_SINK_SIZE = 1;
     protected String name;
     protected List<Data> sink = null;
 
