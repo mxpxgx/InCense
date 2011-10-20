@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import edu.incense.android.datatask.data.Data;
+import edu.incense.android.ui.SensingNotification;
 
 /**
  * Abstract class with basic sensor functionality. This class cannot be
@@ -17,12 +18,14 @@ import edu.incense.android.datatask.data.Data;
  * 
  */
 public abstract class Sensor {
-//    private final static String TAG = "Sensor";
+    // private final static String TAG = "Sensor";
     private final static int DEFAULT_PERIOD_TIME = 1000;
+    private final static String DEFAULT_NAME = "Unknown";
     private Context context; // Most sensors need context access
+    private String name;
     private float sampleFrequency; // Sample frequency
     private long periodTime; // Sleep time for each cycle (period time in
-                            // milliseconds)
+                             // milliseconds)
     private volatile boolean sensing = false; // True when sensor is
                                               // active/running
     protected Data currentData = null; // Used when just one sensed data is
@@ -30,6 +33,7 @@ public abstract class Sensor {
     protected List<Data> dataList = null; // Used when the sensor generates a
                                           // set of data values (e.g. access
                                           // points found by wifi sensors)
+    private static SensingNotification sensingNotification;
 
     private Sensor() {
         sensing = false;
@@ -40,6 +44,10 @@ public abstract class Sensor {
     protected Sensor(Context context) {
         this();
         this.setContext(context);
+        setName(DEFAULT_NAME);
+        if(sensingNotification == null){
+            sensingNotification = new SensingNotification(context);
+        }
     }
 
     /**
@@ -47,6 +55,7 @@ public abstract class Sensor {
      */
     public synchronized void start() {
         sensing = true;
+        sensingNotification.updateNotificationWith(name);
     }
 
     /**
@@ -54,6 +63,7 @@ public abstract class Sensor {
      */
     public synchronized void stop() {
         sensing = false;
+        sensingNotification.updateNotificationWithout(name);
     }
 
     /**
@@ -153,4 +163,19 @@ public abstract class Sensor {
     public boolean isSensing() {
         return sensing;
     }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
 }

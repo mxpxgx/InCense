@@ -26,6 +26,7 @@ public class BatteryLevelSensor extends Sensor {
      */
     protected BatteryLevelSensor(Context context) {
         super(context);
+        setName("Battery level");
     }
     
     @Override

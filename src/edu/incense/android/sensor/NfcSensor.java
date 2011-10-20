@@ -28,6 +28,7 @@ public class NfcSensor extends Sensor {
      */
     public NfcSensor(Context context) {
         super(context);
+        setName("NFC");
         filter = new IntentFilter();
         filter.addAction(NfcActivity.NFC_TAG_ACTION);
     }

@@ -19,6 +19,7 @@ public class AudioSensor extends Sensor implements Runnable {
 
     public AudioSensor(Context context, float sampleFrequency) {
         super(context);
+        setName("Audio recording");
         // this.setPeriodTime(10000); // 10 seconds of audio
         this.setSampleFrequency(sampleFrequency);
         audioRecord = findAudioRecord((int)getSampleFrequency());

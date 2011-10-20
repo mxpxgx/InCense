@@ -19,6 +19,7 @@ public class WifiScanSensor extends Sensor {
 
     public WifiScanSensor(Context context) {
         super(context);
+        setName("WiFi scan");
         // Initialize list where results will be stored
         dataList = new ArrayList<Data>();
 

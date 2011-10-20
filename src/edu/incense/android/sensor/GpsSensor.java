@@ -28,6 +28,7 @@ public class GpsSensor extends Sensor {
 
     public GpsSensor(Context context) {
         super(context);
+        setName("GPS");
         locationAdded = false;
         // LocationManager initialization
         String service = Context.LOCATION_SERVICE;

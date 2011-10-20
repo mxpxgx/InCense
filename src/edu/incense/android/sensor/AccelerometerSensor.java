@@ -46,6 +46,7 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
     public AccelerometerSensor(Context context, int sensorType, long frameTime,
             long duration) {
         super(context);
+        setName("Accelerometer");
         this.sensorType = sensorType;
         this.frameTime = frameTime;
         this.duration = duration;

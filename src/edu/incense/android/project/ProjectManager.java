@@ -111,7 +111,7 @@ public class ProjectManager extends WakefulIntentService implements
         }
     }
 
-    private Intent generateActionIntent(Class<?> cls, String action) {
+    private Intent createActionIntent(Class<?> cls, String action) {
         Intent projectIntent = new Intent(this, cls);
         // Point out this action was triggered by a user
         projectIntent.setAction(action);
@@ -121,12 +121,12 @@ public class ProjectManager extends WakefulIntentService implements
         return projectIntent;
     }
 
-    private Intent generateProjectActionIntent(String action) {
-        return generateActionIntent(ProjectManager.class, action);
+    private Intent createProjectActionIntent(String action) {
+        return createActionIntent(ProjectManager.class, action);
     }
 
     private Intent generateSessionActionIntent(String action) {
-        return generateActionIntent(SessionService.class, action);
+        return createActionIntent(SessionService.class, action);
     }
 
     /* PROJECT UPDATE */
@@ -136,7 +136,7 @@ public class ProjectManager extends WakefulIntentService implements
         if (updateIntent != null) {
             am.cancel(updateIntent);
         }
-        Intent intent = generateProjectActionIntent(PROJECT_UPDATE_ACTION);
+        Intent intent = createProjectActionIntent(PROJECT_UPDATE_ACTION);
         updateIntent = PendingIntent.getService(this, 0, intent, 0);
         // Set the trigger time to the next 12am occurrence (today or tomorrow)
         long triggerAtTime = obtainNextOcurranceOf(0, 0);

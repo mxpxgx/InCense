@@ -17,7 +17,7 @@ public class BluetoothSensor extends Sensor {
 
     public BluetoothSensor(Context context) {
         super(context);
-
+        setName("Bluetooth");
         // Initialize list where results will be stored
         dataList = new ArrayList<Data>();
         context.registerReceiver(discoveryResult, new IntentFilter(

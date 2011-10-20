@@ -28,6 +28,7 @@ public class PhoneStateSensor extends Sensor {
 
     public PhoneStateSensor(Context context) {
         super(context);
+        setName("Phone state");
         String service = Context.TELEPHONY_SERVICE;
         telephonyManager = (TelephonyManager) context.getSystemService(service);
 
@@ -47,7 +48,7 @@ public class PhoneStateSensor extends Sensor {
     }
 
     public void start() {
-        // super.start();
+        super.start();
     }
 
     public void stop() {
