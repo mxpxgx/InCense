@@ -10,8 +10,10 @@ import java.util.UUID;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -56,7 +58,6 @@ public class ProjectManager extends WakefulIntentService implements
         super.onCreate();
         loadProject();
         setUpdateAlarm();
-        sessions = getProject().getSessions();
         updateIntent = null;
         Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
     }
@@ -81,8 +82,12 @@ public class ProjectManager extends WakefulIntentService implements
         }
 
         if (intent.getAction().compareTo(PROJECT_START_ACTION) == 0) {
+            startProject();
 
         } else if (intent.getAction().compareTo(PROJECT_UPDATE_ACTION) == 0) {
+            UpdateProjectTask updateTask = new UpdateProjectTask(this, this);
+            updateTask.execute();
+            Log.d(TAG, "Updating task started.");
 
         } else {
             Log.e(TAG, "Unknown action received: " + intent.getAction());
@@ -90,14 +95,38 @@ public class ProjectManager extends WakefulIntentService implements
         }
     }
 
-    private Intent generateProjectActionIntent(String action) {
-        Intent projectIntent = new Intent(this, ProjectManager.class);
+    private void startProject() {
+        if (sessions == null || sessions.isEmpty()) {
+            Log.e(TAG, "Project doesn't contain any session.");
+            return;
+        }
+
+        long currentTime = System.currentTimeMillis();
+        for (Session session : sessions.values()) {
+            if (currentTime >= session.getStartDate()) {
+                startSession(session);
+            } else {
+                this.setAlarmsFor(session);
+            }
+        }
+    }
+
+    private Intent generateActionIntent(Class<?> cls, String action) {
+        Intent projectIntent = new Intent(this, cls);
         // Point out this action was triggered by a user
         projectIntent.setAction(action);
         // Send unique id for this action
         long actionId = UUID.randomUUID().getLeastSignificantBits();
         projectIntent.putExtra(SessionService.ACTION_ID_FIELDNAME, actionId);
         return projectIntent;
+    }
+
+    private Intent generateProjectActionIntent(String action) {
+        return generateActionIntent(ProjectManager.class, action);
+    }
+
+    private Intent generateSessionActionIntent(String action) {
+        return generateActionIntent(SessionService.class, action);
     }
 
     /* PROJECT UPDATE */
@@ -136,19 +165,60 @@ public class ProjectManager extends WakefulIntentService implements
      * Set an alarm for recording sessions and surveys.
      */
     public void setAlarmsFor(Session session) {
-        Intent projectManagerIntent = new Intent(
-                ProjectManager.this.getApplicationContext(),
-                SessionService.class);
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = generateSessionActionIntent(SessionService.SESSION_START_ACTION);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent,
+                0);
+        // Set the trigger time to the next 12am occurrence (today or tomorrow)
+        long triggerAtTime = session.getStartDate();
+
+        if (session.isRepeat()) {
+            long interval = getRepeatInterval(session);
+            am.setRepeating(AlarmManager.ELAPSED_REALTIME, triggerAtTime,
+                    interval, pendingIntent);
+        } else {
+            am.set(AlarmManager.ELAPSED_REALTIME, triggerAtTime, pendingIntent);
+        }
+    }
+
+    private long getRepeatInterval(Session session) {
+        long interval = session.getDurationUnits();
+        Session.RepeatType measure = Session.RepeatType.valueOf(session
+                .getRepeatMeasure());
+
+        switch (measure) {
+        case MINUTES:
+            interval = interval * 60L * 1000L;
+            break;
+        case HOURS:
+            interval = interval * 60L * 60L * 1000L;
+            break;
+        case DAYS:
+            interval = interval * 24L * 60L * 60L * 1000L;
+            break;
+        case WEEKS:
+            interval = interval * 7L * 24L * 60L * 60L * 1000L;
+            break;
+        case MONTHS:
+            interval = interval * 30L * 24L * 60L * 60L * 1000L;
+            break;
+        }
+
+        return interval;
+    }
+
+    public void startSession(Session session) {
+        // Start service for it to run the recording session
+        Intent sessionServiceIntent = new Intent(this, SessionService.class);
         // Point out this action was triggered by a user
-        projectManagerIntent.setAction(ProjectManager.PROJECT_START_ACTION);
+        sessionServiceIntent.setAction(SessionService.SESSION_START_ACTION);
         // Send unique id for this action
         long actionId = UUID.randomUUID().getLeastSignificantBits();
-        projectManagerIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
                 actionId);
-        // startService(sessionServiceIntent);
-        WakefulIntentService.sendWakefulWork(
-                ProjectManager.this.getApplicationContext(),
-                projectManagerIntent);
+        sessionServiceIntent.putExtra(SessionService.SESSION_NAME_FIELDNAME,
+                session.getName());
+        WakefulIntentService.sendWakefulWork(this, sessionServiceIntent);
     }
 
     /**
@@ -180,15 +250,49 @@ public class ProjectManager extends WakefulIntentService implements
             Log.e(TAG, "File [" + projectFilename + "] not found", e);
         }
         setProject(jsonProject.getProject(input));
+        loadSessions();
+    }
+
+    private void loadSessions() {
+        sessions = getProject().getSessions();
     }
 
     /**
      * @see edu.incense.android.project.ProjectUpdateListener#update(edu.incense.android.project.Project)
      */
     public void update(Project newProject) {
+        // Stop SessionService
+        Intent stopIntent = generateSessionActionIntent(SessionService.SESSION_STOP_ACTION);
+        startService(stopIntent);
+
+        // Reset project configuration
         setProject(newProject);
-        // TODO STOP SessionService AND RESET!!
+        loadSessions();
+
+        // Register receiver to wait until is stopped
+        IntentFilter intentFilter = new IntentFilter(
+                SessionService.SESSION_STOP_ACTION_COMPLETE);
+        this.registerReceiver(sessionStopReceiver, intentFilter);
+
     }
+
+    private void unregisterReceiver() {
+        ProjectManager.this.unregisterReceiver(sessionStopReceiver);
+    }
+
+    BroadcastReceiver sessionStopReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().compareTo(
+                    SessionService.SESSION_STOP_ACTION_COMPLETE) == 0) {
+                // Start project
+                startProject();
+                unregisterReceiver();
+            }
+        }
+
+    };
 
     /* In case of crashes */
 
