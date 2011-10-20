@@ -123,7 +123,7 @@ public class RecordActivity extends MainMenuActivity {
         resetUI();
         
         IntentFilter filter = new IntentFilter();
-        filter.addAction(SessionService.SESSION_USER_ACTION_COMPLETE);
+        filter.addAction(SessionService.SESSION_START_ACTION_COMPLETE);
         registerReceiver(sessionCompleteReceiver, filter);
     }
 
@@ -133,7 +133,7 @@ public class RecordActivity extends MainMenuActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().compareTo(
-                    SessionService.SESSION_USER_ACTION_COMPLETE) == 0) {
+                    SessionService.SESSION_START_ACTION_COMPLETE) == 0) {
                 if (actionId == intent.getLongExtra(
                         SessionService.ACTION_ID_FIELDNAME, 0)) {
                     suspendRecordingSession();
@@ -165,7 +165,7 @@ public class RecordActivity extends MainMenuActivity {
         // Start service for it to run the recording session
         Intent sessionServiceIntent = new Intent(this, SessionService.class);
         // Point out this action was triggered by a user
-        sessionServiceIntent.setAction(SessionService.SESSION_ACTION);
+        sessionServiceIntent.setAction(SessionService.SESSION_START_ACTION);
         // Send unique id for this action
         actionId = UUID.randomUUID().getLeastSignificantBits();
         sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,

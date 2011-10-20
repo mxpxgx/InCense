@@ -1,6 +1,8 @@
 package edu.incense.android.session;
 
+import java.io.Serializable;
 import java.util.List;
+
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.model.TaskRelation;
 
@@ -12,7 +14,8 @@ import edu.incense.android.datatask.model.TaskRelation;
  * @since 10/18/2011
  */
 
-public class Session {
+public class Session implements Serializable {
+    private static final long serialVersionUID = 3232566373112570131L;
     private String name;
     private List<Task> tasks;
     private List<TaskRelation> relations;

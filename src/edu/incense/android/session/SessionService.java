@@ -47,17 +47,21 @@ public class SessionService extends WakefulIntentService implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // TODO Auto-generated method stub
-        Log.d(TAG, "Service destroyed");
+        Log.d(TAG, "SessionService destroyed");
     }
 
     /* INTENT_SERVICE METHODS */
 
-    public final static String SESSION_ACTION = "edu.incense.android.SESSION_ACTION";
-    public final static String SESSION_USER_ACTION = "edu.incense.android.SESSION_USER_ACTION";
-    public final static String SESSION_USER_ACTION_COMPLETE = "edu.incense.android.SESSION_USER_ACTION_COMPLETE";
-    public final static String SESSION_ALARM_ACTION = "edu.incense.android.SESSION_ALARM_ACTION";
-    public final static String SESSION_ALARM_ACTION_COMPLETE = "edu.incense.android.SESSION_ALARM_ACTION_COMPLETE";
+    // public final static String SESSION_ACTION =
+    // "edu.incense.android.SESSION_ACTION";
+    // public final static String SESSION_USER_ACTION =
+    // "edu.incense.android.SESSION_USER_ACTION";
+    // public final static String SESSION_USER_ACTION_COMPLETE =
+    // "edu.incense.android.SESSION_USER_ACTION_COMPLETE";
+    // public final static String SESSION_ALARM_ACTION =
+    // "edu.incense.android.SESSION_ALARM_ACTION";
+    // public final static String SESSION_ALARM_ACTION_COMPLETE =
+    // "edu.incense.android.SESSION_ALARM_ACTION_COMPLETE";
     public final static String SESSION_START_ACTION = "edu.incense.android.SESSION_START_ACTION";
     public final static String SESSION_STOP_ACTION = "edu.incense.android.SESSION_STOP_ACTION";
     public final static String SESSION_START_ACTION_COMPLETE = "edu.incense.android.SESSION_START_ACTION_COMPLETE";
@@ -126,11 +130,8 @@ public class SessionService extends WakefulIntentService implements
             String sessionName = controller.getSessionName();
             Log.d(TAG, "Stopping session: " + sessionName);
             stopSession();
-
         } else {
-            Log.e(TAG,
-                    "Non-recording-session action received: "
-                            + intent.getAction());
+            Log.e(TAG, "Unknown action received: " + intent.getAction());
             return;
         }
     }

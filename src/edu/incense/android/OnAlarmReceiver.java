@@ -16,19 +16,21 @@ import edu.incense.android.session.SessionService;
 
 /**
  * @author mxpxgx
- *
+ * 
  */
 public class OnAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent sessionServiceIntent = new Intent(context, SessionService.class);
+        // Start service for it to run the recording session
+        Intent projectManagerIntent = new Intent(context, SessionService.class);
         // Point out this action was triggered by a user
-        sessionServiceIntent.setAction(SessionService.SESSION_ACTION);
+        projectManagerIntent.setAction(ProjectManager.PROJECT_START_ACTION);
         // Send unique id for this action
         long actionId = UUID.randomUUID().getLeastSignificantBits();
-        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+        projectManagerIntent.putExtra(ProjectManager.ACTION_ID_FIELDNAME,
                 actionId);
-        WakefulIntentService.sendWakefulWork(context, sessionServiceIntent);
+        // startService(sessionServiceIntent);
+        WakefulIntentService.sendWakefulWork(context, projectManagerIntent);
     }
 
 }

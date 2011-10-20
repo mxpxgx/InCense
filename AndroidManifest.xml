@@ -75,6 +75,12 @@
         <service
             android:name=".project.ProjectManager"
             android:launchMode="singleInstance">
+            <intent-filter>
+                <action
+                    android:name="edu.incense.android.PROJECT_START_ACTION" />
+                <action
+                    android:name="edu.incense.android.PROJECT_UPDATE_ACTION" />
+            </intent-filter>
         </service>
 
         <activity
@@ -95,7 +101,9 @@
             android:launchMode="singleInstance">
             <intent-filter>
                 <action
-                    android:name="edu.incense.android.SESSION_ACTION" />
+                    android:name="edu.incense.android.SESSION_START_ACTION" />
+                <action
+                    android:name="edu.incense.android.SESSION_STOP_ACTION" />
                 <category
                     android:name="android.intent.category.DEFAULT" />
             </intent-filter>
