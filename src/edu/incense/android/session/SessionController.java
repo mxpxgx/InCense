@@ -3,6 +3,8 @@ package edu.incense.android.session;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.content.Context;
 import android.util.Log;
@@ -27,17 +29,56 @@ import edu.incense.android.datatask.trigger.GeneralTrigger;
 public class SessionController {
     private static final String TAG = "SessionController";
 
+    public enum ControllerState {
+        INITIATED, PREPARED, STARTED, STOPPING, STOPPED
+    };
+
+    private SessionCompletionListener listener;
+    private volatile ControllerState state;
     private Session session;
     private List<DataTask> tasks;
     private Context context;
+    private ExecutorService executorService;
 
     public SessionController(Context context, Session session) {
         this.context = context;
         this.session = session;
         tasks = new ArrayList<DataTask>();
+        executorService = Executors.newSingleThreadExecutor();
+        setState(ControllerState.INITIATED);
     }
 
-    public void prepareSession() {
+    public String getSessionName() {
+        if (session != null) {
+            return session.getName();
+        }
+        return null;
+    }
+
+    /**
+     * @param state
+     *            the state to set
+     */
+    private synchronized void setState(ControllerState state) {
+        this.state = state;
+    }
+
+    /**
+     * @return the state
+     */
+    public synchronized ControllerState getState() {
+        return state;
+    }
+    
+    public void registerListener(SessionCompletionListener listener){
+        this.listener = listener;
+    }
+
+    private void prepareSession() {
+        if (getState() == ControllerState.STARTED
+                || getState() == ControllerState.STOPPING) {
+            return;
+        }
         // TODO The usage of this HashMap could be improved (?)
         // Map<String, DataTask> taskCollection =
         // InCenseApplication.getInstance()
@@ -97,28 +138,34 @@ public class SessionController {
                             + tr.getTask2());
                 }
             }
+            setState(ControllerState.PREPARED);
         } catch (Exception e) {
             Log.e(TAG, "Preparing controller failed", e);
         }
     }
 
     public void start() {
-        Thread thread = new Thread(sessionRunnable);
-        thread.start();
+        if(getState() == ControllerState.INITIATED){
+            prepareSession();
+        }
+        if (getState() == ControllerState.PREPARED
+                || getState() == ControllerState.STOPPED) {
+            setState(ControllerState.STARTED);
+            executorService.execute(sessionRunnable);
+        }
     }
 
     public void stop() {
-        for (DataTask dt : tasks) {
-            Log.i(TAG, "Stoping: " + dt.getClass().getName());
-            if (dt.isRunning()) {
-                dt.stop();
+        if (getState() == ControllerState.STARTED) {
+            setState(ControllerState.STOPPING);
+            while(getState() != ControllerState.STOPPED){
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    Log.e(TAG, "Runnable sleep failed", e);
+                }
             }
-            dt.clear();
         }
-        // if(thread != null){
-        // thread.interrupt();
-        // thread = null;
-        // }
     }
 
     /**
@@ -140,21 +187,44 @@ public class SessionController {
         return duration;
     }
 
-    Runnable sessionRunnable = new Runnable() {
+    private Runnable sessionRunnable = new Runnable() {
+
         public void run() {
+
+            // Compute duration of the session
             long duration = getDuration(session);
-            try {
-                for (DataTask dt : tasks) {
-                    Log.i(TAG, "Starting: " + dt.getClass().getName());
-                    dt.start();
-                }
-                Log.i(getClass().getName(), "Sleeping: " + duration + " ms");
-                Thread.sleep(duration);
-                stop();
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to sleep for " + duration + " ms", e);
+
+            // Start DataTasks in the session
+            for (DataTask dt : tasks) {
+                Log.i(TAG, "Starting: " + dt.getClass().getName());
+                dt.start();
             }
+
+            // Wait until duration time elapses
+            long startTime = System.currentTimeMillis();
+            long runningTime = 0;
+            while (duration >= runningTime
+                    && getState() == ControllerState.STARTED) {
+                runningTime = System.currentTimeMillis() - startTime;
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    Log.e(TAG, "Runnable sleep failed", e);
+                }
+            }
+
+            // Stop DataTasks
+            for (DataTask dt : tasks) {
+                Log.i(TAG, "Stoping: " + dt.getClass().getName());
+                if (dt.isRunning()) {
+                    dt.stop();
+                }
+                dt.clear();
+            }
+            setState(ControllerState.STOPPED);
+            listener.completedSession(getSessionName(), runningTime);
         }
+
     };
 
 }
