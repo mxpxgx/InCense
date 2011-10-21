@@ -22,7 +22,7 @@ public class OnAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // Start service for it to run the recording session
-        Intent projectManagerIntent = new Intent(context, SessionService.class);
+        Intent projectManagerIntent = new Intent(context, ProjectManager.class);
         // Point out this action was triggered by a user
         projectManagerIntent.setAction(ProjectManager.PROJECT_START_ACTION);
         // Send unique id for this action

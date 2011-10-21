@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import edu.incense.android.R;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -42,6 +44,14 @@ public class SensingNotification {
         sb.replace(sb.length() - div.length(), sb.length(), end);
         return sb.toString();
     }
+    
+    private Notification createNotification() {
+        int icon = R.drawable.bullseye;
+        CharSequence tickerText = CONTENT_TITLE;
+        long when = System.currentTimeMillis();
+
+        return new Notification(icon, tickerText, when);
+    }
 
     private PendingIntent createNotificationIntent() {
         // TODO CHANGE THIS ACTIVITy
@@ -52,7 +62,9 @@ public class SensingNotification {
     }
     
     public void add(String sensor) {
-        activeSensors.add(sensor);
+        if(!activeSensors.contains(sensor)){
+            activeSensors.add(sensor);
+        }
     }
 
     public void remove(String sensor) {
@@ -89,7 +101,7 @@ public class SensingNotification {
                 // clicked
                 PendingIntent pendingIntent = createNotificationIntent();
 
-                Notification notification = new Notification();
+                Notification notification = createNotification();
                 notification.setLatestEventInfo(context, contentTitle,
                         contentText, pendingIntent);
 

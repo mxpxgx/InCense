@@ -26,7 +26,7 @@ public class SessionService extends WakefulIntentService implements
         SessionCompletionListener {// extends
     // IntentService {
     private static final String TAG = "SessionService";
-    private volatile boolean sessionRunning;
+    private static volatile boolean sessionRunning = false;
 
     /**
      * This constructor is never used directly, it is used by the superclass
@@ -39,7 +39,7 @@ public class SessionService extends WakefulIntentService implements
     @Override
     public void onCreate() {
         super.onCreate();
-        sessionRunning = false;
+//        sessionRunning = false;
         loadProject();
         // Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
     }
@@ -86,7 +86,7 @@ public class SessionService extends WakefulIntentService implements
             if (sessionRunning) {
                 Toast.makeText(this,
                         "Session currently running, please wait...",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Session currently running, please wait...");
                 return;
             }
@@ -105,15 +105,13 @@ public class SessionService extends WakefulIntentService implements
             // Start session
             Log.d(TAG, "Starting session action: " + sessionName);
             startSession(session);
-            Log.d(TAG, "Session action [" + sessionName + "] finished");
-
+            
             actionId = intent.getLongExtra(ACTION_ID_FIELDNAME, -1);
             // Send broadcast the end of this process
             Intent broadcastIntent = new Intent(SESSION_START_ACTION_COMPLETE);
             broadcastIntent.putExtra(ACTION_ID_FIELDNAME, actionId);
             sendBroadcast(broadcastIntent);
-            Log.d(TAG, "[" + session.getName()
-                    + "] was started by SessionService");
+            Log.d(TAG, "Session start action [" + sessionName + "] finished");
 
         } else if (intent.getAction().compareTo(SESSION_STOP_ACTION) == 0) {
             if (controller == null) {
@@ -145,6 +143,7 @@ public class SessionService extends WakefulIntentService implements
         broadcastIntent.putExtra(ACTION_ID_FIELDNAME, actionId);
         sendBroadcast(broadcastIntent);
         Log.d(TAG, "SessionService stop broadcasted");
+        sessionRunning = false;
     }
 
     /**

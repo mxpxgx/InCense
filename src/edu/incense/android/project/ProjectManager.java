@@ -303,7 +303,7 @@ public class ProjectManager extends WakefulIntentService implements
             // Start service for it to run the recording session
             Intent projectManagerIntent = new Intent(
                     ProjectManager.this.getApplicationContext(),
-                    SessionService.class);
+                    ProjectManager.class);
             // Point out this action was triggered by a user
             projectManagerIntent.setAction(ProjectManager.PROJECT_START_ACTION);
             // Send unique id for this action

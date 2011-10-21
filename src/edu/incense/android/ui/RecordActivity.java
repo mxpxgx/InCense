@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.incense.android.R;
+import edu.incense.android.project.ProjectManager;
 import edu.incense.android.session.SessionService;
 
 /**
@@ -32,7 +33,7 @@ import edu.incense.android.session.SessionService;
 public class RecordActivity extends MainMenuActivity {
 
     // UI elements
-    private ProgressDialog progressDialog = null;
+//    private ProgressDialog progressDialog = null;
     private TextView statusTextView;
     private TextView usernameTextView;
     private Button startButton;
@@ -134,14 +135,15 @@ public class RecordActivity extends MainMenuActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().compareTo(
                     SessionService.SESSION_START_ACTION_COMPLETE) == 0) {
-                if (actionId == intent.getLongExtra(
-                        SessionService.ACTION_ID_FIELDNAME, 0)) {
-                    suspendRecordingSession();
+//                if (actionId == intent.getLongExtra(
+//                        SessionService.ACTION_ID_FIELDNAME, 0)) {
+//                    suspendRecordingSession();
                     Toast.makeText(RecordActivity.this,
-                            getString(R.string.session_completed_message),
+                            getString(R.string.session_start_completed_message),
                             Toast.LENGTH_LONG).show();
-                    startResultsActivity();
-                }
+                    //startResultsActivity();
+                    RecordActivity.this.finish();
+//                }
             }
         }
 
@@ -158,20 +160,20 @@ public class RecordActivity extends MainMenuActivity {
         startButton.setEnabled(false);
 
         // Show progress dialog
-        Resources res = getResources();
-        progressDialog = ProgressDialog.show(this,
-                res.getText(R.string.session_title),
-                res.getText(R.string.session_active_message));
-        // Start service for it to run the recording session
-        Intent sessionServiceIntent = new Intent(this, SessionService.class);
-        // Point out this action was triggered by a user
-        sessionServiceIntent.setAction(SessionService.SESSION_START_ACTION);
-        // Send unique id for this action
-        actionId = UUID.randomUUID().getLeastSignificantBits();
-        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
-                actionId);
-        WakefulIntentService.sendWakefulWork(this, sessionServiceIntent);
-//        startService(sessionServiceIntent);
+//        Resources res = getResources();
+////        progressDialog = ProgressDialog.show(this,
+////                res.getText(R.string.session_title),
+////                res.getText(R.string.session_active_message));
+//        // Start service for it to run the recording session
+//        Intent sessionServiceIntent = new Intent(this, SessionService.class);
+//        // Point out this action was triggered by a user
+//        sessionServiceIntent.setAction(SessionService.SESSION_START_ACTION);
+//        // Send unique id for this action
+//        actionId = UUID.randomUUID().getLeastSignificantBits();
+//        sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+//                actionId);
+//        WakefulIntentService.sendWakefulWork(this, sessionServiceIntent);
+////        startService(sessionServiceIntent);
         
 //        // Start service for it to run the recording session
 //        Intent surveyIntent = new Intent(this, SurveyService.class);
@@ -182,6 +184,17 @@ public class RecordActivity extends MainMenuActivity {
 //        surveyIntent.putExtra(SurveyService.ACTION_ID_FIELDNAME,
 //                actionId);
 //        this.startService(surveyIntent);
+        
+        // Start service for it to run the recording session
+        Intent projectManagerIntent = new Intent(getApplicationContext(), ProjectManager.class);
+        // Point out this action was triggered by a user
+        projectManagerIntent.setAction(ProjectManager.PROJECT_START_ACTION);
+        // Send unique id for this action
+        long actionId = UUID.randomUUID().getLeastSignificantBits();
+        projectManagerIntent.putExtra(ProjectManager.ACTION_ID_FIELDNAME,
+                actionId);
+        // startService(sessionServiceIntent);
+        WakefulIntentService.sendWakefulWork(getApplicationContext(), projectManagerIntent);
     }
 
     /**
@@ -196,11 +209,11 @@ public class RecordActivity extends MainMenuActivity {
      * Remove progress dialog and enable the start button again
      */
     private void resetUI() {
-        if (progressDialog != null) {
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
-            progressDialog = null;
-        }
+//        if (progressDialog != null) {
+//            if (progressDialog.isShowing())
+//                progressDialog.dismiss();
+//            progressDialog = null;
+//        }
 
         if (!startButton.isEnabled())
             startButton.setEnabled(true);

@@ -16,6 +16,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.format.Time;
 import edu.incense.android.R;
 import edu.incense.android.datatask.filter.WifiTimeConnectedFilter;
 import edu.incense.android.datatask.model.Task;
@@ -44,6 +45,18 @@ public class ProjectGenerator {
         Session session = new Session();
         session.setDurationUnits(60);
         session.setDurationMeasure("minutes");
+        session.setAutoTriggered(true);
+        Time time = new Time();
+        time.setToNow();
+        time.set(time.monthDay-1, time.month, time.year);
+        session.setStartDate(time.normalize(false));
+        
+        time.setToNow();
+        time.set(time.monthDay+7, time.month, time.year);
+        session.setEndDate(time.normalize(false));
+        
+        session.setName("GPS Session");
+        
 
         List<Task> tasks = new ArrayList<Task>();
 
@@ -406,8 +419,23 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDurationUnits(1000L * 60L * 60L * 24L * 4L); // 4days
+        session.setName("mainSession");
+        session.setDurationUnits(24L*4L); //4 days
+        session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
+        session.setAutoTriggered(true);
+        Time time = new Time();
+        time.setToNow();
+        time.set(time.monthDay-1, time.month, time.year);
+        session.setStartDate(time.normalize(false));
+        
+        time.setToNow();
+        time.set(time.monthDay+7, time.month, time.year);
+        session.setEndDate(time.normalize(false));
+        
+        session.setNotices(true);
+        session.setRepeat(false);
+        session.setSessionType("Automatic");
 
         List<Task> tasks = new ArrayList<Task>();
 

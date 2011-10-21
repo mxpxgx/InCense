@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 import edu.incense.android.datatask.data.Data;
 import edu.incense.android.ui.SensingNotification;
 
@@ -18,7 +19,7 @@ import edu.incense.android.ui.SensingNotification;
  * 
  */
 public abstract class Sensor {
-    // private final static String TAG = "Sensor";
+    private final static String TAG = "Sensor";
     private final static int DEFAULT_PERIOD_TIME = 1000;
     private final static String DEFAULT_NAME = "Unknown";
     private Context context; // Most sensors need context access
@@ -45,8 +46,9 @@ public abstract class Sensor {
         this();
         this.setContext(context);
         setName(DEFAULT_NAME);
-        if(sensingNotification == null){
+        if (sensingNotification == null) {
             sensingNotification = new SensingNotification(context);
+            Log.d(TAG, "SensingNotification initiated");
         }
     }
 
@@ -56,6 +58,7 @@ public abstract class Sensor {
     public synchronized void start() {
         sensing = true;
         sensingNotification.updateNotificationWith(name);
+        Log.d(TAG, "SensingNotification updated");
     }
 
     /**
@@ -64,6 +67,7 @@ public abstract class Sensor {
     public synchronized void stop() {
         sensing = false;
         sensingNotification.updateNotificationWithout(name);
+        Log.d(TAG, "SensingNotification updated");
     }
 
     /**
@@ -165,7 +169,8 @@ public abstract class Sensor {
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;

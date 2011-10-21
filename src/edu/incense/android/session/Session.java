@@ -32,7 +32,10 @@ public class Session implements Serializable {
     private boolean repeat;
     private boolean notices;
     private String sessionType;
-
+    private static final String[] SESSION_TYPES = { "User", "Automatic" };
+    private static final String[] DURATION_MEASURES = { "minutes", "hours" };
+    private static final String[] REPEAT_MEASURES = { "minutes", "hours",
+            "days", "weeks", "months" };
     public enum RepeatType {
         NOT_REPEATABLE, MINUTES, HOURS, DAYS, WEEKS, MONTHS
     };

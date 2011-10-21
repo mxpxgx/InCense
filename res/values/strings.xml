@@ -34,6 +34,7 @@
     <string name="session_title">Recording session</string>
     <string name="session_active_message">Sensing and collecting data... Please wait a moment.</string>
     <string name="session_completed_message">Recording session completed!</string>
+    <string name="session_start_completed_message">Recording session started!</string>
     <string name="no_username_message">Please enter a username.</string>
     <string name="alert_tags">It\'s recommended to enter at least one tag describing this moment.</string>
 
