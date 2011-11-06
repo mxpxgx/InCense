@@ -109,6 +109,7 @@ public class SessionController {
                 InputEnabledTask inputTask;
                 for (TaskRelation tr : relations) {
                     DataTask task1 = taskCollection.get(tr.getTask1());
+                    Log.i(TAG, "Task: "+tr.getTask1());
                     // When first task is a trigger
                     if (task1.getTaskType() == TaskType.Trigger
                             || task1.getTaskType() == TaskType.StopTrigger) {

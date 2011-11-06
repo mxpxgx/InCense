@@ -23,4 +23,5 @@ public enum TaskType {
     WifiTimeConnectedFilter,
     StopTrigger,
     TimerSensor,
+    PowerConnectionSensor
 }

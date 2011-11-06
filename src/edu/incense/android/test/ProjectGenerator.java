@@ -48,15 +48,14 @@ public class ProjectGenerator {
         session.setAutoTriggered(true);
         Time time = new Time();
         time.setToNow();
-        time.set(time.monthDay-1, time.month, time.year);
+        time.set(time.monthDay - 1, time.month, time.year);
         session.setStartDate(time.normalize(false));
-        
+
         time.setToNow();
-        time.set(time.monthDay+7, time.month, time.year);
+        time.set(time.monthDay + 7, time.month, time.year);
         session.setEndDate(time.normalize(false));
-        
+
         session.setName("GPS Session");
-        
 
         List<Task> tasks = new ArrayList<Task>();
 
@@ -174,7 +173,7 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationUnits(24L * 4L); // 4days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
@@ -304,7 +303,7 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDurationUnits(1); //1 minute
+        session.setDurationUnits(1); // 1 minute
         session.setDurationMeasure("minutes");
         // session.setStartDate(new Calendar())
 
@@ -380,7 +379,7 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationUnits(24L * 4L); // 4days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
@@ -420,19 +419,19 @@ public class ProjectGenerator {
         // Session
         Session session = new Session();
         session.setName("mainSession");
-        session.setDurationUnits(24L*4L); //4 days
+        session.setDurationUnits(24L * 4L); // 4 days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
         session.setAutoTriggered(true);
         Time time = new Time();
         time.setToNow();
-        time.set(time.monthDay-1, time.month, time.year);
+        time.set(time.monthDay - 1, time.month, time.year);
         session.setStartDate(time.normalize(false));
-        
+
         time.setToNow();
-        time.set(time.monthDay+7, time.month, time.year);
+        time.set(time.monthDay + 7, time.month, time.year);
         session.setEndDate(time.normalize(false));
-        
+
         session.setNotices(true);
         session.setRepeat(false);
         session.setSessionType("Automatic");
@@ -471,7 +470,7 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationUnits(24L * 4L); // 4days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
@@ -512,7 +511,7 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationUnits(24L * 4L); // 4days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
@@ -621,7 +620,7 @@ public class ProjectGenerator {
 
         // Session
         Session session = new Session();
-        session.setDurationUnits(24L * 4L); //4days
+        session.setDurationUnits(24L * 4L); // 4days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
@@ -634,7 +633,7 @@ public class ProjectGenerator {
         Task accSensor = TaskGenerator.createAccelerometerSensor(mapper, 20,
                 10000, 5000);
         tasks.add(accSensor);
-        
+
         Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
                 TaskType.DataSink, 1000);
         tasks.add(dataSink);
@@ -676,8 +675,73 @@ public class ProjectGenerator {
                         new TaskRelation(accSensor.getName(), dataSink
                                 .getName()),
                         new TaskRelation(gpsSensor.getName(), dataSink
-                                .getName()),
-                                });
+                                .getName()), });
+
+        session.setTasks(tasks);
+        session.setRelations(relations);
+
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(1);
+        project.put("mainSurvey", survey);
+
+        writeProject(context, mapper, project);
+    }
+
+    /**
+     * POWER
+     * 
+     * @param context
+     */
+    public static void buildProjectJsonL(Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Session
+        Session session = new Session();
+        session.setName("mainSession");
+        session.setDurationUnits(24L * 4L); // 4 days
+        session.setDurationMeasure("hours");
+        // session.setStartDate(new Calendar())
+        session.setAutoTriggered(true);
+        Time time = new Time();
+        time.setToNow();
+        time.set(time.monthDay - 1, time.month, time.year);
+        session.setStartDate(time.normalize(false));
+
+        time.setToNow();
+        time.set(time.monthDay + 7, time.month, time.year);
+        session.setEndDate(time.normalize(false));
+
+        session.setNotices(true);
+        session.setRepeat(false);
+        session.setSessionType("Automatic");
+
+        List<Task> tasks = new ArrayList<Task>();
+
+        Task powerSensor = TaskGenerator.createPowerConnectionSensor(mapper,
+                1000);
+        tasks.add(powerSensor);
+
+        Condition ifPower = TaskGenerator.createCondition("value",
+                GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[1]); // "is true"
+        ArrayList<Condition> conditions = new ArrayList<Condition>();
+        conditions.add(ifPower);
+        Task surveyTrigger = TaskGenerator.createTrigger(mapper,
+                "SurveyTrigger", 1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(surveyTrigger);
+
+        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
+                TaskType.DataSink, 1000);
+        tasks.add(dataSink);
+
+     // Survey
+        Survey survey = SurveyGenerator.createWanderingMindSurvey();
+        
+        List<TaskRelation> relations = Arrays.asList(new TaskRelation[] {
+                new TaskRelation(powerSensor.getName(), surveyTrigger.getName()),
+                new TaskRelation(surveyTrigger.getName(), "mainSurvey")});
 
         session.setTasks(tasks);
         session.setRelations(relations);

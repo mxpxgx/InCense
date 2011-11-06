@@ -47,6 +47,11 @@ public class TaskGenerator {
         return task;
     }
     
+    public static Task createPowerConnectionSensor(ObjectMapper mapper, long period){
+        Task task = TaskGenerator.createTaskWithPeriod(mapper, "PowerConnectionSensor", TaskType.PowerConnectionSensor, period);
+        return task;
+    }
+    
     public static Task createTimerSensor(ObjectMapper mapper, long sourcePeriod, long sensorPeriod){
         Task task = TaskGenerator.createTaskWithPeriod(mapper, "TimerSensor", TaskType.TimerSensor, sourcePeriod);
         JsonNode extrasNode = mapper.createObjectNode();
