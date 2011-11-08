@@ -18,6 +18,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.format.Time;
 import edu.incense.android.R;
+import edu.incense.android.datatask.filter.MovementFilter;
 import edu.incense.android.datatask.filter.WifiTimeConnectedFilter;
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.model.TaskRelation;
@@ -30,7 +31,8 @@ import edu.incense.android.session.Session;
 import edu.incense.android.survey.Survey;
 
 /**
- * @author Moises Perez (incense.cicese@gmail.com)
+ * Project examples for testing
+ * @author Moises Perez (mxpxgx@gmail.com)
  * @version 0.1, May 20, 2011
  * 
  */
@@ -609,7 +611,7 @@ public class ProjectGenerator {
     }
 
     /**
-     * GPS + Wifi + Acc, no audio
+     * GPS + Wifi + Acc + audio
      * 
      * @param resources
      */
@@ -736,12 +738,14 @@ public class ProjectGenerator {
                 TaskType.DataSink, 1000);
         tasks.add(dataSink);
 
-     // Survey
+        // Survey
         Survey survey = SurveyGenerator.createWanderingMindSurvey();
-        
-        List<TaskRelation> relations = Arrays.asList(new TaskRelation[] {
-                new TaskRelation(powerSensor.getName(), surveyTrigger.getName()),
-                new TaskRelation(surveyTrigger.getName(), "mainSurvey")});
+
+        List<TaskRelation> relations = Arrays
+                .asList(new TaskRelation[] {
+                        new TaskRelation(powerSensor.getName(), surveyTrigger
+                                .getName()),
+                        new TaskRelation(surveyTrigger.getName(), "mainSurvey") });
 
         session.setTasks(tasks);
         session.setRelations(relations);
@@ -751,6 +755,176 @@ public class ProjectGenerator {
         project.put("mainSession", session);
         project.setSurveysSize(1);
         project.put("mainSurvey", survey);
+
+        writeProject(context, mapper, project);
+    }
+
+    /**
+     * Acc + Movement
+     * 
+     * @param context
+     */
+    public static void buildProjectJsonM(Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Session
+        Session session = new Session();
+        session.setName("mainSession");
+        session.setDurationUnits(24L * 4L); // 4 days
+        session.setDurationMeasure("hours");
+        // session.setStartDate(new Calendar())
+        session.setAutoTriggered(true);
+        Time time = new Time();
+        time.setToNow();
+        time.set(time.monthDay - 1, time.month, time.year);
+        session.setStartDate(time.normalize(false));
+
+        time.setToNow();
+        time.set(time.monthDay + 7, time.month, time.year);
+        session.setEndDate(time.normalize(false));
+
+        session.setNotices(true);
+        session.setRepeat(false);
+        session.setSessionType("Automatic");
+
+        List<Task> tasks = new ArrayList<Task>();
+
+        Task accSensor = TaskGenerator.createAccelerometerSensor(mapper, 20,
+                10000, 10000);
+        tasks.add(accSensor);
+
+        Task movementFilter = TaskGenerator.createMovementFilter(mapper, 1000, 0.3f);
+        tasks.add(movementFilter);
+
+        Condition ifMovement = TaskGenerator.createCondition("isMovement",
+                GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[0]); // "is true"
+        ArrayList<Condition> conditions = new ArrayList<Condition>();
+        conditions.add(ifMovement);
+        Task surveyTrigger = TaskGenerator.createTrigger(mapper,
+                "SurveyTrigger", 1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(surveyTrigger);
+
+        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
+                TaskType.DataSink, 1000);
+        tasks.add(dataSink);
+
+        // Survey
+        Survey survey = SurveyGenerator.createWanderingMindSurvey();
+
+        List<TaskRelation> relations = Arrays.asList(new TaskRelation[] {
+                new TaskRelation(accSensor.getName(), movementFilter.getName()),
+                new TaskRelation(movementFilter.getName(), surveyTrigger.getName()),
+                new TaskRelation(surveyTrigger.getName(), "mainSurvey") });
+
+        session.setTasks(tasks);
+        session.setRelations(relations);
+
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(1);
+        project.put("mainSurvey", survey);
+
+        writeProject(context, mapper, project);
+    }
+    
+    /**
+     * GPS + Wifi + Acc + audio + NFC
+     * 
+     * @param resources
+     */
+    public static void buildProjectJsonN(Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+
+//        Survey survey = SurveyGenerator.createWanderingMindSurvey();
+
+        // Session
+        Session session = new Session();
+        session.setDurationUnits(24L * 4L); // 4days
+        session.setDurationMeasure("hours");
+        // session.setStartDate(new Calendar())
+
+        List<Task> tasks = new ArrayList<Task>();
+
+        //Sensors
+        
+        Task accSensor = TaskGenerator.createAccelerometerSensor(mapper, 20,
+                10000, 10000);
+        tasks.add(accSensor);
+        
+        Task audioSensor = TaskGenerator.createAudioSensor(mapper, 44100,
+                1000 * 25); // rate: 44100Hz, duration: 25 seconds
+        tasks.add(audioSensor);
+        
+        Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 1000L * 30L);
+        tasks.add(gpsSensor);
+        
+        Task nfcSensor = TaskGenerator.createNfcSensor(mapper, 44100);
+        tasks.add(nfcSensor);
+        
+        Task timerSensor = TaskGenerator.createTimerSensor(mapper, 1000,
+                1000 * 60 * 60 * 1); // each 3 hour
+        tasks.add(timerSensor);
+
+        Task wifiSensor = TaskGenerator.createWifiConnectionSensor(mapper,
+                1000, new String[] { "AppleBS4" });
+        tasks.add(wifiSensor);
+
+        //Filters
+        
+        Task movementFilter = TaskGenerator.createMovementFilter(mapper, 1000, 0.3f);
+        tasks.add(movementFilter);
+        
+        //Triggers
+        
+        Condition ifMovement = TaskGenerator.createCondition("isMovement",
+                GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[0]); // "is true"
+        
+        Condition ifTimerSaysSo = TaskGenerator.createCondition("value",
+                GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[0]); // "is true"
+        ArrayList<Condition> conditions = new ArrayList<Condition>();
+        conditions.add(ifTimerSaysSo);
+        Task audioTrigger = TaskGenerator.createTrigger(mapper, "AudioTrigger",
+                1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(audioTrigger);
+
+        //Sinks
+        
+        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
+                TaskType.DataSink, 1000);
+        tasks.add(dataSink);
+
+        Task audioSink = TaskGenerator.createTaskWithPeriod(mapper,
+                "AudioSink", TaskType.AudioSink, 1000);
+        tasks.add(audioSink);
+
+
+        List<TaskRelation> relations = Arrays
+                .asList(new TaskRelation[] {
+                        new TaskRelation(timerSensor.getName(), audioTrigger
+                                .getName()),
+                        new TaskRelation(audioTrigger.getName(), audioSensor
+                                .getName()),
+                        new TaskRelation(audioSensor.getName(), audioSink
+                                .getName()),
+                        new TaskRelation(wifiSensor.getName(), dataSink
+                                .getName()),
+                        new TaskRelation(accSensor.getName(), dataSink
+                                .getName()),
+                        new TaskRelation(gpsSensor.getName(), dataSink
+                                .getName()), });
+
+        session.setTasks(tasks);
+        session.setRelations(relations);
+
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(0);
+//        project.put("mainSurvey", survey);
 
         writeProject(context, mapper, project);
     }

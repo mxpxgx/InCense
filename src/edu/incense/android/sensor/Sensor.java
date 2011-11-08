@@ -34,7 +34,7 @@ public abstract class Sensor {
     protected List<Data> dataList = null; // Used when the sensor generates a
                                           // set of data values (e.g. access
                                           // points found by wifi sensors)
-    private static SensingNotification sensingNotification;
+    protected static SensingNotification sensingNotification;
 
     private Sensor() {
         sensing = false;

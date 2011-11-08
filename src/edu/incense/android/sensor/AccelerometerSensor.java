@@ -72,6 +72,7 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
             long frameTime, long duration) {
         AccelerometerSensor sensor = new AccelerometerSensor(context,
                 Sensor.TYPE_ACCELEROMETER, frameTime, duration);
+        sensor.setName("Accelerometer");
         return sensor;
     }
 
@@ -86,9 +87,14 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
             long frameTime, long duration) {
         AccelerometerSensor sensor = new AccelerometerSensor(context,
                 Sensor.TYPE_GYROSCOPE, frameTime, duration);
+        sensor.setName("Gyroscope");
         return sensor;
     }
 
+    /**
+     * NOTE: this method doesn't call super.start()
+     * @see edu.incense.android.sensor.Sensor#start()
+     */
     @Override
     public void start() {
         if (duration > frameTime) {
@@ -114,6 +120,8 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
         }
 
         if (success) {
+            sensingNotification.updateNotificationWith(getName());
+            Log.d(TAG, "SensingNotification updated");
             super.setSensing(true);
             Log.d(TAG, "SensorEventLister registered!");
         } else {
@@ -127,6 +135,7 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
         sm.unregisterListener(this);
         Log.d(TAG, "SensorEventLister unregistered!");
         super.setSensing(false);
+        super.stop();
     }
 
     /**
@@ -171,7 +180,8 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
             long time = (long) (doubleFrame[frame.size()-1][3] - doubleFrame[0][3]);
             int freq = computeFrameFrequency(time);
             autoFixFrequency(freq);
-            Log.d(TAG, "Accelerometer with frequency: " + freq + "Hz");
+//            Log.d(TAG, "Accelerometer with time: " + time + "ms");
+//            Log.d(TAG, "Accelerometer with frequency: " + freq + "Hz");
         }
         frame.clear();
         return data;

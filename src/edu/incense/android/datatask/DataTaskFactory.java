@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.Context;
 import edu.incense.android.datatask.filter.AccelerometerMeanFilter;
+import edu.incense.android.datatask.filter.MovementFilter;
 import edu.incense.android.datatask.filter.ShakeFilter;
 import edu.incense.android.datatask.filter.WifiTimeConnectedFilter;
 import edu.incense.android.datatask.model.Task;
@@ -46,7 +47,7 @@ public class DataTaskFactory {
                 sensor.setPeriodTime(task.getPeriodTime());
             }
             dataTask = new DataSource(sensor);
-            task.setPeriodTime(frameTime);
+            task.setPeriodTime(1000);
             task.setSampleFrequency(-1.0f);
             break;
         case TimerSensor:
@@ -122,6 +123,11 @@ public class DataTaskFactory {
             break;
         case ShakeFilter:
             dataTask = new ShakeFilter();
+            break;
+        case MovementFilter:
+            double threshold = task.getDouble("threshold", 1000);
+            dataTask = new MovementFilter();
+            ((MovementFilter) dataTask).setMovementThreshold((float)threshold);
             break;
         case WifiTimeConnectedFilter:
             dataTask = new WifiTimeConnectedFilter();

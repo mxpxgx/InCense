@@ -73,6 +73,17 @@ public class Task {
         }
         return defValue;
     }
+    
+    public double getDouble(String key, float defValue) {
+        if (jsonNode == null)
+            return defValue;
+        JsonNode attribute = jsonNode.get(key);
+        if (attribute != null) {
+            double value = attribute.getDoubleValue();
+            return value;
+        }
+        return defValue;
+    }
 
     public String getString(String key, String defValue) {
         if (jsonNode == null)

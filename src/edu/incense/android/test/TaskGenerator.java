@@ -136,7 +136,13 @@ public class TaskGenerator {
         return c;
     }
     
-    
+    public static Task createMovementFilter(ObjectMapper mapper, long timePeriod, double threshold){
+        Task task = TaskGenerator.createTaskWithPeriod(mapper, "MovementFilter", TaskType.MovementFilter, timePeriod);
+        JsonNode extrasNode = mapper.createObjectNode();
+        ((ObjectNode) extrasNode).put("threshold", threshold); 
+        task.setJsonNode(extrasNode);
+        return task;
+    }
 
 
 }
