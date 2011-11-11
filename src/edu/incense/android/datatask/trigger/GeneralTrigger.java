@@ -130,7 +130,7 @@ public class GeneralTrigger extends DataTask implements InputEnabledTask  {
     protected void computeSingleData(Data data){
         boolean valid = validate(data);
         if(valid){
-            Log.d(TAG, "It's valid!");
+            Log.d(TAG, getName()+" is valid!");
             trigger(data);
         }
     }
@@ -143,7 +143,6 @@ public class GeneralTrigger extends DataTask implements InputEnabledTask  {
     /* *** VALIDATION METHODS *** */
 
     public boolean validate(Data data) {
-        Log.d(TAG, "Validate...");
         for (Condition c : conditions) {
             boolean isValid = validate(data, c);
             if (matchesAll && !isValid) {

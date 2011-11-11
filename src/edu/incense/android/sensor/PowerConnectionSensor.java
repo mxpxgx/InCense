@@ -21,7 +21,7 @@ public class PowerConnectionSensor extends Sensor {
      */
     public PowerConnectionSensor(Context context) {
         super(context);
-        setName("Power connection");
+        setName("Power");
     }
 
     @Override

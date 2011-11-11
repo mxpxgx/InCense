@@ -46,7 +46,7 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
     public AccelerometerSensor(Context context, int sensorType, long frameTime,
             long duration) {
         super(context);
-        setName("Accelerometer");
+        setName("Accel");
         this.sensorType = sensorType;
         this.frameTime = frameTime;
         this.duration = duration;
@@ -72,7 +72,7 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
             long frameTime, long duration) {
         AccelerometerSensor sensor = new AccelerometerSensor(context,
                 Sensor.TYPE_ACCELEROMETER, frameTime, duration);
-        sensor.setName("Accelerometer");
+        sensor.setName("Accel");
         return sensor;
     }
 
@@ -87,7 +87,7 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
             long frameTime, long duration) {
         AccelerometerSensor sensor = new AccelerometerSensor(context,
                 Sensor.TYPE_GYROSCOPE, frameTime, duration);
-        sensor.setName("Gyroscope");
+        sensor.setName("Gyro");
         return sensor;
     }
 

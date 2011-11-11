@@ -15,7 +15,7 @@ public class PhoneCallSensor extends Sensor {
 
     public PhoneCallSensor(Context context) {
         super(context);
-        setName("Phone calls");
+        setName("Calls");
         dataList = new ArrayList<Data>();
 
         String service = Context.TELEPHONY_SERVICE;

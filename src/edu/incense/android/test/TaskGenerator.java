@@ -26,6 +26,7 @@ public class TaskGenerator {
         Task task = new Task();
         task.setName(name);
         task.setTaskType(type);
+        task.setTriggered(false);
         return task;
     }
     
@@ -125,7 +126,7 @@ public class TaskGenerator {
             c.setOperator(p[2]);
         }
         if(p.length > 3 && p[3]!=null){
-            c.setOperator(p[2]);
+            c.setOperator(p[3]);
         }
         if(p.length > 4 && p[4]!=null){
             c.setValue1(p[4]);
@@ -140,6 +141,15 @@ public class TaskGenerator {
         Task task = TaskGenerator.createTaskWithPeriod(mapper, "MovementFilter", TaskType.MovementFilter, timePeriod);
         JsonNode extrasNode = mapper.createObjectNode();
         ((ObjectNode) extrasNode).put("threshold", threshold); 
+        task.setJsonNode(extrasNode);
+        return task;
+    }
+
+    public static Task createFalseTimerFilter(ObjectMapper mapper, long timePeriod, float timeLength, String attributeName){
+        Task task = TaskGenerator.createTaskWithPeriod(mapper, "FalseTimerFilter", TaskType.FalseTimerFilter, timePeriod);
+        JsonNode extrasNode = mapper.createObjectNode();
+        ((ObjectNode) extrasNode).put("timeLength", timeLength); 
+        ((ObjectNode) extrasNode).put("attributeName", attributeName); 
         task.setJsonNode(extrasNode);
         return task;
     }

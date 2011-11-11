@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.text.format.Time;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 
@@ -59,7 +60,7 @@ public class ProjectManager extends WakefulIntentService implements
         loadProject();
         setUpdateAlarm();
         updateIntent = null;
-        Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
+        // Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
     }
 
     @Override
@@ -101,6 +102,14 @@ public class ProjectManager extends WakefulIntentService implements
             return;
         }
 
+        // if(SessionService.isSessionRunning()){
+        // Toast.makeText(getApplicationContext(),
+        // "Session currently running, please wait...",
+        // Toast.LENGTH_SHORT).show();
+        // Log.d(TAG, "Session currently running, please wait...");
+        // return;
+        // }
+
         long currentTime = System.currentTimeMillis();
         for (Session session : sessions.values()) {
             if (currentTime >= session.getStartDate()) {
@@ -131,6 +140,9 @@ public class ProjectManager extends WakefulIntentService implements
 
     /* PROJECT UPDATE */
 
+    /** 
+     * Sends update action each day at midnight (12:00 AM).
+     */
     private void setUpdateAlarm() {
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (updateIntent != null) {
@@ -146,6 +158,14 @@ public class ProjectManager extends WakefulIntentService implements
                 updateIntent);
     }
 
+    /**
+     * Obtains the time length in milliseconds before the next occurrence/event of the
+     * hour and minute specified. 
+     * 
+     * @param hour
+     * @param minute
+     * @return
+     */
     private long obtainNextOcurranceOf(int hour, int minute) {
         Time now = new Time();
         now.setToNow();
@@ -221,6 +241,18 @@ public class ProjectManager extends WakefulIntentService implements
         WakefulIntentService.sendWakefulWork(this, sessionServiceIntent);
     }
 
+    // public void stopSession() {
+    // // Start service for it to run the recording session
+    // Intent sessionServiceIntent = new Intent(this, SessionService.class);
+    // // Point out this action was triggered by a user
+    // sessionServiceIntent.setAction(SessionService.SESSION_STOP_ACTION);
+    // // Send unique id for this action
+    // long actionId = UUID.randomUUID().getLeastSignificantBits();
+    // sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+    // actionId);
+    // WakefulIntentService.sendWakefulWork(this, sessionServiceIntent);
+    // }
+
     /**
      * @return the project
      */
@@ -295,26 +327,27 @@ public class ProjectManager extends WakefulIntentService implements
     };
 
     /* In case of crashes */
-
-    private Thread.UncaughtExceptionHandler onRuntimeError = new Thread.UncaughtExceptionHandler() {
-        private long actionId;
-
-        public void uncaughtException(Thread thread, Throwable ex) {
-            // Start service for it to run the recording session
-            Intent projectManagerIntent = new Intent(
-                    ProjectManager.this.getApplicationContext(),
-                    ProjectManager.class);
-            // Point out this action was triggered by a user
-            projectManagerIntent.setAction(ProjectManager.PROJECT_START_ACTION);
-            // Send unique id for this action
-            actionId = UUID.randomUUID().getLeastSignificantBits();
-            projectManagerIntent.putExtra(ProjectManager.ACTION_ID_FIELDNAME,
-                    actionId);
-            // startService(sessionServiceIntent);
-            WakefulIntentService.sendWakefulWork(
-                    ProjectManager.this.getApplicationContext(),
-                    projectManagerIntent);
-        }
-    };
+    //
+    // private Thread.UncaughtExceptionHandler onRuntimeError = new
+    // Thread.UncaughtExceptionHandler() {
+    // private long actionId;
+    //
+    // public void uncaughtException(Thread thread, Throwable ex) {
+    // // Start service for it to run the recording session
+    // Intent projectManagerIntent = new Intent(
+    // ProjectManager.this.getApplicationContext(),
+    // ProjectManager.class);
+    // // Point out this action was triggered by a user
+    // projectManagerIntent.setAction(ProjectManager.PROJECT_START_ACTION);
+    // // Send unique id for this action
+    // actionId = UUID.randomUUID().getLeastSignificantBits();
+    // projectManagerIntent.putExtra(ProjectManager.ACTION_ID_FIELDNAME,
+    // actionId);
+    // // startService(sessionServiceIntent);
+    // WakefulIntentService.sendWakefulWork(
+    // ProjectManager.this.getApplicationContext(),
+    // projectManagerIntent);
+    // }
+    // };
 
 }

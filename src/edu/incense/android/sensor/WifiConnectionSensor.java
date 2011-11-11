@@ -34,7 +34,7 @@ public class WifiConnectionSensor extends Sensor {
 
     public WifiConnectionSensor(Context context) {
         super(context);
-        setName("WiFi connection");
+        setName("WiFi");
         // WifiManager initiation
         String service = Context.WIFI_SERVICE;
         wifiManager = (WifiManager) context.getSystemService(service);

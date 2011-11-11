@@ -20,7 +20,9 @@ public abstract class DataTask implements Runnable {
     private TaskType taskType;
     private Thread thread = null;
     private boolean running = false;
-
+    private String name = null;
+    private boolean triggered;
+    
     /**
      * @return the isRunning
      */
@@ -38,6 +40,7 @@ public abstract class DataTask implements Runnable {
     public DataTask() {
         // thread = new Thread(this);
         running = false;
+        triggered = false;
         setPeriodTime(DEFAULT_PERIOD_TIME);
     }
 
@@ -101,6 +104,7 @@ public abstract class DataTask implements Runnable {
         thread = new Thread(this);
         setRunning(true);
         thread.start();
+        Log.d(TAG, getName()+" started");
     }
 
     public void stop() {
@@ -170,5 +174,33 @@ public abstract class DataTask implements Runnable {
      */
     public TaskType getTaskType() {
         return taskType;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param triggered the triggered to set
+     */
+    public void setTriggered(boolean triggered) {
+        this.triggered = triggered;
+    }
+
+    /**
+     * @return the triggered
+     */
+    public boolean isTriggered() {
+        return triggered;
     }
 }

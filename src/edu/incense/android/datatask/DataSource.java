@@ -26,6 +26,7 @@ public class DataSource extends DataTask implements OutputEnabledTask {
     public void stop() {
         super.stop();
         sensor.stop();
+        compute();
     }
 
     protected void clearInputs() {

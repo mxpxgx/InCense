@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.Context;
 import edu.incense.android.datatask.filter.AccelerometerMeanFilter;
+import edu.incense.android.datatask.filter.FalseTimerFilter;
 import edu.incense.android.datatask.filter.MovementFilter;
 import edu.incense.android.datatask.filter.ShakeFilter;
 import edu.incense.android.datatask.filter.WifiTimeConnectedFilter;
@@ -52,7 +53,9 @@ public class DataTaskFactory {
             break;
         case TimerSensor:
             long period = task.getLong("period", 1000);
-            dataTask = new DataSource(new TimerSensor(context, period));
+            TimerSensor ts = new TimerSensor(context, period);
+            dataTask = new DataSource(ts);
+            ts.addSourceTask((DataSource) dataTask);
             break;
         case AudioSensor:
             long audioDuration = task.getLong("duration", -1);
@@ -129,6 +132,13 @@ public class DataTaskFactory {
             dataTask = new MovementFilter();
             ((MovementFilter) dataTask).setMovementThreshold((float)threshold);
             break;
+        case FalseTimerFilter:
+            long timeLength = task.getLong("timeLength", 1000);
+            String attributeName = task.getString("attributeName", "");
+            dataTask = new FalseTimerFilter();
+            ((FalseTimerFilter) dataTask).setTimeLength(timeLength);
+            ((FalseTimerFilter) dataTask).setAttributeName(attributeName);
+            break;
         case WifiTimeConnectedFilter:
             dataTask = new WifiTimeConnectedFilter();
             break;
@@ -159,6 +169,8 @@ public class DataTaskFactory {
             dataTask.setPeriodTime(task.getPeriodTime());
         }
         dataTask.setTaskType(task.getTaskType());
+        dataTask.setName(task.getName());
+        dataTask.setTriggered(task.isTriggered());
         return dataTask;
     }
 }

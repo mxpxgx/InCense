@@ -28,7 +28,7 @@ public class PhoneStateSensor extends Sensor {
 
     public PhoneStateSensor(Context context) {
         super(context);
-        setName("Phone state");
+        setName("States");
         String service = Context.TELEPHONY_SERVICE;
         telephonyManager = (TelephonyManager) context.getSystemService(service);
 

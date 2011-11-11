@@ -2,6 +2,7 @@ package edu.incense.android.session;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import android.content.Intent;
 import android.util.Log;
@@ -26,7 +27,15 @@ public class SessionService extends WakefulIntentService implements
         SessionCompletionListener {// extends
     // IntentService {
     private static final String TAG = "SessionService";
-    private static volatile boolean sessionRunning = false;
+
+    // private static volatile boolean sessionRunning = false;
+
+//    /**
+//     * @return the sessionRunning
+//     */
+//    public boolean isSessionRunning() {
+//        return sessionRunning;
+//    }
 
     /**
      * This constructor is never used directly, it is used by the superclass
@@ -39,9 +48,10 @@ public class SessionService extends WakefulIntentService implements
     @Override
     public void onCreate() {
         super.onCreate();
-//        sessionRunning = false;
+        // sessionRunning = false;
         loadProject();
-        // Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
+        Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
+        Log.d(TAG, "SessionService created");
     }
 
     @Override
@@ -52,16 +62,6 @@ public class SessionService extends WakefulIntentService implements
 
     /* INTENT_SERVICE METHODS */
 
-    // public final static String SESSION_ACTION =
-    // "edu.incense.android.SESSION_ACTION";
-    // public final static String SESSION_USER_ACTION =
-    // "edu.incense.android.SESSION_USER_ACTION";
-    // public final static String SESSION_USER_ACTION_COMPLETE =
-    // "edu.incense.android.SESSION_USER_ACTION_COMPLETE";
-    // public final static String SESSION_ALARM_ACTION =
-    // "edu.incense.android.SESSION_ALARM_ACTION";
-    // public final static String SESSION_ALARM_ACTION_COMPLETE =
-    // "edu.incense.android.SESSION_ALARM_ACTION_COMPLETE";
     public final static String SESSION_START_ACTION = "edu.incense.android.SESSION_START_ACTION";
     public final static String SESSION_STOP_ACTION = "edu.incense.android.SESSION_STOP_ACTION";
     public final static String SESSION_START_ACTION_COMPLETE = "edu.incense.android.SESSION_START_ACTION_COMPLETE";
@@ -83,13 +83,14 @@ public class SessionService extends WakefulIntentService implements
 
         /* SESSION ACTION */
         if (intent.getAction().compareTo(SESSION_START_ACTION) == 0) {
-            if (sessionRunning) {
-                Toast.makeText(this,
-                        "Session currently running, please wait...",
-                        Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Session currently running, please wait...");
-                return;
-            }
+            // if (sessionRunning) {
+//            if (isWorking()) {
+//                Toast.makeText(getApplicationContext(),
+//                        "Session currently running, please wait...",
+//                        Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "Session currently running, please wait...");
+//                return;
+//            }
 
             // Get session
             String sessionName = intent.getStringExtra(SESSION_NAME_FIELDNAME);
@@ -105,7 +106,7 @@ public class SessionService extends WakefulIntentService implements
             // Start session
             Log.d(TAG, "Starting session action: " + sessionName);
             startSession(session);
-            
+
             actionId = intent.getLongExtra(ACTION_ID_FIELDNAME, -1);
             // Send broadcast the end of this process
             Intent broadcastIntent = new Intent(SESSION_START_ACTION_COMPLETE);
@@ -119,11 +120,11 @@ public class SessionService extends WakefulIntentService implements
                         "SessionController is null. There's nothing to stop.");
                 return;
             }
-            if (!sessionRunning) {
-                Log.e(TAG,
-                        "SessionService is not running any session. There's nothing to stop.");
-                return;
-            }
+//            if (!isWorking()){//sessionRunning) {
+//                Log.e(TAG,
+//                        "SessionService is not running any session. There's nothing to stop.");
+//                return;
+//            }
             actionId = intent.getLongExtra(ACTION_ID_FIELDNAME, -1);
             String sessionName = controller.getSessionName();
             Log.d(TAG, "Stopping session: " + sessionName);
@@ -143,7 +144,8 @@ public class SessionService extends WakefulIntentService implements
         broadcastIntent.putExtra(ACTION_ID_FIELDNAME, actionId);
         sendBroadcast(broadcastIntent);
         Log.d(TAG, "SessionService stop broadcasted");
-        sessionRunning = false;
+//        sessionRunning = false;
+//        setWorking(false);
     }
 
     /**
@@ -192,7 +194,8 @@ public class SessionService extends WakefulIntentService implements
     }
 
     private void startSession(Session session) {
-        sessionRunning = true;
+//        sessionRunning = true;
+//        setWorking(true);
         controller = new SessionController(this, session);
         Log.d(TAG, "Session controller initiated");
         controller.start();
@@ -202,31 +205,31 @@ public class SessionService extends WakefulIntentService implements
     private void stopSession() {
         if (controller != null)
             controller.stop();
-        sessionRunning = false;
+//        sessionRunning = false;
+//        setWorking(false);
     }
 
     /* In case of crashes */
 
-    // private Thread.UncaughtExceptionHandler onRuntimeError = new
-    // Thread.UncaughtExceptionHandler() {
-    // private long actionId;
-    //
-    // public void uncaughtException(Thread thread, Throwable ex) {
-    // // Start service for it to run the recording session
-    // Intent sessionServiceIntent = new Intent(
-    // SessionService.this.getApplicationContext(),
-    // SessionService.class);
-    // // Point out this action was triggered by a user
-    // sessionServiceIntent.setAction(SessionService.SESSION_ACTION);
-    // // Send unique id for this action
-    // actionId = UUID.randomUUID().getLeastSignificantBits();
-    // sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
-    // actionId);
-    // // startService(sessionServiceIntent);
-    // WakefulIntentService.sendWakefulWork(
-    // SessionService.this.getApplicationContext(),
-    // sessionServiceIntent);
-    // }
-    // };
+    private Thread.UncaughtExceptionHandler onRuntimeError = new Thread.UncaughtExceptionHandler() {
+        private long actionId;
+
+        public void uncaughtException(Thread thread, Throwable ex) {
+            // Start service for it to run the recording session
+            Intent sessionServiceIntent = new Intent(
+                    SessionService.this.getApplicationContext(),
+                    SessionService.class);
+            // Point out this action was triggered by a user
+            sessionServiceIntent.setAction(SessionService.SESSION_START_ACTION);
+            // Send unique id for this action
+            actionId = UUID.randomUUID().getLeastSignificantBits();
+            sessionServiceIntent.putExtra(SessionService.ACTION_ID_FIELDNAME,
+                    actionId);
+            // startService(sessionServiceIntent);
+            WakefulIntentService.sendWakefulWork(
+                    SessionService.this.getApplicationContext(),
+                    sessionServiceIntent);
+        }
+    };
 
 }

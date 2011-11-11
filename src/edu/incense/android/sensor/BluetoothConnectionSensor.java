@@ -17,7 +17,7 @@ public class BluetoothConnectionSensor extends Sensor implements Runnable{
 
     public BluetoothConnectionSensor(Context context, String address) {
         super(context);
-        setName("Bluetooth connection");
+        setName("BT");
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if(BluetoothAdapter.checkBluetoothAddress(address)){
             device = adapter.getRemoteDevice(address);

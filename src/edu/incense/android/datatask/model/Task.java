@@ -9,6 +9,7 @@ public class Task {
     private String name;
     private float sampleFrequency;
     private long periodTime;
+    private boolean triggered;
     private JsonNode jsonNode;
 
     public Task() {
@@ -130,5 +131,19 @@ public class Task {
      */
     public long getPeriodTime() {
         return periodTime;
+    }
+
+    /**
+     * @param triggered the triggered to set
+     */
+    public void setTriggered(boolean triggered) {
+        this.triggered = triggered;
+    }
+
+    /**
+     * @return the triggered
+     */
+    public boolean isTriggered() {
+        return triggered;
     }
 }

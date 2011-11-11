@@ -24,5 +24,6 @@ public enum TaskType {
     StopTrigger,
     TimerSensor,
     PowerConnectionSensor,
-    MovementFilter
+    MovementFilter,
+    FalseTimerFilter
 }

@@ -38,13 +38,14 @@ public class SessionController {
     private Session session;
     private List<DataTask> tasks;
     private Context context;
-    private ExecutorService executorService;
+
+    // private ExecutorService executorService;
 
     public SessionController(Context context, Session session) {
         this.context = context;
         this.session = session;
         tasks = new ArrayList<DataTask>();
-        executorService = Executors.newSingleThreadExecutor();
+        // executorService = Executors.newSingleThreadExecutor();
         setState(ControllerState.INITIATED);
     }
 
@@ -69,8 +70,8 @@ public class SessionController {
     public synchronized ControllerState getState() {
         return state;
     }
-    
-    public void registerListener(SessionCompletionListener listener){
+
+    public void registerListener(SessionCompletionListener listener) {
         this.listener = listener;
     }
 
@@ -109,7 +110,7 @@ public class SessionController {
                 InputEnabledTask inputTask;
                 for (TaskRelation tr : relations) {
                     DataTask task1 = taskCollection.get(tr.getTask1());
-                    Log.i(TAG, "Task: "+tr.getTask1());
+                    Log.i(TAG, "Task: " + tr.getTask1());
                     // When first task is a trigger
                     if (task1.getTaskType() == TaskType.Trigger
                             || task1.getTaskType() == TaskType.StopTrigger) {
@@ -146,20 +147,21 @@ public class SessionController {
     }
 
     public void start() {
-        if(getState() == ControllerState.INITIATED){
+        if (getState() == ControllerState.INITIATED) {
             prepareSession();
         }
         if (getState() == ControllerState.PREPARED
                 || getState() == ControllerState.STOPPED) {
             setState(ControllerState.STARTED);
-            executorService.execute(sessionRunnable);
+            // executorService.execute(sessionRunnable);
+            run();
         }
     }
 
     public void stop() {
         if (getState() == ControllerState.STARTED) {
             setState(ControllerState.STOPPING);
-            while(getState() != ControllerState.STOPPED){
+            while (getState() != ControllerState.STOPPED) {
                 try {
                     Thread.sleep(100);
                 } catch (Exception e) {
@@ -188,44 +190,45 @@ public class SessionController {
         return duration;
     }
 
-    private Runnable sessionRunnable = new Runnable() {
+    // private Runnable sessionRunnable = new Runnable() {
 
-        public void run() {
+    public void run() {
 
-            // Compute duration of the session
-            long duration = getDuration(session);
+        // Compute duration of the session
+        long duration = getDuration(session);
 
-            // Start DataTasks in the session
-            for (DataTask dt : tasks) {
-                Log.i(TAG, "Starting: " + dt.getClass().getName());
+        // Start DataTasks in the session
+        for (DataTask dt : tasks) {
+            Log.i(TAG, "Starting: " + dt.getClass().getName());
+            if (!dt.isTriggered()) {
                 dt.start();
             }
-
-            // Wait until duration time elapses
-            long startTime = System.currentTimeMillis();
-            long runningTime = 0;
-            while (duration >= runningTime
-                    && getState() == ControllerState.STARTED) {
-                runningTime = System.currentTimeMillis() - startTime;
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    Log.e(TAG, "Runnable sleep failed", e);
-                }
-            }
-
-            // Stop DataTasks
-            for (DataTask dt : tasks) {
-                Log.i(TAG, "Stoping: " + dt.getClass().getName());
-                if (dt.isRunning()) {
-                    dt.stop();
-                }
-                dt.clear();
-            }
-            setState(ControllerState.STOPPED);
-            listener.completedSession(getSessionName(), runningTime);
         }
 
-    };
+        // Wait until duration time elapses
+        long startTime = System.currentTimeMillis();
+        long runningTime = 0;
+        while (duration >= runningTime && getState() == ControllerState.STARTED) {
+            runningTime = System.currentTimeMillis() - startTime;
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                Log.e(TAG, "Runnable sleep failed", e);
+            }
+        }
+
+        // Stop DataTasks
+        for (DataTask dt : tasks) {
+            Log.i(TAG, "Stoping: " + dt.getClass().getName());
+            if (dt.isRunning()) {
+                dt.stop();
+            }
+            dt.clear();
+        }
+        setState(ControllerState.STOPPED);
+        listener.completedSession(getSessionName(), runningTime);
+    }
+
+    // };
 
 }

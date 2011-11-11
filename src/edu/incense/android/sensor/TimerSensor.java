@@ -7,6 +7,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
+import android.util.Log;
+import edu.incense.android.datatask.DataSource;
 import edu.incense.android.datatask.data.others.BooleanData;
 
 /**
@@ -14,15 +16,18 @@ import edu.incense.android.datatask.data.others.BooleanData;
  * 
  */
 public class TimerSensor extends Sensor {
-//    private final static String TAG = "TimerSensor";
+    private final static String TAG = "TimerSensor";
     private ScheduledThreadPoolExecutor stpe;
     private long period;
-
+    private boolean firstEventRan = false;
+    private DataSource dataSource;
+    
     /**
      * @param context
      */
     public TimerSensor(Context context, long period) {
         super(context);
+        setName("Timer");
         this.period = period;
     }
 
@@ -47,9 +52,15 @@ public class TimerSensor extends Sensor {
     @Override
     public synchronized void start() {
         super.start();
+        this.currentData =  null;
+        firstEventRan = false;
         stpe = new ScheduledThreadPoolExecutor(1);
-        stpe.scheduleAtFixedRate(timerRunnable, 0, period,
+//        stpe.scheduleAtFixedRate(timerRunnable, 0, period,
+//                TimeUnit.MILLISECONDS);
+        stpe.schedule(timerRunnable, period,
                 TimeUnit.MILLISECONDS);
+        Log.d(TAG, TAG + " started");
+//        Log.d(TAG, "Period: "+period+" ms");
     }
 
     /**
@@ -59,12 +70,25 @@ public class TimerSensor extends Sensor {
     public synchronized void stop() {
         super.stop();
         stpe.shutdown();
+        Log.d(TAG, TAG + " stopped");
     }
 
     Runnable timerRunnable = new Runnable() {
         public void run() {
-            TimerSensor.this.currentData = new BooleanData(true);
+//            if (!firstEventRan) {
+//                firstEventRan = true;
+//                TimerSensor.this.currentData =  null;
+//                Log.d(TAG, "First execution");
+//            } else {
+                TimerSensor.this.currentData = new BooleanData(true);
+                Log.d(TAG, "Timer event");
+                dataSource.stop();
+//            }
         }
     };
+    
+    public void addSourceTask(DataSource ds){
+        dataSource = ds;
+    }
 
 }

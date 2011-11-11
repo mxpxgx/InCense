@@ -3,6 +3,9 @@
  */
 package edu.incense.android.ui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -35,11 +38,15 @@ public class NfcActivity extends Activity {
     private PendingIntent mNfcPendingIntent;
     private IntentFilter[] mWriteTagFilters;
     private IntentFilter[] mNdefExchangeFilters;
+    
+    
+    private final static Map<String, String> tagsText = initTagTexts();
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         setContentView(R.layout.nfc);
@@ -208,6 +215,31 @@ public class NfcActivity extends Activity {
         broadcastIntent.putExtra(ACTION_NFC_TAG, message);
         sendBroadcast(broadcastIntent);
         Log.d(TAG, "New NFC tag intent was broadcasted");
+    }
+    
+    private static Map<String, String> initTagTexts(){
+        Map<String, String> tagsText = new HashMap<String, String>();
+        tagsText.put("ACAM", "ACOSTARSE Y LEVANTARSE DE LA CAMA");
+        tagsText.put("HCAM", "HACER LA CAMA");
+        tagsText.put("BANO", "BAÑARSE");
+        tagsText.put("ASEO", "ASEO PERSONAL");
+        tagsText.put("DNTS", "LAVARSE LOS DIENTES");
+        tagsText.put("VEST", "VESTIRSE");
+        tagsText.put("IRBN", "IR AL BAÑO");
+        tagsText.put("PCMD", "PREPARAR LA COMIDA");
+        tagsText.put("COMR", "COMER");
+        tagsText.put("TMED", "TOMAR MEDICAMENTOS");
+        tagsText.put("LAVR", "LAVAR ROPA");
+        tagsText.put("PLAR", "PLANCHAR ROPA");
+        tagsText.put("MASC", "ALIMENTAR O JUGAR CON MASCOTAS");
+        tagsText.put("TV", "VER TELEVISIÓN");
+        tagsText.put("TEL", "HABLAR POR TELÉFONO");
+        tagsText.put("AUTO", "USAR TRANSPORTE O CONDUCIR AUTO");
+        tagsText.put("IGLS", "IR AL BANCO O A LA IGLESIA");
+        tagsText.put("CMNR", "CAMINAR EN LA CALLE");
+        tagsText.put("MRCD", "IR AL MERCADO");
+        tagsText.put("VMED", "VISITA AL MÉDICO");
+        return tagsText;
     }
 
     // private void toast(String text) {
