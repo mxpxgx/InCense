@@ -58,7 +58,7 @@ public class ProjectManager extends WakefulIntentService implements
     public void onCreate() {
         super.onCreate();
         loadProject();
-        setUpdateAlarm();
+//        setUpdateAlarm();
         updateIntent = null;
         // Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
     }
@@ -115,7 +115,7 @@ public class ProjectManager extends WakefulIntentService implements
             if (currentTime >= session.getStartDate()) {
                 startSession(session);
             } else {
-                this.setAlarmsFor(session);
+//                this.setAlarmsFor(session);
             }
         }
     }

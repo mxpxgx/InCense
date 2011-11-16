@@ -11,7 +11,9 @@ import edu.incense.android.datatask.data.Data;
 
 public class DataSink extends DataTask implements InputEnabledTask {
     private final static String TAG = "DataSink";
-    private final static int DEFAUL_MAX_SINK_SIZE = 60;
+    private final static int DEFAULT_MAX_SINK_SIZE = 60;
+    private final static long DEFAULT_DRAIN_TIME = 36000000L;//1L * 60L * 60L * 1000L; // each hour
+    private long lastDrainTime;
     protected String name;
     protected List<Data> sink = null;
 
@@ -20,6 +22,7 @@ public class DataSink extends DataTask implements InputEnabledTask {
     public DataSink(SinkWritter sinkWritter) {
         this.sinkWritter = sinkWritter;
         inputs = new ArrayList<Input>();
+        lastDrainTime = System.currentTimeMillis();
 
         clear();
         initSinkList();
@@ -47,7 +50,7 @@ public class DataSink extends DataTask implements InputEnabledTask {
     /*
      * (non-Javadoc)
      * 
-     * @see com.UrbanMoments.DataTask.DataTask#compute() Collects the most
+     * @see edu.incense.datatask.DataTask#compute() Collects the most
      * recent data from all inputs in a "sink" (List)
      */
     @Override
@@ -55,13 +58,14 @@ public class DataSink extends DataTask implements InputEnabledTask {
         Data latestData = null;
         for (Input i : inputs) {
             do {
+                long timeSinceLastDrain = System.currentTimeMillis() - lastDrainTime;
                 latestData = i.pullData();
                 if (latestData != null) {
                     sink.add(latestData);
                     //Log.d(TAG, "Data added to sink!");
-                    if(sink.size() >= DEFAUL_MAX_SINK_SIZE){
-                        //Log.d(TAG, "Trying to write data...");
-                        sinkWritter.writeSink(name, removeSink());
+                    if(sink.size() >= DEFAULT_MAX_SINK_SIZE || 
+                            timeSinceLastDrain >= DEFAULT_DRAIN_TIME){
+                        drain();
                     }
                 } else {
 //                    Log.d(TAG, "Data NOT added to sink!");
@@ -72,6 +76,12 @@ public class DataSink extends DataTask implements InputEnabledTask {
 
     public List<Data> getSink() {
         return sink;
+    }
+    
+    private void drain(){
+        //Log.d(TAG, "Trying to write data...");
+        sinkWritter.writeSink(name, removeSink());
+        lastDrainTime = System.currentTimeMillis();
     }
     
     /**

@@ -144,7 +144,7 @@ public class AudioSensor extends Sensor implements Runnable {
     @Override
     public void stop() {
 //        Log.i(TAG, "Trying to stop");
-        ///super.stop();
+        super.stop();
         super.setSensing(false);
 //        try {
 //            thread.join();

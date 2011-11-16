@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.TextView;
 import edu.incense.android.R;
 
 /**
@@ -35,6 +36,8 @@ public class NfcPlainActivity extends Activity {
     private IntentFilter[] mWriteTagFilters;
     private IntentFilter[] mNdefExchangeFilters;
 
+    private TextView nfcText;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,8 @@ public class NfcPlainActivity extends Activity {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         setContentView(R.layout.nfc_plain);
+
+        nfcText = (TextView) findViewById(R.id.textview_nfcmessage);
 
         // Handle all of our received NFC intents in this activity.
         mNfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
@@ -57,7 +62,7 @@ public class NfcPlainActivity extends Activity {
         }
         IntentFilter techDetected = new IntentFilter(
                 NfcAdapter.ACTION_TECH_DISCOVERED);
-        
+
         mNdefExchangeFilters = new IntentFilter[] { ndefDetected, techDetected };
 
         // Intent filters for writing to a tag
@@ -65,11 +70,11 @@ public class NfcPlainActivity extends Activity {
                 NfcAdapter.ACTION_TAG_DISCOVERED);
         mWriteTagFilters = new IntentFilter[] { tagDetected };
 
-        //Load NFC sound
+        // Load NFC sound
         ring = MediaPlayer.create(this,
                 Settings.System.DEFAULT_NOTIFICATION_URI);
-        
-        //Set volume according to user current settings
+
+        // Set volume according to user current settings
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int vol = am.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
         ring.setVolume(vol, vol);
@@ -96,12 +101,12 @@ public class NfcPlainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mNfcAdapter.disableForegroundNdefPush(this);
-        if(ring != null){
-            try{
+        if (ring != null) {
+            try {
                 ring.release();
-                } catch(IllegalStateException e){
-                    Log.e(TAG, "Could not be released.", e);
-                }
+            } catch (IllegalStateException e) {
+                Log.e(TAG, "Could not be released.", e);
+            }
         }
         // finish();
     }
@@ -118,10 +123,9 @@ public class NfcPlainActivity extends Activity {
             sendBroadcast(message);
 
             runnable.resetEventTime();
-        } else if(NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())){
+        } else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
             String message = getNfcAMessage(intent);
             this.setIntent(intent);
-
             sendBroadcast(message);
 
             runnable.resetEventTime();
@@ -145,10 +149,10 @@ public class NfcPlainActivity extends Activity {
 
         public synchronized void resetEventTime() {
             startTime = System.currentTimeMillis();
-            if(ring != null){
-                try{
-                ring.start();
-                } catch(IllegalStateException e){
+            if (ring != null) {
+                try {
+                    ring.start();
+                } catch (IllegalStateException e) {
                     Log.e(TAG, "Could not be started.", e);
                 }
             }
@@ -199,13 +203,15 @@ public class NfcPlainActivity extends Activity {
         }
         return msgs;
     }
+
     private String getNfcAMessage(Intent intent) {
         // Parse the intent
         String msg = null;
         String action = intent.getAction();
-        if(NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)){
-            Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.ACTION_TECH_DISCOVERED);
-            if(tag != null){
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
+            Tag tag = (Tag) intent
+                    .getParcelableExtra(NfcAdapter.ACTION_TECH_DISCOVERED);
+            if (tag != null) {
                 NfcA nfcA = NfcA.get(tag);
                 msg = new String(nfcA.getAtqa());
             }
@@ -217,6 +223,8 @@ public class NfcPlainActivity extends Activity {
     public final static String ACTION_NFC_TAG = "action_nfctag";
 
     public void sendBroadcast(String message) {
+        //Show message in the screen
+        nfcText.setText(message);
         // Send broadcast the end of this process
         Intent broadcastIntent = new Intent(NFC_TAG_ACTION);
         broadcastIntent.putExtra(ACTION_NFC_TAG, message);

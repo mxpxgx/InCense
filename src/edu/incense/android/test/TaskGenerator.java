@@ -69,8 +69,8 @@ public class TaskGenerator {
         return task;
     }
     
-    public static Task createNfcSensor(ObjectMapper mapper, int sampleFrequency){
-        Task task = TaskGenerator.createTask(mapper, "NfcSensor", TaskType.NfcSensor, sampleFrequency);
+    public static Task createNfcSensor(ObjectMapper mapper, long period){
+        Task task = TaskGenerator.createTaskWithPeriod(mapper, "NfcSensor", TaskType.NfcSensor, period);
         return task;
     }
     

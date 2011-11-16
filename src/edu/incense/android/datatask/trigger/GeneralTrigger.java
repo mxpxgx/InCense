@@ -80,6 +80,9 @@ public class GeneralTrigger extends DataTask implements InputEnabledTask  {
     }
 
     protected void trigger(Data data){
+        if(tasksToStart.isEmpty()){
+            Log.d(TAG, "There aren't tasks to trigger.");
+        }
         for(DataTask task: tasksToStart){
             if(!task.isRunning()){
                 Log.d(TAG, "Triggering task... "+task.getClass());
@@ -132,6 +135,8 @@ public class GeneralTrigger extends DataTask implements InputEnabledTask  {
         if(valid){
             Log.d(TAG, getName()+" is valid!");
             trigger(data);
+        } else {
+            Log.d(TAG, getName()+" is invalid!");
         }
     }
 

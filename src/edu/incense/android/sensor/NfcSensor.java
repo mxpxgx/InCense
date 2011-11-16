@@ -42,9 +42,9 @@ public class NfcSensor extends Sensor {
                     NfcActivity.NFC_TAG_ACTION) == 0) {
                 
                     String message = intent.getStringExtra(NfcActivity.ACTION_NFC_TAG);
-                    Toast.makeText(getContext(), "NFC tag received: "+message,
+                    Toast.makeText(getContext(), message,
                             Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "NFC tag received"+message);
+                    Log.d(TAG, "NFC tag received: "+message);
                     currentData = new NfcData(message);
             }
         }

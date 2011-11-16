@@ -122,7 +122,6 @@ public class SessionController {
                         } else {
                             DataTask task2 = (DataTask) taskCollection.get(tr
                                     .getTask2());
-
                             trigger.addTask(task2);
                         }
                     }
