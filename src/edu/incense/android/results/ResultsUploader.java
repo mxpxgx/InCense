@@ -49,6 +49,7 @@ public class ResultsUploader {
             int maxFiles = Integer.parseInt(context.getResources().getString(
                     R.string.filequeue_max_files));
             fileQueue.setMaxFiles(maxFiles);
+            //There no Queue, a new one should be created
             Queue<ResultFile> queue = new LinkedList<ResultFile>();
             fileQueue.setFileQueue(queue);
             saveQueue();

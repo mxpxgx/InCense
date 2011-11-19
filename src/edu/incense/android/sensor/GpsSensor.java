@@ -15,6 +15,7 @@ import edu.incense.android.datatask.data.GpsData;
 public class GpsSensor extends Sensor {
     private final static String LOCATION_UPDATE_ACTION = "locationUpdate";
     private final static long MIN_RATE_TIME = 20L * 1000L; // 20 seconds
+    private final static float MIN_DISTANCE = 5.0F; // In meters
     private final static long MAX_TIME_WITHOUT_NEW_LOCATION = 2L * 60L * 1000L; // 2
     private final static long RESTART_TIME = 5L * 60L * 1000L; // 5 minutes
     private final static String TAG = "GpsSensor";
@@ -44,7 +45,7 @@ public class GpsSensor extends Sensor {
         Location location = null;
         try {
             Log.d(TAG, "Time rate: "+minTime);
-            locationManager.requestLocationUpdates(provider, minTime, 3.0F,
+            locationManager.requestLocationUpdates(provider, minTime, MIN_DISTANCE,
                     pendingIntent);
             // Initialize it with the last known location (it is better than
             // nothing at all).

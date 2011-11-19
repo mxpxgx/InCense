@@ -6,6 +6,7 @@ import android.content.Context;
 import edu.incense.android.datatask.filter.AccelerometerMeanFilter;
 import edu.incense.android.datatask.filter.FalseTimerFilter;
 import edu.incense.android.datatask.filter.MovementFilter;
+import edu.incense.android.datatask.filter.MovementTimeFilter;
 import edu.incense.android.datatask.filter.ShakeFilter;
 import edu.incense.android.datatask.filter.WifiTimeConnectedFilter;
 import edu.incense.android.datatask.model.Task;
@@ -138,6 +139,13 @@ public class DataTaskFactory {
             dataTask = new FalseTimerFilter();
             ((FalseTimerFilter) dataTask).setTimeLength(timeLength);
             ((FalseTimerFilter) dataTask).setAttributeName(attributeName);
+            break;
+        case MovementTimeFilter:
+            long maxNoInput = task.getLong("maxNoInput", 30000L);
+            long maxNoMovement = task.getLong("maxNoMovement", 5000L);
+            dataTask = new MovementTimeFilter();
+            ((MovementTimeFilter) dataTask).setMaxNoInput(maxNoInput);
+            ((MovementTimeFilter) dataTask).setMaxNoMovement(maxNoMovement);
             break;
         case WifiTimeConnectedFilter:
             dataTask = new WifiTimeConnectedFilter();

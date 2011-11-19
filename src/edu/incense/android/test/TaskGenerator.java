@@ -153,6 +153,15 @@ public class TaskGenerator {
         task.setJsonNode(extrasNode);
         return task;
     }
+    
+    public static Task createMovementTimeFilter(ObjectMapper mapper, long timePeriod, long maxNoInput, long maxNoMovement){
+        Task task = TaskGenerator.createTaskWithPeriod(mapper, "MovementTimeFilter", TaskType.MovementTimeFilter, timePeriod);
+        JsonNode extrasNode = mapper.createObjectNode();
+        ((ObjectNode) extrasNode).put("maxNoInput", maxNoInput); 
+        ((ObjectNode) extrasNode).put("maxNoMovement", maxNoMovement); 
+        task.setJsonNode(extrasNode);
+        return task;
+    }
 
 
 }

@@ -22,7 +22,7 @@ public abstract class DataTask implements Runnable {
     private boolean running = false;
     private String name = null;
     private boolean triggered;
-    
+
     /**
      * @return the isRunning
      */
@@ -31,7 +31,8 @@ public abstract class DataTask implements Runnable {
     }
 
     /**
-     * @param isRunning the isRunning to set
+     * @param isRunning
+     *            the isRunning to set
      */
     public synchronized void setRunning(boolean running) {
         this.running = running;
@@ -88,14 +89,13 @@ public abstract class DataTask implements Runnable {
     public void run() {
         Looper.prepare();
         while (isRunning()) {
-            try {
-
-                compute();
-                if (getPeriodTime() > 1) {
+            compute();
+            if (getPeriodTime() > 1) {
+                try {
                     Thread.sleep(getPeriodTime());
+                } catch (Exception e) {
+                    Log.e(TAG, "Sleep: " + e);
                 }
-            } catch (Exception e) {
-                Log.e(TAG, "Sleep: " + e);
             }
         }
     }
@@ -104,16 +104,16 @@ public abstract class DataTask implements Runnable {
         thread = new Thread(this);
         setRunning(true);
         thread.start();
-        Log.d(TAG, getName()+" started");
+        Log.d(TAG, getName() + " started");
     }
 
     public void stop() {
         setRunning(false);
-//        try {
-//            thread.join();
-//        } catch (InterruptedException e) {
-//            Log.e(TAG, "Task thread join failed", e);
-//        }
+        // try {
+        // thread.join();
+        // } catch (InterruptedException e) {
+        // Log.e(TAG, "Task thread join failed", e);
+        // }
         if (thread != null) {
             thread = null;
         }
@@ -177,7 +177,8 @@ public abstract class DataTask implements Runnable {
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;
@@ -191,7 +192,8 @@ public abstract class DataTask implements Runnable {
     }
 
     /**
-     * @param triggered the triggered to set
+     * @param triggered
+     *            the triggered to set
      */
     public void setTriggered(boolean triggered) {
         this.triggered = triggered;

@@ -13,7 +13,7 @@ import edu.incense.android.datatask.data.Data;
  */
 public class MovementFilter extends DataFilter {
     private static final String TAG = "MovementFilter";
-    private static final String ATT_ISMOVEMENT = "isMovement";
+    public static final String ATT_ISMOVEMENT = "isMovement";
     private float movementThreshold;
 
     public MovementFilter() {

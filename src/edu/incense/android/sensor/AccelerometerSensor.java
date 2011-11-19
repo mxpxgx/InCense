@@ -51,7 +51,9 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
         this.frameTime = frameTime;
         this.duration = duration;
         frameStartTime = System.currentTimeMillis();
-        frame = new LinkedList<double[]>();
+        frame = new LinkedList<double[]>(); // Adding null elements to the
+                                            // LinkedList implementation of
+                                            // Queue should be prevented.
 
         // AccelerometerManager initialization
         String service = Context.SENSOR_SERVICE;
@@ -93,6 +95,7 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
 
     /**
      * NOTE: this method doesn't call super.start()
+     * 
      * @see edu.incense.android.sensor.Sensor#start()
      */
     @Override
@@ -154,10 +157,10 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
         if (currentFrameTime > frameTime) {
             frameStartTime = frameStartTime + frameTime;
         }
-        
+
         if (currentFrameTime <= duration) {
-            frame.add(new double[] { newX, newY, newZ, timestamp });
-            if(frame.size() >= this.getSampleFrequency()){
+            frame.offer(new double[] { newX, newY, newZ, timestamp });
+            if (frame.size() >= this.getSampleFrequency()) {
                 // Make available to DataSource
                 currentData = createNewData();
             }
@@ -166,8 +169,8 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
             currentData = createNewData();
         }
     }
-    
-    private AccelerometerFrameData createNewData(){
+
+    private AccelerometerFrameData createNewData() {
         double[][] doubleFrame = frame.toArray(new double[frame.size()][]);
         AccelerometerFrameData data = null;
         if (sensorType == Sensor.TYPE_ACCELEROMETER) {
@@ -175,21 +178,21 @@ public class AccelerometerSensor extends edu.incense.android.sensor.Sensor
         } else {
             data = AccelerometerFrameData.createGyroFrameData(doubleFrame);
         }
-        
-        if(frame.size() > 0){
-            long time = (long) (doubleFrame[frame.size()-1][3] - doubleFrame[0][3]);
+
+        if (frame.size() > 0) {
+            long time = (long) (doubleFrame[frame.size() - 1][3] - doubleFrame[0][3]);
             int freq = computeFrameFrequency(time);
             autoFixFrequency(freq);
-//            Log.d(TAG, "Accelerometer with time: " + time + "ms");
-//            Log.d(TAG, "Accelerometer with frequency: " + freq + "Hz");
+            // Log.d(TAG, "Accelerometer with time: " + time + "ms");
+            // Log.d(TAG, "Accelerometer with frequency: " + freq + "Hz");
         }
         frame.clear();
         return data;
     }
-    
-    private int computeFrameFrequency(long frameTime){
-        //Careful not to divide by zero
-        return (int)(frame.size() / (frameTime / 1000f));
+
+    private int computeFrameFrequency(long frameTime) {
+        // Careful not to divide by zero
+        return (int) (frame.size() / (frameTime / 1000f));
     }
 
     private void autoFixFrequency(int freq) {

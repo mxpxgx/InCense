@@ -916,8 +916,8 @@ public class ProjectGenerator {
                 GeneralTrigger.textOperators[3], null, "null"); // "is not"
         conditions = new ArrayList<Condition>();
         conditions.add(ifNotNull);
-        Task audioTrigger = TaskGenerator.createTrigger(mapper,
-                "AudioTrigger", 1000, GeneralTrigger.matches[0], conditions);
+        Task audioTrigger = TaskGenerator.createTrigger(mapper, "AudioTrigger",
+                1000, GeneralTrigger.matches[0], conditions);
         tasks.add(audioTrigger);
 
         Condition ifNotMovement = TaskGenerator.createCondition("falseEvent",
@@ -1260,16 +1260,16 @@ public class ProjectGenerator {
                 10000, 5000);
         tasks.add(accSensor);
 
-        Task audioSensor = TaskGenerator.createAudioSensor(mapper, 44100,
+        Task audioSensor = TaskGenerator.createAudioSensor(mapper, 22050,
                 1000 * 60 * 2); // rate: 44100Hz, duration: 2 minutes
         audioSensor.setTriggered(true);
         tasks.add(audioSensor);
 
-        Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 1000L * 30L);
+        Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 1000L * 60L);
         gpsSensor.setTriggered(true);
         tasks.add(gpsSensor);
 
-        Task nfcSensor = TaskGenerator.createNfcSensor(mapper, 500);
+        Task nfcSensor = TaskGenerator.createNfcSensor(mapper, 1000);
         tasks.add(nfcSensor);
 
         Task wifiSensor = TaskGenerator.createWifiConnectionSensor(mapper,
@@ -1303,8 +1303,8 @@ public class ProjectGenerator {
                 GeneralTrigger.textOperators[3], null, "null"); // "is not"
         conditions = new ArrayList<Condition>();
         conditions.add(ifNotNull);
-        Task audioTrigger = TaskGenerator.createTrigger(mapper,
-                "AudioTrigger", 1000, GeneralTrigger.matches[0], conditions);
+        Task audioTrigger = TaskGenerator.createTrigger(mapper, "AudioTrigger",
+                1000, GeneralTrigger.matches[0], conditions);
         tasks.add(audioTrigger);
 
         // Sinks
@@ -1340,7 +1340,7 @@ public class ProjectGenerator {
                         new TaskRelation(audioSensor.getName(), audioSink
                                 .getName()),
                         new TaskRelation(accSensor.getName(), dataSink
-                                .getName()), });
+                                .getName()) });
 
         session.setTasks(tasks);
         session.setRelations(relations);
@@ -1389,8 +1389,8 @@ public class ProjectGenerator {
                 GeneralTrigger.textOperators[3], null, "null"); // "is not"
         ArrayList<Condition> conditions = new ArrayList<Condition>();
         conditions.add(ifNotNull);
-        Task audioTrigger = TaskGenerator.createTrigger(mapper,
-                "AudioTrigger", 1000, GeneralTrigger.matches[0], conditions);
+        Task audioTrigger = TaskGenerator.createTrigger(mapper, "AudioTrigger",
+                1000, GeneralTrigger.matches[0], conditions);
         tasks.add(audioTrigger);
 
         // Sinks
@@ -1412,6 +1412,164 @@ public class ProjectGenerator {
                         new TaskRelation(audioTrigger.getName(), audioSensor
                                 .getName()),
                         new TaskRelation(audioSensor.getName(), audioSink
+                                .getName()) });
+
+        session.setTasks(tasks);
+        session.setRelations(relations);
+
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(0);
+        // project.put("mainSurvey", survey);
+
+        writeProject(context, mapper, project);
+    }
+
+    /**
+     * GPS + Wifi + Acc + audio + NFC without movement Movement filters
+     * 
+     * @param resources
+     */
+    public static void buildProjectJsonS(Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Survey survey = SurveyGenerator.createWanderingMindSurvey();
+
+        // Session
+        Session session = new Session();
+        session.setDurationUnits(24L * 25L); // 21days
+        session.setDurationMeasure("hours");
+        // session.setStartDate(new Calendar())
+
+        List<Task> tasks = new ArrayList<Task>();
+
+        // Sensors
+
+        Task accSensor = TaskGenerator.createAccelerometerSensor(mapper, 30,
+                10000, 5000);
+        tasks.add(accSensor);
+
+        Task audioSensor = TaskGenerator.createAudioSensor(mapper, 22050,
+                1000 * 60 * 2); // rate: 44100Hz, duration: 2 minutes
+        audioSensor.setTriggered(true);
+        tasks.add(audioSensor);
+
+        Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 1000L * 60L * 2L); //each 2 minutes
+        gpsSensor.setTriggered(true);
+        tasks.add(gpsSensor);
+
+        Task nfcSensor = TaskGenerator.createNfcSensor(mapper, 1000);
+        tasks.add(nfcSensor);
+
+        Task wifiSensor = TaskGenerator.createWifiConnectionSensor(mapper,
+                1000, new String[] { "AppleBS4" });
+        tasks.add(wifiSensor);
+
+        // Filters
+
+        Task movementFilter = TaskGenerator.createMovementFilter(mapper, 1000,
+                0.3f);
+        tasks.add(movementFilter);
+
+        Task movementTimeFilter = TaskGenerator.createMovementTimeFilter(
+                mapper, 1000, 30000L, 5000L);
+        tasks.add(movementTimeFilter);
+
+        // Triggers
+
+        Condition ifNotConnected = TaskGenerator.createCondition(
+                WifiConnectionSensor.ATT_ISCONNECTED,
+                GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[1]); // "is false"
+        ArrayList<Condition> conditions = new ArrayList<Condition>();
+        conditions.add(ifNotConnected);
+        Task gpsTrigger = TaskGenerator.createTrigger(mapper, "GpsTrigger",
+                1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(gpsTrigger);
+
+        Condition ifConnected = TaskGenerator.createCondition(
+                WifiConnectionSensor.ATT_ISCONNECTED,
+                GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[0]); // "is true"
+        conditions = new ArrayList<Condition>();
+        conditions.add(ifConnected);
+        Task gpsStopTrigger = TaskGenerator.createStopTrigger(mapper,
+                "GpsStopTrigger", 1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(gpsStopTrigger);
+
+        Condition ifNotNull = TaskGenerator.createCondition("message",
+                GeneralTrigger.DataType.TEXT.name(),
+                GeneralTrigger.textOperators[3], null, "null"); // "is not"
+        conditions = new ArrayList<Condition>();
+        conditions.add(ifNotNull);
+        Task audioTrigger = TaskGenerator.createTrigger(mapper, "AudioTrigger",
+                1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(audioTrigger);
+
+        Condition ifMoveTimeEvent = TaskGenerator.createCondition(
+                "moveTimeEvent", GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[0]); // "is true"
+        conditions = new ArrayList<Condition>();
+        conditions.add(ifMoveTimeEvent);
+        Task accTrigger = TaskGenerator.createTrigger(mapper, "AccTrigger",
+                1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(accTrigger);
+
+        Condition ifNotMoveTimeEvent = TaskGenerator.createCondition(
+                "moveTimeEvent", GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[1]); // "is false"
+        conditions = new ArrayList<Condition>();
+        conditions.add(ifNotMoveTimeEvent);
+        Task accStopTrigger = TaskGenerator.createStopTrigger(mapper,
+                "AccStopTrigger", 1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(accStopTrigger);
+
+        // Sinks
+
+        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
+                TaskType.DataSink, 1000);
+        tasks.add(dataSink);
+
+        Task audioSink = TaskGenerator.createTaskWithPeriod(mapper,
+                "AudioSink", TaskType.AudioSink, 1000);
+        tasks.add(audioSink);
+
+        List<TaskRelation> relations = Arrays
+                .asList(new TaskRelation[] {
+                        new TaskRelation(wifiSensor.getName(), gpsTrigger
+                                .getName()),
+                        new TaskRelation(gpsTrigger.getName(), gpsSensor
+                                .getName()),
+                        new TaskRelation(wifiSensor.getName(), gpsStopTrigger
+                                .getName()),
+                        new TaskRelation(gpsStopTrigger.getName(), gpsSensor
+                                .getName()),
+                        new TaskRelation(wifiSensor.getName(), dataSink
+                                .getName()),
+                        new TaskRelation(gpsSensor.getName(), dataSink
+                                .getName()),
+                        new TaskRelation(nfcSensor.getName(), dataSink
+                                .getName()),
+                        new TaskRelation(nfcSensor.getName(), audioTrigger
+                                .getName()),
+                        new TaskRelation(audioTrigger.getName(), audioSensor
+                                .getName()),
+                        new TaskRelation(audioSensor.getName(), audioSink
+                                .getName()),
+                        new TaskRelation(accSensor.getName(), movementFilter
+                                .getName()),
+                        new TaskRelation(movementFilter.getName(),
+                                movementTimeFilter.getName()),
+                        new TaskRelation(movementTimeFilter.getName(),
+                                accTrigger.getName()),
+                        new TaskRelation(movementTimeFilter.getName(),
+                                accStopTrigger.getName()),
+                        new TaskRelation(accTrigger.getName(), accSensor
+                                .getName()),
+                        new TaskRelation(accStopTrigger.getName(), accSensor
+                                .getName()),
+                        new TaskRelation(accSensor.getName(), dataSink
                                 .getName()) });
 
         session.setTasks(tasks);
