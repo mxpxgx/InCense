@@ -1,6 +1,8 @@
 package edu.incense.android.sensor;
 
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -12,13 +14,25 @@ import android.location.LocationManager;
 import android.util.Log;
 import edu.incense.android.datatask.data.GpsData;
 
+/**
+ * Receives location updates with a BroadcastReceiver. It includes a controller
+ * (Runnable) that turns off GPS for while (MAX_TIME_WITHOUT_NEW_LOCATION +
+ * RESTART_TIME), if there is no new location in certain time
+ * (MAX_TIME_WITHOUT_NEW_LOCATION).
+ * 
+ * @author mxpxgx
+ * 
+ */
+
 public class GpsSensor extends Sensor {
     private final static String LOCATION_UPDATE_ACTION = "locationUpdate";
     private final static long MIN_RATE_TIME = 20L * 1000L; // 20 seconds
     private final static float MIN_DISTANCE = 5.0F; // In meters
     private final static long MAX_TIME_WITHOUT_NEW_LOCATION = 2L * 60L * 1000L; // 2
+                                                                                // minutes
     private final static long RESTART_TIME = 5L * 60L * 1000L; // 5 minutes
     private final static String TAG = "GpsSensor";
+    private ScheduledThreadPoolExecutor stpe;
 
     private LocationManager locationManager;
     private long lastLocationTime;
@@ -44,9 +58,9 @@ public class GpsSensor extends Sensor {
                 : getPeriodTime();
         Location location = null;
         try {
-            Log.d(TAG, "Time rate: "+minTime);
-            locationManager.requestLocationUpdates(provider, minTime, MIN_DISTANCE,
-                    pendingIntent);
+            Log.d(TAG, "Time rate: " + minTime);
+            locationManager.requestLocationUpdates(provider, minTime,
+                    MIN_DISTANCE, pendingIntent);
             // Initialize it with the last known location (it is better than
             // nothing at all).
             location = locationManager.getLastKnownLocation(provider);
@@ -65,8 +79,11 @@ public class GpsSensor extends Sensor {
         super.start();
         // We are using any provider (GPS, NETWORK or PASSIVE)
         addLocationListenerWithAllProviders();
-        Thread thread = new Thread(controller);
-        thread.start();
+        // Thread thread = new Thread(controller);
+        // thread.start();
+        stpe = new ScheduledThreadPoolExecutor(1);
+        stpe.scheduleAtFixedRate(controller, MAX_TIME_WITHOUT_NEW_LOCATION,
+                MAX_TIME_WITHOUT_NEW_LOCATION, TimeUnit.MILLISECONDS);
         // try {
         // start = true;
         // handlerThread = new HandlerThread("GPS Thread");
@@ -111,6 +128,7 @@ public class GpsSensor extends Sensor {
     @Override
     public void stop() {
         super.stop();
+        stpe.shutdown();
         removeLocationListener();
         getContext().unregisterReceiver(locationReceiver);
         // handlerThread.getLooper().quit();
@@ -136,33 +154,31 @@ public class GpsSensor extends Sensor {
 
     private Runnable controller = new Runnable() {
         public void run() {
-            long timeElapsed;
+            // long timeElapsed;
             // if (start) {
             // addLocationListenerWithAllProviders();
             // start = false;
             // }
-            while (isSensing()) {
-                Log.d(TAG, "Sleeping " + MAX_TIME_WITHOUT_NEW_LOCATION);
-                try {
-                    Thread.sleep(MAX_TIME_WITHOUT_NEW_LOCATION);
-                } catch (Exception e) {
-                    Log.e(TAG, "GpsSensor run failed", e);
-                }
-                timeElapsed = System.currentTimeMillis() - lastLocationTime;
+            // while (isSensing()) {
+            // Log.d(TAG, "Sleeping " + MAX_TIME_WITHOUT_NEW_LOCATION);
+            // try {
+            // Thread.sleep(MAX_TIME_WITHOUT_NEW_LOCATION);
+            // } catch (Exception e) {
+            // Log.e(TAG, "GpsSensor run failed", e);
+            // }
+            long timeElapsed = System.currentTimeMillis() - lastLocationTime;
 
-                if (timeElapsed > MAX_TIME_WITHOUT_NEW_LOCATION
-                        && locationAdded) {
-                    removeLocationListener();
-                    Log.d(TAG, "LocationListener removed: " + !locationAdded);
-                }
-                Log.d(TAG, "Checked " + timeElapsed + " > "
-                        + MAX_TIME_WITHOUT_NEW_LOCATION);
-                if (timeElapsed > (MAX_TIME_WITHOUT_NEW_LOCATION + RESTART_TIME)
-                        && !locationAdded) {
-                    addLocationListenerWithAllProviders();
-                    Log.d(TAG, "LocationListener added: " + locationAdded);
-                }
+            Log.d(TAG, "Checked " + timeElapsed + " > "
+                    + MAX_TIME_WITHOUT_NEW_LOCATION);
+            if (timeElapsed > MAX_TIME_WITHOUT_NEW_LOCATION && locationAdded) {
+                removeLocationListener();
+                Log.d(TAG, "LocationListener removed: " + !locationAdded);
+            } else if (timeElapsed > (MAX_TIME_WITHOUT_NEW_LOCATION + RESTART_TIME)
+                    && !locationAdded) {
+                addLocationListenerWithAllProviders();
+                Log.d(TAG, "LocationListener added: " + locationAdded);
             }
+            // }
             Log.d(TAG, "sensorController finished");
         }
     };
