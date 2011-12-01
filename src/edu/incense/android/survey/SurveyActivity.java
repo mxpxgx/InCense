@@ -294,7 +294,11 @@ public class SurveyActivity extends Activity {
         startNewActivity(available);
     }
 
+    /**
+     * Advances to the next question in the survey.
+     */
     private void next() {
+        //Assure its answered before advancing
         QuestionType type = question.getType();
         if ((type == QuestionType.OPENTEXT || type == QuestionType.OPENNUMERIC)
                 && !answer.isAnswered()) {
@@ -305,16 +309,18 @@ public class SurveyActivity extends Activity {
             Toast.makeText(getBaseContext(), "Please select an answer.",
                     Toast.LENGTH_LONG).show();
             return;
-        } else if (!surveyController.isLastQuestion()) {
+        } else if (!surveyController.isLastQuestion()) { 
+            // assure it wasn't the last question
             boolean available = surveyController.next();
             startNewActivity(available);
         } else if (surveyController.isSurveyComplete()) {
+            // Save results when completed
             Toast.makeText(getBaseContext(), "Survey completed!",
                     Toast.LENGTH_LONG).show();
-            // InCenseApplication.getInstance().setSurveyController(surveyController);
             ResultFile resultFile = ResultFile.createInstance(this,
                     FileType.SURVEY);
             surveyController.saveAnswersTo(resultFile.getFileName());
+            // Send file to the queue
             new QueueFileTask(this).execute(resultFile);
             finish();
         } else {

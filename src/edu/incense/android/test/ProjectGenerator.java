@@ -1427,7 +1427,7 @@ public class ProjectGenerator {
     }
 
     /**
-     * GPS + Wifi + Acc + audio + NFC without movement Movement filters
+     * GPS + Wifi + Acc + audio + NFC with Movement filters
      * 
      * @param resources
      */

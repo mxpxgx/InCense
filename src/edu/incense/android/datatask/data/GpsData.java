@@ -9,7 +9,7 @@ public class GpsData extends Data {
     private double latitude;
     private double longitude;
     private float accuracy;
-    private double satellites; // the number of satellites used to derive the
+    private int satellites; // the number of satellites used to derive the
                                // fix
     private double speed;
     private String provider;
@@ -67,7 +67,7 @@ public class GpsData extends Data {
         return accuracy;
     }
 
-    public double getSatellites() {
+    public int getSatellites() {
         return satellites;
     }
 

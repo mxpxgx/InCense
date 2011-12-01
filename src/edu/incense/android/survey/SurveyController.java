@@ -91,9 +91,12 @@ public class SurveyController implements Serializable {
         return true;
     }
 
-    // User Actions
+    /**
+     * Advances to the next question
+     * @return
+     */
     public boolean next() {
-        surveyPath.push(index);
+        surveyPath.push(index); //register the question number
         int[] nextQuestions = getQuestion().getNextQuestions();
         if (getQuestion().getType() == QuestionType.RADIOBUTTONS
                 && nextQuestions != null && getAnswer().isAnswered()) {

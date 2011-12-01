@@ -12,8 +12,12 @@ import edu.incense.android.ui.SensingNotification;
  * Abstract class with basic sensor functionality. This class cannot be
  * instantiated. Please extends this class when implementing a new sensor.
  * 
- * Sensed data should be stored in the currentData attribute. If a sensor
- * generates a set of data (not just one), it should use dataList to store them.
+ * In implementations of Sensor, Sensed data should be stored in the currentData
+ * attribute. If a sensor generates a set of data (not just one), it should use
+ * dataList to store them.
+ * 
+ * Sample frequency could be set but depends to the technology and
+ * implementation to really use it.
  * 
  * @author mxpxgx
  * 
@@ -23,8 +27,9 @@ public abstract class Sensor {
     private final static int DEFAULT_PERIOD_TIME = 1000;
     private final static String DEFAULT_NAME = "Unknown";
     private Context context; // Most sensors need context access
-    private String name;
-    private float sampleFrequency; // Sample frequency
+    private String name; // Name of the sensor. It's used by the notifications
+                         // of the application
+    private float sampleFrequency; //
     private long periodTime; // Sleep time for each cycle (period time in
                              // milliseconds)
     private volatile boolean sensing = false; // True when sensor is
