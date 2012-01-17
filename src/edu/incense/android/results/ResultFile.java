@@ -72,11 +72,12 @@ public class ResultFile {
     public static ResultFile createDataInstance(Context context,
             String extraName) {
         long timestamp = System.currentTimeMillis();
-//        String parent = "./";
+        // String parent = "./";
         File parent = getParentDirectory(context);
         String child = "data";
         String extension = ".json";
-//        parent = context.getResources().getString(R.string.results_data_parent);
+        // parent =
+        // context.getResources().getString(R.string.results_data_parent);
         child = context.getResources().getString(R.string.results_data_child);
         extension = context.getResources().getString(
                 R.string.results_data_extension);
@@ -125,24 +126,27 @@ public class ResultFile {
     }
 
     public static File getParentDirectory(Context context) {
-        //Add sdcard and InCense directories
+        // Add sdcard and InCense directories
         String parentDirectory = context.getResources().getString(
                 R.string.application_root_directory);
         File parent = new File(Environment.getExternalStorageDirectory(),
                 parentDirectory);
-        
-        //Add user directory per day
+
+        // Add user directory per day
         String username = getUsernameFromPrefs(context);
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1; // We add 1 because the
+                                                      // first month of the year
+                                                      // is January which is 0.
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        parent = new File(parent, username+"-"+year+"-"+month+"-"+day);
+        parent = new File(parent, username + "-" + year + "-" + month + "-"
+                + day);
         parent.mkdirs();
-        
+
         return parent;
     }
-    
+
     private static String getUsernameFromPrefs(Context context) {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(context);
