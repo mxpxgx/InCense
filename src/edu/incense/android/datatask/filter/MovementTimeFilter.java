@@ -10,6 +10,8 @@ import edu.incense.android.datatask.data.AccelerometerData;
 import edu.incense.android.datatask.data.Data;
 
 /**
+ * 
+ * This object does the following:
  * If more than X seconds without movement, output false (to stop Accelerometer)
  * If more than Y seconds without input, output true (to start Accelerometer)
  * 

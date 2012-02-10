@@ -1447,7 +1447,7 @@ public class ProjectGenerator {
         // Sensors
 
         Task accSensor = TaskGenerator.createAccelerometerSensor(mapper, 30,
-                10000, 5000);
+                10000, 10000);
         tasks.add(accSensor);
 
         Task audioSensor = TaskGenerator.createAudioSensor(mapper, 22050,
