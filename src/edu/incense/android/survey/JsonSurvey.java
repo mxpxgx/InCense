@@ -77,5 +77,21 @@ public class JsonSurvey {
             Log.e(getClass().getName(), "Reading JSON file failed", e);
         }
     }
+    
+    public void toJson(String fileName, AnswersContainer answers) {
+        toJson(new File(fileName), answers);
+    }
+
+    public void toJson(File file, AnswersContainer answers) {
+        try {
+            mapper.writeValue(file, answers);
+        } catch (JsonParseException e) {
+            Log.e(getClass().getName(), "Parsing JSON file failed", e);
+        } catch (JsonMappingException e) {
+            Log.e(getClass().getName(), "Mapping JSON file failed", e);
+        } catch (IOException e) {
+            Log.e(getClass().getName(), "Reading JSON file failed", e);
+        }
+    }
 
 }

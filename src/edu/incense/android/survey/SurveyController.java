@@ -19,7 +19,8 @@ public class SurveyController implements Serializable {
 
     public void saveAnswersTo(String fileName) {
         JsonSurvey jsonSurvey = new JsonSurvey();
-        jsonSurvey.toJson(fileName, answers);
+        AnswersContainer container = new AnswersContainer(answers, (Survey)survey);
+        jsonSurvey.toJson(fileName, container);
     }
 
     public boolean isEmpty() {
