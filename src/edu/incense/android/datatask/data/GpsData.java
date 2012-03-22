@@ -24,6 +24,7 @@ public class GpsData extends Data {
         Bundle bundle = location.getExtras();
         if (bundle != null)
             satellites = bundle.getInt("satellites");
+        //TODO Convert UTC time from location.getTime() to Pacific Time or whatever the device is using.
         setTimestamp(location.getTime());
     }
 
