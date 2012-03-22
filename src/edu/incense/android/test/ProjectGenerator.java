@@ -141,7 +141,7 @@ public class ProjectGenerator {
                 "SurveyTrigger", 1000, GeneralTrigger.matches[0], conditions);
         tasks.add(surveyTrigger);
 
-        Task nfcSensor = TaskGenerator.createNfcSensor(mapper, 44100);
+        Task nfcSensor = TaskGenerator.createNfcSensor(mapper, 1000);
         tasks.add(nfcSensor);
 
         List<TaskRelation> relations = Arrays
@@ -425,31 +425,31 @@ public class ProjectGenerator {
         session.setDurationUnits(24L * 4L); // 4 days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
-        session.setAutoTriggered(true);
-        Time time = new Time();
-        time.setToNow();
-        time.set(time.monthDay - 1, time.month, time.year);
-        session.setStartDate(time.normalize(false));
+//        session.setAutoTriggered(true);
+//        Time time = new Time();
+//        time.setToNow();
+//        time.set(time.monthDay - 1, time.month, time.year);
+//        session.setStartDate(time.normalize(false));
+//
+//        time.setToNow();
+//        time.set(time.monthDay + 7, time.month, time.year);
+//        session.setEndDate(time.normalize(false));
 
-        time.setToNow();
-        time.set(time.monthDay + 7, time.month, time.year);
-        session.setEndDate(time.normalize(false));
-
-        session.setNotices(true);
-        session.setRepeat(false);
-        session.setSessionType("Automatic");
+//        session.setNotices(true);
+//        session.setRepeat(false);
+//        session.setSessionType("Automatic");
 
         List<Task> tasks = new ArrayList<Task>();
 
-        Task accSensor = TaskGenerator.createGpsSensor(mapper, 10000);
-        tasks.add(accSensor);
+        Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 10000);
+        tasks.add(gpsSensor);
 
         Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
                 TaskType.DataSink, 1000);
         tasks.add(dataSink);
 
         List<TaskRelation> relations = Arrays
-                .asList(new TaskRelation[] { new TaskRelation(accSensor
+                .asList(new TaskRelation[] { new TaskRelation(gpsSensor
                         .getName(), dataSink.getName()) });
 
         session.setTasks(tasks);
@@ -1580,6 +1580,79 @@ public class ProjectGenerator {
         project.put("mainSession", session);
         project.setSurveysSize(0);
         // project.put("mainSurvey", survey);
+
+        writeProject(context, mapper, project);
+    }
+    
+    /**
+     * Survey + Shake
+     * 
+     * @param resources
+     */
+    public static void buildProjectJsonMaythe(Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Survey
+        Survey survey = SurveyGenerator.createWanderingMindSurvey();
+
+        // Session
+     // Session
+        Session session = new Session();
+        session.setDurationUnits(24L * 25L); // 21days
+        session.setDurationMeasure("hours");
+        // session.setStartDate(new Calendar())
+
+        List<Task> tasks = new ArrayList<Task>();
+        
+        Task nfcSensor = TaskGenerator.createNfcSensor(mapper, 1000);
+        tasks.add(nfcSensor);
+
+        ArrayList<Condition> conditions = new ArrayList<Condition>();
+        
+//        Condition ifNotNull = TaskGenerator.createCondition("message",
+//                GeneralTrigger.DataType.TEXT.name(),
+//                GeneralTrigger.textOperators[3], null, "null"); // "is not"
+//        conditions.add(ifNotNull);
+        
+        Condition ifPreocupado = TaskGenerator.createCondition("message",
+                GeneralTrigger.DataType.TEXT.name(),
+                GeneralTrigger.textOperators[0], null, "PREOCUPADO"); // "contains"
+        conditions.add(ifPreocupado);
+        
+        Condition ifDeprimido = TaskGenerator.createCondition("message",
+                GeneralTrigger.DataType.TEXT.name(),
+                GeneralTrigger.textOperators[2], null, "DEPRIMIDO"); // "is"
+        conditions.add(ifDeprimido);
+        
+        Condition ifTriste = TaskGenerator.createCondition("message",
+                GeneralTrigger.DataType.TEXT.name(),
+                GeneralTrigger.textOperators[2], null, "AGREDIO"); // "contains"
+        conditions.add(ifTriste);
+        
+        Task surveyTrigger = TaskGenerator.createTrigger(mapper,
+                "SurveyTrigger", 1000, GeneralTrigger.matches[1], conditions);
+        tasks.add(surveyTrigger);
+        
+        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
+                TaskType.DataSink, 1000);
+        tasks.add(dataSink);
+
+        List<TaskRelation> relations = Arrays
+                .asList(new TaskRelation[] {
+                        new TaskRelation(nfcSensor.getName(), surveyTrigger
+                                .getName()),
+                                new TaskRelation(nfcSensor.getName(), dataSink
+                                        .getName()),
+                        new TaskRelation(surveyTrigger.getName(), "mainSurvey") });
+
+        session.setTasks(tasks);
+        session.setRelations(relations);
+
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(1);
+        project.put("mainSurvey", survey);
 
         writeProject(context, mapper, project);
     }

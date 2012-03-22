@@ -29,7 +29,7 @@ public class SurveyGenerator {
         survey.add(question);
         
         question = new Question();
-        question.setQuestion("What are you doing right now?");
+        question.setQuestion("¿Por qué ha salido a caminar?");
         question.setType(QuestionType.OPENTEXT);
         question.setSkippable(false);
         int[] nextQuestions2 = { 2 };
