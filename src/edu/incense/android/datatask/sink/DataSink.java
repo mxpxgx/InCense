@@ -11,7 +11,7 @@ import edu.incense.android.datatask.data.Data;
 
 public class DataSink extends DataTask implements InputEnabledTask {
     private final static String TAG = "DataSink";
-    private final static int DEFAULT_MAX_SINK_SIZE = 60;
+    private final static int DEFAULT_MAX_SINK_SIZE = 1;
     private final static long DEFAULT_DRAIN_TIME = 36000000L;//1L * 60L * 60L * 1000L; // each hour
     private long lastDrainTime;
     protected String name;
