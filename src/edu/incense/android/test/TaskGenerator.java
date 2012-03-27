@@ -74,6 +74,11 @@ public class TaskGenerator {
         return task;
     }
     
+    public static Task createSurveySensor(ObjectMapper mapper, long period){
+        Task task = TaskGenerator.createTaskWithPeriod(mapper, "SurveySensor", TaskType.SurveySensor, period);
+        return task;
+    }
+    
     public static Task createAccelerometerSensor(ObjectMapper mapper, int sampleFrequency, long frameTime, long duration){
         Task task = TaskGenerator.createTask(mapper, "AccelerometerSensor", TaskType.AccelerometerSensor, sampleFrequency);
         JsonNode extrasNode = mapper.createObjectNode();

@@ -425,19 +425,19 @@ public class ProjectGenerator {
         session.setDurationUnits(24L * 4L); // 4 days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
-//        session.setAutoTriggered(true);
-//        Time time = new Time();
-//        time.setToNow();
-//        time.set(time.monthDay - 1, time.month, time.year);
-//        session.setStartDate(time.normalize(false));
-//
-//        time.setToNow();
-//        time.set(time.monthDay + 7, time.month, time.year);
-//        session.setEndDate(time.normalize(false));
+        // session.setAutoTriggered(true);
+        // Time time = new Time();
+        // time.setToNow();
+        // time.set(time.monthDay - 1, time.month, time.year);
+        // session.setStartDate(time.normalize(false));
+        //
+        // time.setToNow();
+        // time.set(time.monthDay + 7, time.month, time.year);
+        // session.setEndDate(time.normalize(false));
 
-//        session.setNotices(true);
-//        session.setRepeat(false);
-//        session.setSessionType("Automatic");
+        // session.setNotices(true);
+        // session.setRepeat(false);
+        // session.setSessionType("Automatic");
 
         List<Task> tasks = new ArrayList<Task>();
 
@@ -1455,7 +1455,8 @@ public class ProjectGenerator {
         audioSensor.setTriggered(true);
         tasks.add(audioSensor);
 
-        Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 1000L * 60L * 2L); //each 2 minutes
+        Task gpsSensor = TaskGenerator
+                .createGpsSensor(mapper, 1000L * 60L * 2L); // each 2 minutes
         gpsSensor.setTriggered(true);
         tasks.add(gpsSensor);
 
@@ -1583,7 +1584,7 @@ public class ProjectGenerator {
 
         writeProject(context, mapper, project);
     }
-    
+
     /**
      * Survey + Shake
      * 
@@ -1593,57 +1594,80 @@ public class ProjectGenerator {
         ObjectMapper mapper = new ObjectMapper();
 
         // Survey
-        Survey survey = SurveyGenerator.createWanderingMindSurvey();
+//        Survey survey = SurveyGenerator.createWanderingMindSurvey();
+        Survey survey = SurveyGenerator.createMindSurveyWithAudio();
 
         // Session
-     // Session
+        // Session
         Session session = new Session();
         session.setDurationUnits(24L * 25L); // 21days
         session.setDurationMeasure("hours");
         // session.setStartDate(new Calendar())
 
         List<Task> tasks = new ArrayList<Task>();
-        
+
         Task nfcSensor = TaskGenerator.createNfcSensor(mapper, 1000);
         tasks.add(nfcSensor);
+        Task surveySensor = TaskGenerator.createSurveySensor(mapper, 500);
+        tasks.add(surveySensor);
+
+        Task audioSensor = TaskGenerator.createAudioSensor(mapper, 22050,
+                1000 * 60 * 1); // rate: 44100Hz, duration: 2 minutes
+        audioSensor.setTriggered(true);
+        tasks.add(audioSensor);
 
         ArrayList<Condition> conditions = new ArrayList<Condition>();
-        
-//        Condition ifNotNull = TaskGenerator.createCondition("message",
-//                GeneralTrigger.DataType.TEXT.name(),
-//                GeneralTrigger.textOperators[3], null, "null"); // "is not"
-//        conditions.add(ifNotNull);
-        
+
+        // Condition ifNotNull = TaskGenerator.createCondition("message",
+        // GeneralTrigger.DataType.TEXT.name(),
+        // GeneralTrigger.textOperators[3], null, "null"); // "is not"
+        // conditions.add(ifNotNull);
+
         Condition ifPreocupado = TaskGenerator.createCondition("message",
                 GeneralTrigger.DataType.TEXT.name(),
                 GeneralTrigger.textOperators[0], null, "PREOCUPADO"); // "contains"
         conditions.add(ifPreocupado);
-        
+
         Condition ifDeprimido = TaskGenerator.createCondition("message",
                 GeneralTrigger.DataType.TEXT.name(),
                 GeneralTrigger.textOperators[2], null, "DEPRIMIDO"); // "is"
         conditions.add(ifDeprimido);
-        
+
         Condition ifTriste = TaskGenerator.createCondition("message",
                 GeneralTrigger.DataType.TEXT.name(),
-                GeneralTrigger.textOperators[2], null, "AGREDIO"); // "contains"
+                GeneralTrigger.textOperators[2], null, "AGREDIO"); // "is"
         conditions.add(ifTriste);
-        
+
         Task surveyTrigger = TaskGenerator.createTrigger(mapper,
                 "SurveyTrigger", 1000, GeneralTrigger.matches[1], conditions);
         tasks.add(surveyTrigger);
+
+        conditions = new ArrayList<Condition>();
+        Condition ifGrabarAudio = TaskGenerator.createCondition("lastAnswer",
+                GeneralTrigger.DataType.TEXT.name(),
+                GeneralTrigger.textOperators[2], null, "0"); // "is"
+        conditions.add(ifGrabarAudio);
         
+        Task audioTrigger = TaskGenerator.createTrigger(mapper,
+                "AudioTrigger", 1000, GeneralTrigger.matches[1], conditions);
+        tasks.add(audioTrigger);
+
         Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
                 TaskType.DataSink, 1000);
         tasks.add(dataSink);
 
-        List<TaskRelation> relations = Arrays
-                .asList(new TaskRelation[] {
-                        new TaskRelation(nfcSensor.getName(), surveyTrigger
-                                .getName()),
-                                new TaskRelation(nfcSensor.getName(), dataSink
-                                        .getName()),
-                        new TaskRelation(surveyTrigger.getName(), "mainSurvey") });
+        Task audioSink = TaskGenerator.createTaskWithPeriod(mapper,
+                "AudioSink", TaskType.AudioSink, 1000);
+        tasks.add(audioSink);
+
+        List<TaskRelation> relations = Arrays.asList(new TaskRelation[] {
+                new TaskRelation(nfcSensor.getName(), surveyTrigger.getName()),
+                new TaskRelation(nfcSensor.getName(), dataSink.getName()),
+                new TaskRelation(surveyTrigger.getName(), "mainSurvey"),
+                new TaskRelation(surveySensor.getName(), audioTrigger.getName()),
+                new TaskRelation(audioTrigger.getName(), audioSensor.getName()),
+                new TaskRelation(audioSensor.getName(), audioSink.getName()),
+                });
 
         session.setTasks(tasks);
         session.setRelations(relations);

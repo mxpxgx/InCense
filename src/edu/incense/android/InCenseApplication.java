@@ -43,7 +43,7 @@ public class InCenseApplication extends Application {
     @Override
     public final void onCreate() {
         super.onCreate();
-        ProjectGenerator.buildProjectJsonB(this);
+        ProjectGenerator.buildProjectJsonMaythe(this);
         Log.i(getClass().getName(), "Project.json saved");
 //        singleton = this;
         taskCollection = new HashMap<String, DataTask>();
