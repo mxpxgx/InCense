@@ -5,6 +5,7 @@ public enum TaskType {
     AccelerometerSensor, 
     GyroscopeSensor, 
     AudioSensor, 
+    SurveySensor,
     BluetoothSensor, 
     GpsSensor, 
     CallSensor, 

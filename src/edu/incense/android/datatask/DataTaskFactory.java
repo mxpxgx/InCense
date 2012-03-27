@@ -29,6 +29,7 @@ import edu.incense.android.sensor.PhoneCallSensor;
 import edu.incense.android.sensor.PhoneStateSensor;
 import edu.incense.android.sensor.PowerConnectionSensor;
 import edu.incense.android.sensor.Sensor;
+import edu.incense.android.sensor.SurveySensor;
 import edu.incense.android.sensor.TimerSensor;
 import edu.incense.android.sensor.WifiConnectionSensor;
 import edu.incense.android.sensor.WifiScanSensor;
@@ -101,6 +102,9 @@ public class DataTaskFactory {
             break;
         case NfcSensor:
             dataTask = new DataSource(new NfcSensor(context));
+            break;
+        case SurveySensor:
+            dataTask = new DataSource(new SurveySensor(context));
             break;
         case WifiScanSensor:
             dataTask = new DataSource(new WifiScanSensor(context));
