@@ -3,6 +3,7 @@ package edu.incense.android.survey;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -319,7 +320,10 @@ public class SurveyActivity extends Activity {
                     Toast.LENGTH_LONG).show();
             ResultFile resultFile = ResultFile.createInstance(this,
                     FileType.SURVEY);
-            surveyController.saveAnswersTo(resultFile.getFileName());
+            //Old way
+            //surveyController.saveAnswersTo(resultFile.getFileName());
+            //UPDATE, now we send a broadcast too
+            surveyController.saveFileAndSendBroadcast(getApplicationContext(), resultFile.getFileName());
             // Send file to the queue
             new QueueFileTask(this).execute(resultFile);
             finish();
