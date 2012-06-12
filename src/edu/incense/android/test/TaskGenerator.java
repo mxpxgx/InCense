@@ -14,7 +14,7 @@ import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.model.TaskType;
 import edu.incense.android.datatask.trigger.Condition;
 import edu.incense.android.datatask.trigger.JsonTrigger;
-import edu.incense.android.sensor.AccelerometerSensor;
+import edu.incense.android.sensor.AccelerometerSensor_old;
 
 /**
  * @author mxpxgx
@@ -80,10 +80,10 @@ public class TaskGenerator {
     }
     
     public static Task createAccelerometerSensor(ObjectMapper mapper, int sampleFrequency, long frameTime, long duration){
-        Task task = TaskGenerator.createTask(mapper, "AccelerometerSensor", TaskType.AccelerometerSensor, sampleFrequency);
+        Task task = TaskGenerator.createTask(mapper, "AccelerometerSensor_old", TaskType.AccelerometerSensor_old, sampleFrequency);
         JsonNode extrasNode = mapper.createObjectNode();
-        ((ObjectNode) extrasNode).put(AccelerometerSensor.ATT_FRAMETIME, frameTime);
-        ((ObjectNode) extrasNode).put(AccelerometerSensor.ATT_DURATION, duration);
+        ((ObjectNode) extrasNode).put(AccelerometerSensor_old.ATT_FRAMETIME, frameTime);
+        ((ObjectNode) extrasNode).put(AccelerometerSensor_old.ATT_DURATION, duration);
         task.setJsonNode(extrasNode);
         return task;
     }
@@ -164,6 +164,22 @@ public class TaskGenerator {
         JsonNode extrasNode = mapper.createObjectNode();
         ((ObjectNode) extrasNode).put("maxNoInput", maxNoInput); 
         ((ObjectNode) extrasNode).put("maxNoMovement", maxNoMovement); 
+        task.setJsonNode(extrasNode);
+        return task;
+    }
+    
+    public static Task createStepsCounterFilter(ObjectMapper mapper, long timePeriod){
+        Task task = TaskGenerator.createTaskWithPeriod(mapper,"StepsAccFilter", TaskType.StepsAccFilter, timePeriod);
+        JsonNode extrasNode = mapper.createObjectNode(); 
+        task.setJsonNode(extrasNode);
+        return task;
+    }
+    
+    public static Task createDataSink(ObjectMapper mapper, int bufferSize){
+        Task task = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
+                TaskType.DataSink, 1000);
+        JsonNode extrasNode = mapper.createObjectNode();
+        ((ObjectNode) extrasNode).put("bufferSize", bufferSize);
         task.setJsonNode(extrasNode);
         return task;
     }

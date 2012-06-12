@@ -18,7 +18,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.format.Time;
 import edu.incense.android.R;
-import edu.incense.android.datatask.filter.MovementFilter;
+//import edu.incense.android.datatask.filter.MovementFilter;
 import edu.incense.android.datatask.filter.WifiTimeConnectedFilter;
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.model.TaskRelation;
@@ -34,7 +34,6 @@ import edu.incense.android.survey.Survey;
  * Project examples for testing
  * 
  * @author Moises Perez (mxpxgx@gmail.com)
- * @version 0.1, May 20, 2011
  * 
  */
 public class ProjectGenerator {
@@ -200,8 +199,7 @@ public class ProjectGenerator {
                 1000, GeneralTrigger.matches[0], conditions);
         tasks.add(gpsTrigger);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         // Task gpsSensor = TaskGenerator.createGpsSensor(mapper, period);
@@ -392,8 +390,7 @@ public class ProjectGenerator {
                 10000, 10000);
         tasks.add(accSensor);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         List<TaskRelation> relations = Arrays
@@ -444,8 +441,7 @@ public class ProjectGenerator {
         Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 10000);
         tasks.add(gpsSensor);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         List<TaskRelation> relations = Arrays
@@ -483,8 +479,7 @@ public class ProjectGenerator {
                 1000, new String[] { "AppleBS4" });
         tasks.add(wifiSensor);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         List<TaskRelation> relations = Arrays
@@ -538,8 +533,7 @@ public class ProjectGenerator {
                 1000, GeneralTrigger.matches[0], conditions);
         tasks.add(gpsTrigger);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 1000L * 30L);
@@ -637,8 +631,7 @@ public class ProjectGenerator {
                 10000, 5000);
         tasks.add(accSensor);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         Task gpsSensor = TaskGenerator.createGpsSensor(mapper, 1000L * 30L);
@@ -735,8 +728,7 @@ public class ProjectGenerator {
                 "SurveyTrigger", 1000, GeneralTrigger.matches[0], conditions);
         tasks.add(surveyTrigger);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         // Survey
@@ -807,8 +799,7 @@ public class ProjectGenerator {
                 "SurveyTrigger", 1000, GeneralTrigger.matches[0], conditions);
         tasks.add(surveyTrigger);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         // Survey
@@ -943,8 +934,7 @@ public class ProjectGenerator {
 
         // Sinks
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         Task audioSink = TaskGenerator.createTaskWithPeriod(mapper,
@@ -1100,8 +1090,7 @@ public class ProjectGenerator {
 
         // Sinks
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         List<TaskRelation> relations = Arrays
@@ -1205,8 +1194,7 @@ public class ProjectGenerator {
 
         // Sinks
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         List<TaskRelation> relations = Arrays
@@ -1309,9 +1297,7 @@ public class ProjectGenerator {
 
         // Sinks
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
-        tasks.add(dataSink);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
 
         Task audioSink = TaskGenerator.createTaskWithPeriod(mapper,
                 "AudioSink", TaskType.AudioSink, 1000);
@@ -1395,8 +1381,7 @@ public class ProjectGenerator {
 
         // Sinks
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         Task audioSink = TaskGenerator.createTaskWithPeriod(mapper,
@@ -1528,8 +1513,7 @@ public class ProjectGenerator {
 
         // Sinks
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         Task audioSink = TaskGenerator.createTaskWithPeriod(mapper,
@@ -1558,6 +1542,132 @@ public class ProjectGenerator {
                                 .getName()),
                         new TaskRelation(audioSensor.getName(), audioSink
                                 .getName()),
+                        new TaskRelation(accSensor.getName(), movementFilter
+                                .getName()),
+                        new TaskRelation(movementFilter.getName(),
+                                movementTimeFilter.getName()),
+                        new TaskRelation(movementTimeFilter.getName(),
+                                accTrigger.getName()),
+                        new TaskRelation(movementTimeFilter.getName(),
+                                accStopTrigger.getName()),
+                        new TaskRelation(accTrigger.getName(), accSensor
+                                .getName()),
+                        new TaskRelation(accStopTrigger.getName(), accSensor
+                                .getName()),
+                        new TaskRelation(accSensor.getName(), dataSink
+                                .getName()) });
+
+        session.setTasks(tasks);
+        session.setRelations(relations);
+
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(0);
+        // project.put("mainSurvey", survey);
+
+        writeProject(context, mapper, project);
+    }
+    
+    public static void buildProjectJsonS2(Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Survey survey = SurveyGenerator.createWanderingMindSurvey();
+
+        // Session
+        Session session = new Session();
+        session.setDurationUnits(24L * 25L); // 21days
+        session.setDurationMeasure("hours");
+        // session.setStartDate(new Calendar())
+
+        List<Task> tasks = new ArrayList<Task>();
+
+        // Sensors
+
+        Task accSensor = TaskGenerator.createAccelerometerSensor(mapper, 30,
+                10000, 10000);
+        tasks.add(accSensor);
+
+
+        // Sinks
+
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
+        tasks.add(dataSink);
+        
+        List<TaskRelation> relations = Arrays
+                .asList(new TaskRelation[] {
+                        new TaskRelation(accSensor.getName(), dataSink
+                                .getName()) });
+
+        session.setTasks(tasks);
+        session.setRelations(relations);
+
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(0);
+        // project.put("mainSurvey", survey);
+
+        writeProject(context, mapper, project);
+    }
+    
+    public static void buildProjectJsonS3(Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Survey survey = SurveyGenerator.createWanderingMindSurvey();
+
+        // Session
+        Session session = new Session();
+        session.setDurationUnits(24L * 25L); // 21days
+        session.setDurationMeasure("hours");
+        // session.setStartDate(new Calendar())
+
+        List<Task> tasks = new ArrayList<Task>();
+
+        // Sensors
+
+        Task accSensor = TaskGenerator.createAccelerometerSensor(mapper, 30,
+                10000, 10000);
+        tasks.add(accSensor);
+
+        
+        // Filters
+
+        Task movementFilter = TaskGenerator.createMovementFilter(mapper, 1000,
+                0.3f);
+        tasks.add(movementFilter);
+
+        Task movementTimeFilter = TaskGenerator.createMovementTimeFilter(
+                mapper, 1000, 30000L, 5000L);
+        tasks.add(movementTimeFilter);
+
+        // Triggers
+
+        Condition ifMoveTimeEvent = TaskGenerator.createCondition(
+                "moveTimeEvent", GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[0]); // "is true"
+        ArrayList<Condition> conditions = new ArrayList<Condition>();
+        conditions.add(ifMoveTimeEvent);
+        Task accTrigger = TaskGenerator.createTrigger(mapper, "AccTrigger",
+                1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(accTrigger);
+
+        Condition ifNotMoveTimeEvent = TaskGenerator.createCondition(
+                "moveTimeEvent", GeneralTrigger.DataType.BOOLEAN.name(),
+                GeneralTrigger.booleanOperators[1]); // "is false"
+        conditions = new ArrayList<Condition>();
+        conditions.add(ifNotMoveTimeEvent);
+        Task accStopTrigger = TaskGenerator.createStopTrigger(mapper,
+                "AccStopTrigger", 1000, GeneralTrigger.matches[0], conditions);
+        tasks.add(accStopTrigger);
+
+        // Sinks
+
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
+        tasks.add(dataSink);
+        
+        List<TaskRelation> relations = Arrays
+                .asList(new TaskRelation[] {
                         new TaskRelation(accSensor.getName(), movementFilter
                                 .getName()),
                         new TaskRelation(movementFilter.getName(),
@@ -1652,8 +1762,7 @@ public class ProjectGenerator {
                 "AudioTrigger", 1000, GeneralTrigger.matches[1], conditions);
         tasks.add(audioTrigger);
 
-        Task dataSink = TaskGenerator.createTaskWithPeriod(mapper, "DataSink",
-                TaskType.DataSink, 1000);
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
         tasks.add(dataSink);
 
         Task audioSink = TaskGenerator.createTaskWithPeriod(mapper,
@@ -1677,6 +1786,58 @@ public class ProjectGenerator {
         project.put("mainSession", session);
         project.setSurveysSize(1);
         project.put("mainSurvey", survey);
+
+        writeProject(context, mapper, project);
+    }
+    
+    public static void buildProjectJsonU(Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Session
+        Session session = new Session();
+        session.setDurationUnits(24L * 4L); // 4days
+        session.setDurationMeasure("hours");
+        // session.setStartDate(new Calendar())
+
+        List<Task> tasks = new ArrayList<Task>();
+
+        // Sensors
+
+        Task accSensor = TaskGenerator.createAccelerometerSensor(mapper, 30,
+                10000, 10000);
+        tasks.add(accSensor);
+        
+       
+        // Filters
+
+        Task stepCounterFilter = TaskGenerator.createStepsCounterFilter(mapper, 10000);
+        tasks.add(stepCounterFilter);
+
+     
+        // Sinks
+
+        Task dataSink = TaskGenerator.createDataSink(mapper, 60);
+        tasks.add(dataSink);
+
+        List<TaskRelation> relations = Arrays
+                .asList(new TaskRelation[] {
+                        new TaskRelation(accSensor.getName(), dataSink
+                                .getName()),
+                        new TaskRelation(accSensor.getName(), stepCounterFilter
+                                .getName()),
+                        new TaskRelation(stepCounterFilter.getName(),
+                                dataSink.getName()),
+                       
+                });
+
+        session.setTasks(tasks);
+        session.setRelations(relations);
+
+        Project project = new Project();
+        project.setSessionsSize(1);
+        project.put("mainSession", session);
+        project.setSurveysSize(0);
+        // project.put("mainSurvey", survey);
 
         writeProject(context, mapper, project);
     }

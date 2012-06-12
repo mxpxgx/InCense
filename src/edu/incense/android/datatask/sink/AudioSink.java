@@ -23,7 +23,7 @@ public class AudioSink extends DataSink {
      * @param sinkWritter
      */
     public AudioSink(RawAudioSinkWritter sinkWritter) {
-        super(sinkWritter);
+        super(sinkWritter, 1);
         this.sinkWritter = sinkWritter;
         lastDataTime = System.currentTimeMillis() + MAX_TIME_WITHOUT_AUDIO; // TODO
                                                                             // not
