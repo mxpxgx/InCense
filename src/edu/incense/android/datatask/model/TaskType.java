@@ -3,7 +3,9 @@ package edu.incense.android.datatask.model;
 public enum TaskType {
     NULL, 
     AccelerometerSensor, 
+    AccelerometerSensor_old, 
     GyroscopeSensor, 
+    GyroscopeSensor_old, 
     AudioSensor, 
     SurveySensor,
     BluetoothSensor, 
@@ -27,5 +29,6 @@ public enum TaskType {
     PowerConnectionSensor,
     MovementFilter,
     FalseTimerFilter,
-    MovementTimeFilter
+    MovementTimeFilter,
+    StepsAccFilter
 }

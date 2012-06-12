@@ -3,6 +3,7 @@ package edu.incense.android.datatask;
 import java.util.List;
 
 import android.content.Context;
+import android.hardware.SensorManager;
 import edu.incense.android.datatask.filter.AccelerometerMeanFilter;
 import edu.incense.android.datatask.filter.FalseTimerFilter;
 import edu.incense.android.datatask.filter.MovementFilter;
@@ -20,6 +21,7 @@ import edu.incense.android.datatask.trigger.JsonTrigger;
 import edu.incense.android.datatask.trigger.StopTrigger;
 import edu.incense.android.datatask.trigger.SurveyTrigger;
 import edu.incense.android.sensor.AccelerometerSensor;
+import edu.incense.android.sensor.AccelerometerSensor_old;
 import edu.incense.android.sensor.AudioSensor;
 import edu.incense.android.sensor.BluetoothConnectionSensor;
 import edu.incense.android.sensor.BluetoothSensor;
@@ -39,10 +41,12 @@ public class DataTaskFactory {
         DataTask dataTask = null;
 
         switch (task.getTaskType()) {
-        case AccelerometerSensor:
-            long frameTime = task.getLong(AccelerometerSensor.ATT_FRAMETIME, 1000);
-            long duration = task.getLong(AccelerometerSensor.ATT_DURATION, 500);
-            Sensor sensor = AccelerometerSensor.createAccelerometer(
+        case AccelerometerSensor_old:
+            long frameTime = task.getLong(
+                    AccelerometerSensor_old.ATT_FRAMETIME, 1000);
+            long duration = task.getLong(AccelerometerSensor_old.ATT_DURATION,
+                    500);
+            Sensor sensor = AccelerometerSensor_old.createAccelerometer(
                     context, frameTime, duration);
             if (task.getSampleFrequency() > 0) {
                 sensor.setSampleFrequency(task.getSampleFrequency());
@@ -50,6 +54,22 @@ public class DataTaskFactory {
                 sensor.setPeriodTime(task.getPeriodTime());
             }
             dataTask = new DataSource(sensor);
+            task.setPeriodTime(1000);
+            task.setSampleFrequency(-1.0f);
+            break;
+        case AccelerometerSensor:
+            long frameTime_as = task.getLong(
+                    AccelerometerSensor.ATT_FRAMETIME, 1000);
+            int sensorDelay_as = task.getInt(AccelerometerSensor.ATT_SENSOR_DELAY,
+                    SensorManager.SENSOR_DELAY_GAME);
+            Sensor sensor_as = AccelerometerSensor.createAccelerometer(
+                    context, frameTime_as, sensorDelay_as);
+            if (task.getSampleFrequency() > 0) {
+                sensor_as.setSampleFrequency(task.getSampleFrequency());
+            } else if (task.getPeriodTime() > 0) {
+                sensor_as.setPeriodTime(task.getPeriodTime());
+            }
+            dataTask = new DataSource(sensor_as);
             task.setPeriodTime(1000);
             task.setSampleFrequency(-1.0f);
             break;
@@ -78,17 +98,19 @@ public class DataTaskFactory {
             dataTask = new DataSource(new GpsSensor(context));
             break;
         case GyroscopeSensor:
-            long frameTime2 = task.getLong(AccelerometerSensor.ATT_FRAMETIME, 1000);
-            long duration2 = task.getLong(AccelerometerSensor.ATT_DURATION, 500);
-            Sensor sensor2 = AccelerometerSensor.createGyroscope(
-                    context, frameTime2, duration2);
+            long frameTime_gs = task.getLong(
+                    AccelerometerSensor.ATT_FRAMETIME, 1000);
+            int sensorDelay_gs = task.getInt(AccelerometerSensor.ATT_SENSOR_DELAY,
+                    SensorManager.SENSOR_DELAY_GAME);
+            Sensor sensor_gs = AccelerometerSensor.createGyroscope(
+                    context, frameTime_gs, sensorDelay_gs);
             if (task.getSampleFrequency() > 0) {
-                sensor2.setSampleFrequency(task.getSampleFrequency());
+                sensor_gs.setSampleFrequency(task.getSampleFrequency());
             } else if (task.getPeriodTime() > 0) {
-                sensor2.setPeriodTime(task.getPeriodTime());
+                sensor_gs.setPeriodTime(task.getPeriodTime());
             }
-            dataTask = new DataSource(sensor2);
-            task.setPeriodTime(frameTime2);
+            dataTask = new DataSource(sensor_gs);
+            task.setPeriodTime(frameTime_gs);
             task.setSampleFrequency(-1.0f);
             break;
         case CallSensor:
@@ -117,10 +139,15 @@ public class DataTaskFactory {
         case AccelerometerMeanFilter:
             dataTask = new AccelerometerMeanFilter();
             break;
+        case StepsAccFilter:
+            dataTask = new AccelerometerMeanFilter();
+            break;
         case DataSink:
             // Set SinkWritter type (Json)
             // It will write results to a JSON file
-            dataTask = new DataSink(new JsonSinkWritter(context));
+            int bufferSize = task.getInt(
+                    DataSink.ATT_BUFFER_SIZE, 60);
+            dataTask = new DataSink(new JsonSinkWritter(context), bufferSize);
             ((DataSink) dataTask).setName(task.getName());
             break;
         case AudioSink:
@@ -135,7 +162,7 @@ public class DataTaskFactory {
         case MovementFilter:
             double threshold = task.getDouble("threshold", 1000);
             dataTask = new MovementFilter();
-            ((MovementFilter) dataTask).setMovementThreshold((float)threshold);
+            ((MovementFilter) dataTask).setMovementThreshold((float) threshold);
             break;
         case FalseTimerFilter:
             long timeLength = task.getLong("timeLength", 1000);
