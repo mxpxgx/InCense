@@ -3,8 +3,8 @@ package edu.incense.android.survey;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -114,7 +114,7 @@ public class SurveyActivity extends Activity {
         }
 
         if (surveyController.isLastQuestion())
-            nextButton.setText("Finish");
+            nextButton.setText(getResources().getText(R.string.survey_finish));
         // Add click listener for NEXT button
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -151,7 +151,7 @@ public class SurveyActivity extends Activity {
 
         setContentView(R.layout.survey_seekbar);
         SeekBar seekbarAnswer = (SeekBar) findViewById(R.id.seekbar_answer);
-        
+
         TextView textViewOption1 = (TextView) findViewById(R.id.textview_option1);
         textViewOption1.setText(options[0]);
 
@@ -190,7 +190,7 @@ public class SurveyActivity extends Activity {
     }
 
     private void initEditText(EditText et) {
-        et.addTextChangedListener(new TextWatcher(){
+        et.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable arg0) {
             }
@@ -203,7 +203,7 @@ public class SurveyActivity extends Activity {
                     int count) {
                 answer.setAnswer(s.toString());
             }
-            
+
         });
 
     }
@@ -247,6 +247,12 @@ public class SurveyActivity extends Activity {
 
             buttons[i].setText(options[i]);
             buttons[i].setTextAppearance(this, R.style.survey_options);
+            //This changes colors in rows. One white, one gray, one white...
+            if((i%2) == 0){
+                buttons[i].setBackgroundColor(Color.WHITE);
+            } else {
+                buttons[i].setBackgroundColor(Color.LTGRAY);                
+            }
             // buttons[i].setTextSize(22);
 
             buttons[i].setOnClickListener(new View.OnClickListener() {
@@ -299,37 +305,41 @@ public class SurveyActivity extends Activity {
      * Advances to the next question in the survey.
      */
     private void next() {
-        //Assure its answered before advancing
+        // Assure its answered before advancing
         QuestionType type = question.getType();
         if ((type == QuestionType.OPENTEXT || type == QuestionType.OPENNUMERIC)
                 && !answer.isAnswered()) {
-            Toast.makeText(getBaseContext(), "Please provide an answer.",
+            Toast.makeText(getBaseContext(),
+                    getResources().getText(R.string.survey_provide_answer_msg),
                     Toast.LENGTH_LONG).show();
             return;
         } else if (!answer.isAnswered()) {
-            Toast.makeText(getBaseContext(), "Please select an answer.",
+            Toast.makeText(getBaseContext(),
+                    getResources().getText(R.string.survey_select_answer_msg),
                     Toast.LENGTH_LONG).show();
             return;
-        } else if (!surveyController.isLastQuestion()) { 
+        } else if (!surveyController.isLastQuestion()) {
             // assure it wasn't the last question
             boolean available = surveyController.next();
             startNewActivity(available);
         } else if (surveyController.isSurveyComplete()) {
             // Save results when completed
-            Toast.makeText(getBaseContext(), "Survey completed!",
+            Toast.makeText(getBaseContext(),
+                    getResources().getText(R.string.survey_completed),
                     Toast.LENGTH_LONG).show();
             ResultFile resultFile = ResultFile.createInstance(this,
                     FileType.SURVEY);
-            //Old way
-            //surveyController.saveAnswersTo(resultFile.getFileName());
-            //UPDATE, now we send a broadcast too
-            surveyController.saveFileAndSendBroadcast(getApplicationContext(), resultFile.getFileName());
+            // Old way
+            // surveyController.saveAnswersTo(resultFile.getFileName());
+            // UPDATE, now we send a broadcast too
+            surveyController.saveFileAndSendBroadcast(getApplicationContext(),
+                    resultFile.getFileName());
             // Send file to the queue
             new QueueFileTask(this).execute(resultFile);
             finish();
         } else {
             Toast.makeText(getBaseContext(),
-                    "Survey not completed, please answered all the questions.",
+                    getResources().getText(R.string.survey_answer_all_msg),
                     Toast.LENGTH_LONG).show();
         }
     }
