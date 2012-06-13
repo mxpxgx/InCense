@@ -13,35 +13,35 @@
     <RadioGroup
         android:id="@+id/radiogroup"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <RadioButton
             android:id="@+id/b_answer1"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="RadioButton">
         </RadioButton>
         <RadioButton
             android:id="@+id/b_answer2"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="RadioButton">
         </RadioButton>
         <RadioButton
             android:id="@+id/b_answer3"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="RadioButton">
         </RadioButton>
         <RadioButton
             android:id="@+id/b_answer4"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="RadioButton">
         </RadioButton>
         <RadioButton
             android:id="@+id/b_answer5"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="RadioButton">
         </RadioButton>

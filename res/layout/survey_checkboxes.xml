@@ -12,31 +12,31 @@
         android:layout_height="wrap_content" />
     <CheckBox
         android:id="@+id/b_answer1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="CheckBox">
     </CheckBox>
     <CheckBox
         android:id="@+id/b_answer2"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="CheckBox">
     </CheckBox>
     <CheckBox
         android:id="@+id/b_answer3"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="CheckBox">
     </CheckBox>
     <CheckBox
         android:id="@+id/b_answer4"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="CheckBox">
     </CheckBox>
     <CheckBox
         android:id="@+id/b_answer5"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="CheckBox">
     </CheckBox>
