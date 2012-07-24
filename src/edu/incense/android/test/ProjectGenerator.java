@@ -4,6 +4,7 @@
 package edu.incense.android.test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.format.Time;
 import edu.incense.android.R;
-//import edu.incense.android.datatask.filter.MovementFilter;
 import edu.incense.android.datatask.filter.WifiTimeConnectedFilter;
 import edu.incense.android.datatask.model.Task;
 import edu.incense.android.datatask.model.TaskRelation;
@@ -281,6 +281,35 @@ public class ProjectGenerator {
             // File file = new File(parent, projectFilename);
             OutputStream output = context.openFileOutput(projectFilename, 0);
             // mapper.writeValue(file, project);
+            mapper.writeValue(output, project);
+        } catch (JsonGenerationException e) {
+            e.printStackTrace();
+            System.out.println(e);
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+            System.out.println(e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+    }
+    
+    private static void writeProject_sdcard(Context context, ObjectMapper mapper,
+            Project project) {
+        String projectFilename = context.getResources().getString(
+                R.string.project_filename);
+//        String parentDirectory = context.getResources().getString(
+//                R.string.application_root_directory);
+        String parentDirectory = context.getResources().getString(
+				R.string.application_root_directory)
+				+ "/.project/";
+        File parent = new File(Environment.getExternalStorageDirectory(),
+                parentDirectory);
+        parent.mkdirs();
+        try {
+            File file = new File(parent, projectFilename);
+            OutputStream output = new FileOutputStream(file);
+            //mapper.writeValue(file, project);
             mapper.writeValue(output, project);
         } catch (JsonGenerationException e) {
             e.printStackTrace();
@@ -1566,7 +1595,8 @@ public class ProjectGenerator {
         project.setSurveysSize(0);
         // project.put("mainSurvey", survey);
 
-        writeProject(context, mapper, project);
+        //writeProject(context, mapper, project);
+        writeProject_sdcard(context, mapper, project);
     }
     
     public static void buildProjectJsonS2(Context context) {
